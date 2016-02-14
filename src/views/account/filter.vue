@@ -1,0 +1,195 @@
+<template>
+	<div>
+		<div class="overflow-hidden bg-white rounded mb2">
+			<div class="m0 p0">
+				<div class="clearfix">
+					<div class="left black">
+						<span class="btn h4 not-clickable muted">
+							Criteria <span class="black"> - Actions</span>
+						</span>
+					</div>
+				</div>
+			</div>
+			<div class="m0 p0" v-if="st.filters.length === 0">
+				<div class="clearfix">
+					<div class="left black">
+						<span class="btn muted h5 not-clickable">
+							No filters defined.
+						</span>
+					</div>
+				</div>
+			</div>
+			<template v-for="filter in st.filters">
+				<filter-item :filter="filter"></filter-item>
+			</template>
+		</div>
+		<div class="mt2 mb2">
+			<div class="overflow-hidden bg-white rounded mb2">
+				<div class="m0 p1">
+					<div class="clearfix">
+						<span class="btn black h5 muted ">Manage: </span>
+					</div>
+				</div>
+				<div class="m0 p2 border-top">
+					<div class="clearfix">
+						<a class="muted h6 ml1 bold btn btn-outline {{ st.color }}" @click="addModal = true">Add a Filter</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<modal :show.sync="addModal">
+			<h4 slot="header">Add a Filter</h4>
+			<span slot="body">
+				<form v-on:submit.prevent="doSearchWithFilter" class="h5">
+					<label for="from">From: (or)</label>
+					<input type="text" class="field block col-12 mb1" v-model="pre.from">
+					<label for="to">To: (or)</label>
+					<input type="text" class="field block col-12 mb1" v-model="pre.to">
+					<label for="subject">Subject: (and)</label>
+					<input type="text" class="field block col-12 mb1" v-model="pre.subject">
+					<label for="contain">Has words: (and)</label>
+					<input type="text" class="field block col-12 mb1" v-model="pre.contain">
+					<label for="exclude">Does not have: (and)</label>
+					<input type="text" class="field block col-12 mb1" v-model="pre.exclude">
+					<button class="block btn btn-primary">Search</button>
+				</form>
+			</span>
+		</modal>
+		<modal :show.sync="resultModal">
+			<h4 slot="header">Search results with filter ({{ searchResults.length }})</u></h4>
+			<span slot="body">
+				<ul class="list-reset block y-scrollable">
+					<li class="overflow-hidden" v-for="result in searchResults">
+					<a @click="resultModal = false" v-link="{ name: 'mail', params: { accountId: this.$route.params.accountId, folderId: result.folder.folderId, messageId: result.messageId }}" class="btn">
+							<i>{{ result.folder.displayName }}</i> - {{ result.subject }}
+						</a>
+					</li>
+					<li v-if="searchResults.length === 0">No results.</li>
+				</ul>
+				<button @click="createFilter" class="inline-block btn btn-primary h5">Create filter</button>
+				<button @click="goBackToCriteria" class="inline-block btn btn-primary black bg-gray h5">Go Back</button>
+			</span>
+		</modal>
+		<modal :show.sync="actionModal">
+			<h4 slot="header">Apply actions...</u></h4>
+			<span slot="body">
+				<form v-on:submit.prevent="doCreateFilter" class="h5">
+					<label for="folder">Move to folder: </label>
+					<select class="block col-12 mb2 field" v-model="post.folder">
+						<option v-for="f in st._folders" value="{{ f.displayName }}">{{ f.displayName }}</option>
+					</select>
+					<label for="notify" class="block col-12 mb2">Do no notify:  <input type="checkbox" v-model="post.doNotNotify"></label>
+					<label for="read" class="block col-12 mb2">Mark read:  <input type="checkbox" v-model="post.markRead"></label>
+					<hr />
+					<label for="existing" class="block col-12 mb2">Apply to existing emails: </label>
+					<label for="folder" class="block col-12 mb2">Move to folder:  <input type="checkbox" v-model="existing.folder"></label>
+					<label for="read" class="block col-12 mb2">Mark Read:  <input type="checkbox" v-model="existing.markRead"></label>
+					<button class="mt2 inline-block btn btn-primary">Create</button>
+					<button @click="goBackToResults" class="mt2 inline-block btn btn-primary black bg-gray h5">Go Back</button>
+				</form>
+			</span>
+		</modal>
+	</div>
+</template>
+
+<script>
+
+var st = require('../../lib/st.js');
+var api = require('../../lib/api.js');
+
+module.exports = {
+	data: function() {
+		return {
+			st: st,
+			addModal: false,
+			resultModal: false,
+			actionModal: false,
+			searchResults: [],
+			pre: {
+				from: null,
+				to: null,
+				subject: null,
+				contain: null,
+				exclude: null
+			},
+			post: {
+				doNotNotify: false,
+				markRead: true,
+				folder: null
+			},
+			existing: {
+				markRead: false,
+				folder: false
+			}
+		}
+	},
+	methods: {
+		doSearchWithFilter: function() {
+			this.st.loading.go(30);
+			api.searchWithFilter(this, {
+				accountId: this.$route.params.accountId,
+				criteria: this.pre
+			}).then(function(res) {
+				this.searchResults = res.data;
+				this.addModal = false;
+				this.resultModal = true;
+				this.st.loading.go(100);
+			}, function(res) {
+				if (res.data.hasOwnProperty('message')) {
+					this.st.alert.error(res.data.message);
+					this.st.loading.go(100);
+				}
+			});
+		},
+		goBackToCriteria: function() {
+			this.resultModal = false;
+			this.addModal = true;
+		},
+		goBackToResults: function() {
+			this.actionModal = false;
+			this.addModal = true;
+		},
+		createFilter: function() {
+			this.resultModal = false;
+			this.actionModal = true;
+		},
+		doCreateFilter: function() {
+			this.st.loading.go(30);
+			api.modifyFilter(this, {
+				accountId: this.$route.params.accountId,
+				op: 'add',
+				criteria: this.pre,
+				action: this.post,
+				existing: this.existing
+			}).then(function(res) {
+				this.actionModal = false;
+				api.grabFilters(this);
+				this.st.alert.success('Filter created.');
+			}, function(res) {
+				if (res.data.hasOwnProperty('message')) {
+					this.st.alert.error(res.data.message);
+					this.st.loading.go(100);
+				}
+			});
+		}
+	},
+	created: function() {
+
+		if (!this.st.isAuthenticated() && !this.st.getToken()) {
+			return this.$route.router.go({name: 'login'})
+		}
+
+		var that = this;
+		this.st.filters = [];
+
+		this.st.setTitle('Filter');
+
+		api.grabDependencies(1, this, function() {
+			that.$dispatch('getFoldersInAccount', function() {
+				api.grabFilters(that);
+			});
+		});
+
+	}
+}
+</script>
