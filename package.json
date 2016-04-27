@@ -15,7 +15,7 @@
     "bull": "^0.7.0",
     "cors": "^2.7.1",
     "debug": "~2.2.0",
-    "dermail-common": "git+ssh://git@git.fm:zllovesuki/dermail-common.git",
+    "dermail-common": "git+ssh@github.com:zllovesuki/dermail-common.git",
     "express": "~4.13.1",
     "html-to-text": "^2.0.0",
     "jsonwebtoken": "^5.5.4",
