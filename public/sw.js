@@ -48,13 +48,15 @@ self.addEventListener('notificationclick', function(event) {
 	event.waitUntil(clients.matchAll({
 		type: "window"
 	}).then(function(clientList) {
-		for (var i = 0; i < clientList.length; i++) {
-			var client = clientList[i];
-			if (client.url == 'https://dermail.net/#!/accounts/' + data.accountId && 'focus' in client)
-				return client.focus();
-    	}
-		if (clients.openWindow) {
-			return clients.openWindow('https://dermail.net/#!/accounts/' + data.accountId);
+		if (!!data.accountId) {
+			for (var i = 0; i < clientList.length; i++) {
+				var client = clientList[i];
+				if (client.url == 'https://dermail.net/#!/accounts/' + data.accountId && 'focus' in client)
+					return client.focus();
+	    	}
+			if (clients.openWindow) {
+				return clients.openWindow('https://dermail.net/#!/accounts/' + data.accountId);
+			}
 		}
 	}));
 });
