@@ -157,6 +157,7 @@ module.exports = {
 							payload: payload
 						}).then(function() {
 							that.st.alert.success('Test notification sent!');
+							that.st.loading.go(100);
 						}, function(res) {
 							that.st.alert.error('API Error!');
 							that.st.loading.go(100);
