@@ -16,7 +16,7 @@ r.db('dermail').tableCreate('domains', {
 r.db('dermail').tableCreate('folders', {
   primaryKey: 'folderId'
 })
-r.db('dermail').tableCreate('gcmRegistration', {
+r.db('dermail').tableCreate('pushSubscriptions', {
   primaryKey: 'userId'
 })
 r.db('dermail').tableCreate('messageHeaders', {
@@ -31,6 +31,9 @@ r.db('dermail').tableCreate('queue', {
 r.db('dermail').tableCreate('users', {
   primaryKey: 'userId'
 })
+r.db('dermail').tableCreate('filters', {
+  primaryKey: 'filterId'
+})
 ```
 
 
@@ -39,6 +42,7 @@ r.db('dermail').tableCreate('users', {
 3. Add secondary index of "accountId" to table "folders"
 4. Add secondary index of "accountId" to table "messages"
 5. Add secondary index of "userId" to table "queue"
+6. Add secondary index of "accountId" to table "filters"
 
 
 compound index of folderId + date in table "messages"
