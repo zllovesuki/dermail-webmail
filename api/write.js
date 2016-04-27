@@ -360,6 +360,14 @@ module.exports = function(app, authenticationMiddleware, r) {
 				}
 			})
 			break;
+			case 'test':
+			return helper.sendNotification(r, {
+				message: 'This is a test!',
+				accountId: null
+			}, object).then(function() {
+				return res.status(200).send();
+			})
+			break;
 		}
 	});
 

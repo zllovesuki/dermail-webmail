@@ -16,11 +16,14 @@
 				</div>
 				<div class="m0 p2 border-top">
 					<div class="clearfix">
-						<button type="submit" class="h6 btn btn-outline {{ st.color }}" v-if="canSubscribe" :disabled="disabled" @click="subscribe">
+						<button type="submit" class="h6 btn btn-outline {{ st.color }} mr2" v-if="canSubscribe" :disabled="disabled" @click="subscribe">
 							Subscribe
 						</button>
-						<button type="submit" class="h6 btn btn-outline {{ st.color }}" v-if="canUnsubscribe" :disabled="disabled" @click="unsubscribe">
+						<button type="submit" class="h6 btn btn-outline {{ st.color }} mr2" v-if="canUnsubscribe" :disabled="disabled" @click="unsubscribe">
 							Unsubscribe
+						</button>
+						<button type="submit" class="h6 btn btn-outline {{ st.color }} mr2" v-if="canUnsubscribe" :disabled="disabled" @click="test">
+							Send a test notification
 						</button>
 					</div>
 				</div>
@@ -134,6 +137,32 @@ module.exports = {
 						})
 					}else{
 						that.disabled = false;
+						that.st.loading.go(100); // Oh well
+					}
+				})
+			})
+		},
+		test: function() {
+			var that = this;
+			this.st.loading.go(30);
+			navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
+				that.st.loading.go(50);
+				serviceWorkerRegistration.pushManager.getSubscription()
+				.then(function(subscription) {
+					that.st.loading.go(70);
+					if (subscription) {
+						var payload = JSON.stringify(subscription);
+						api.pushNotification(that, {
+							action: 'test',
+							payload: payload
+						}).then(function() {
+							that.st.alert.success('Test notification sent!');
+						}, function(res) {
+							that.st.alert.error('API Error!');
+							that.st.loading.go(100);
+						})
+					}else{
+						that.st.alert.error('Not subscribed.');
 						that.st.loading.go(100); // Oh well
 					}
 				})
