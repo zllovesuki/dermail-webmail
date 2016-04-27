@@ -44,6 +44,15 @@ r.db('dermail').tableCreate('filters', {
 5. Add secondary index of "userId" to table "queue"
 6. Add secondary index of "accountId" to table "filters"
 
+```javascript
+r.db('dermail').table("users").indexCreate("username")
+r.db('dermail').table("accounts").indexCreate("userId")
+r.db('dermail').table("folders").indexCreate("accountId")
+r.db('dermail').table("messages").indexCreate("accountId")
+r.db('dermail').table("queue").indexCreate("userId")
+r.db('dermail').table("filters").indexCreate("accountId")
+```
+
 
 compound index of folderId + date in table "messages"
 ```javascript
