@@ -41,15 +41,15 @@
 			<h4 slot="header">Add a Filter</h4>
 			<span slot="body">
 				<form v-on:submit.prevent="doSearchWithFilter" class="h5">
-					<label for="from">From: (or)</label>
+					<label for="from">From, supports wildcard: <i>(or)</i></label>
 					<input type="text" class="field block col-12 mb1" v-model="pre.from">
-					<label for="to">To: (or)</label>
+					<label for="to">To: <i>(or)</i></label>
 					<input type="text" class="field block col-12 mb1" v-model="pre.to">
-					<label for="subject">Subject: (and)</label>
+					<label for="subject">Subject: <i>(and)</i></label>
 					<input type="text" class="field block col-12 mb1" v-model="pre.subject">
-					<label for="contain">Has words: (and)</label>
+					<label for="contain">Has words: <i>(and)</i></label>
 					<input type="text" class="field block col-12 mb1" v-model="pre.contain">
-					<label for="exclude">Does not have: (and)</label>
+					<label for="exclude">Does not have: <i>(and)</i></label>
 					<input type="text" class="field block col-12 mb1" v-model="pre.exclude">
 					<button class="block btn btn-primary">Search</button>
 				</form>
