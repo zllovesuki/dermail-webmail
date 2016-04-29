@@ -32,13 +32,13 @@
 				</div>
 				<div class="m0 p2 border-top">
 					<div class="clearfix">
-						<a class="muted h6 ml1 bold btn btn-outline {{ st.color }}" @click="addModal = true">Add a Filter</a>
+						<a class="muted h6 ml1 bold btn btn-outline {{ st.color }}" @click="addModal = true">Search with Filter</a>
 					</div>
 				</div>
 			</div>
 		</div>
 		<modal :show.sync="addModal">
-			<h4 slot="header">Add a Filter</h4>
+			<h4 slot="header">Search with Filter</h4>
 			<span slot="body">
 				<form v-on:submit.prevent="doSearchWithFilter" class="h5">
 					<label for="from">From, supports wildcard: <i>(or)</i></label>
