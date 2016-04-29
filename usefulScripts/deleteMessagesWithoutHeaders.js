@@ -1,49 +1,47 @@
 var r = require('rethinkdb'),
-	config = require('./config'),
+	config = require('../config'),
 	async = require('async');
 
-jrjewiqorjweirjh;ewjqrq // INTENTIONALLY LEAVE HERE; DO NOT RUN THIS FILE
-
-var headers = [];
+var messages = [];
 var exist = [];
 var notExist = [];
 
 r.connect(config.rethinkdb).then(function(conn) {
 	r
 	.db('dermail')
-	.table('messageHeaders')
-	.getField('messageId')
+	.table('messages')
+	.pluck('headers', 'messageId')
 	.run(conn)
 	.then(function(cursor) {
 		return cursor.toArray();
 	})
 	.then(function(result) {
-		headers = result;
-		async.forEach(headers, function(each, cb) {
+		messages = result;
+		async.forEach(messages, function(each, cb) {
 			r
 			.db('dermail')
-			.table('messages')
-			.get(each)
+			.table('messageHeaders')
+			.get(each.headers)
 			.run(conn)
 			.then(function(_) {
 				if (_ !== null) {
-					exist.push(each);
+					exist.push(_.headerId);
 				}else{
-					console.log('Header with message id ' + each + ' does not has a corresponding message entry');
-					notExist.push(each);
+					notExist.push(each.messageId);
 				}
 				cb();
 			})
 		}, function(err) {
+			console.log(exist);
+			console.log(notExist);
 			async.forEach(notExist, function(id, cb) {
 				r
 				.db('dermail')
-				.table('messageHeaders')
-				.getAll(id, {index: 'messageId'})
+				.table('messages')
+				.get(id)
 				.delete()
 				.run(conn)
 				.then(function(result) {
-					console.log('Header with message id ' + id + ' deleted');
 					cb();
 				})
 			}, function(err) {
