@@ -2,6 +2,8 @@ module.exports = function() {
 	var express = require('express'),
 		path = require('path'),
 		logger = require('morgan'),
+		config = require('./config.js'),
+		fs = require('fs'),
 		app = express();
 
 	if (process.env.RDB_HOST) app.use(logger('dev'));
@@ -11,6 +13,19 @@ module.exports = function() {
 			res.sendFile(__dirname + '/src/dev.html');
 		});
 	}
+
+	app.get('/sw.js', function(req, res, next) {
+		fs.readFile(__dirname + '/src/sw.js', 'utf8', function (err, data) {
+			if (err) {
+				return next(err);
+			}
+			var apiEndpoint = config.apiEndpoint;
+			var version = '/v' + config.apiVersion;
+			var result = data.replace(/__APIENDPOINT__/g, apiEndpoint + version);
+			res.header("Content-Type", "text/javascript");
+			res.end(result);
+		})
+	});
 
 	app.use(express.static(path.join(__dirname, 'public')));
 
