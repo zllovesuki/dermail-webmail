@@ -1,25 +1,31 @@
-var API_ENDPOINT = '/api'
-var PING_ENDPOINT = API_ENDPOINT + '/ping'
+var API_ROOT = 'http://127.0.0.1:2000'
+var API_ENDPOINT = API_ROOT + '';
+var PING_ENDPOINT = API_ENDPOINT + '/read/ping'
 var LOGIN_ENDPOINT = API_ENDPOINT + '/login'
-var GETACCOUNTS_ENDPOINT = API_ENDPOINT + '/getAccounts'
-var GETACCOUNT_ENDPOINT = API_ENDPOINT + '/getAccount'
-var GETFOLDERS_ENDPOINT = API_ENDPOINT + '/getFoldersInAccount'
-var GETFOLDER_ENDPOINT = API_ENDPOINT + '/getFolder'
-var GETMAILSINFOLDER_ENDPOINT = API_ENDPOINT + '/getMailsInFolder'
-var GETMAIL_ENDPOINT = API_ENDPOINT + '/getMail'
-var GETADDRESS_ENDPOINT = API_ENDPOINT + '/getAddress'
-var MODIFYFILTER_ENDPOINT = API_ENDPOINT + '/modifyFilter'
-var GETFILTERS_ENDPOINT = API_ENDPOINT + '/getFilters'
-var SEARCHWITHFILTER_ENDPOINT = API_ENDPOINT + '/searchWithFilter'
-var SEARCHMAILSINACCOUNT_ENDPOINT = API_ENDPOINT + '/searchMailsInAccount'
-var UPDATEMAIL_ENDPOINT = API_ENDPOINT + '/updateMail'
-var UPDATEFOLDER_ENDPOINT = API_ENDPOINT + '/updateFolder'
-var SENDMAIL_ENDPOINT = API_ENDPOINT + '/sendMail'
-var PUSHSUB_ENDPOINT = API_ENDPOINT + '/pushSubscriptions'
+var GETACCOUNTS_ENDPOINT = API_ENDPOINT + '/read/getAccounts'
+var GETACCOUNT_ENDPOINT = API_ENDPOINT + '/read/getAccount'
+var GETFOLDERS_ENDPOINT = API_ENDPOINT + '/read/getFoldersInAccount'
+var GETFOLDER_ENDPOINT = API_ENDPOINT + '/read/getFolder'
+var GETMAILSINFOLDER_ENDPOINT = API_ENDPOINT + '/read/getMailsInFolder'
+var GETMAIL_ENDPOINT = API_ENDPOINT + '/read/getMail'
+var GETADDRESS_ENDPOINT = API_ENDPOINT + '/read/getAddress'
+var GETFILTERS_ENDPOINT = API_ENDPOINT + '/read/getFilters'
+var SEARCHWITHFILTER_ENDPOINT = API_ENDPOINT + '/read/searchWithFilter'
+var SEARCHMAILSINACCOUNT_ENDPOINT = API_ENDPOINT + '/read/searchMailsInAccount'
+var MODIFYFILTER_ENDPOINT = API_ENDPOINT + '/write/modifyFilter'
+var UPDATEMAIL_ENDPOINT = API_ENDPOINT + '/write/updateMail'
+var UPDATEFOLDER_ENDPOINT = API_ENDPOINT + '/write/updateFolder'
+var SENDMAIL_ENDPOINT = API_ENDPOINT + '/write/sendMail'
+var PUSHSUB_ENDPOINT = API_ENDPOINT + '/write/pushSubscriptions'
 
-var queue = require('./socket.js')
+var queue = require('./socket.js');
 
 module.exports = {
+
+	getEndpoint: function() {
+		return API_ROOT;
+	},
+
 	ping: function(ct) {
 		return ct.$http.get(PING_ENDPOINT, {}, {
 			headers: ct.st.getHeader()

@@ -51,7 +51,7 @@ module.exports = {
 						this.$route.router.go(destination);
 					}
 					// Message queue
-					api.queue().connect(this);
+					api.queue().connect(this, api);
 				}
 			}, function(res) {
 				if (res.data == 'Unauthorized') {

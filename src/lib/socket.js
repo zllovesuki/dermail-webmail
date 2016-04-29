@@ -1,10 +1,10 @@
-var io = require('socket.io-client/socket.io.js')
+var io = require('socket.io-client/socket.io.js');
 
 module.exports = {
 	socket: '',
-	connect: function(that) {
+	connect: function(that, api) {
 		var _this = this;
-		this.socket = io.connect();
+		this.socket = io.connect(api.getEndpoint());
 		this.socket.on('connect', function() {
 			_this.socket
 			.emit('authenticate', { token: that.st.getToken() })
