@@ -10,6 +10,8 @@ module.exports = function(st) {
 
 	var colorCode = st.getStyleRuleValue('color', '.' + color);
 
+	//st.setBarColor(color);
+
 	st.color = color; // set color scheme
 	st.Nanobar = require('nanobar');
 	st.loading = new st.Nanobar({ bg: colorCode, id: 'nanobar'});

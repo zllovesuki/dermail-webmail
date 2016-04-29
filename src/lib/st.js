@@ -124,6 +124,23 @@ module.exports = {
 	    return null;
 	},
 
+	setBarColor: function(color) {
+		var colorCode = this.getStyleRuleValue('color', '.' + color);
+		var metas = document.getElementsByTagName('meta');
+
+		for (var i=0; i < metas.length; i++) {
+			if (metas[i].getAttribute("name") && (
+				metas[i].getAttribute("name") === "theme-color" ||
+				metas[i].getAttribute("name") === "msapplication-navbutton-color"
+			)) {
+				metas[i].setAttribute("content", colorCode);
+			}
+			if (metas[i].getAttribute("name") && metas[i].getAttribute("name") === "apple-mobile-web-app-status-bar-style") {
+				metas[i].setAttribute("content", color + "-translucent");
+			}
+		}
+	},
+
 	returnS3URL: function(checksum, fileName) {
 		return 'https://' + this.s3.bucket + '.' + this.s3.endpoint + '/' + checksum + '/' + fileName;
 	}

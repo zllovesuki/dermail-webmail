@@ -68,6 +68,7 @@ module.exports = {
 	},
 	methods: {
 		saveColor: function() {
+			//this.st.setBarColor(this.st.color);
 			var colorCode = this.st.getStyleRuleValue('color', '.' + this.st.color);
 			this.st.loading = new this.st.Nanobar({ bg: colorCode, id: 'nanobar'});
 			localStorage.setItem('color', this.st.color);
