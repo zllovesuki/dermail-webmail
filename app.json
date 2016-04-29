@@ -1,0 +1,12 @@
+{
+	"apps": [
+		{
+			"name": "Webmail",
+			"script": "server.js",
+			"env_dev": {
+				"RDB_HOST": "127.0.0.1",
+			},
+			"watch": true
+		}
+	]
+}
