@@ -1,6 +1,7 @@
 var config = require('../../config.js');
+var VERSION = '/v' + config.apiVersion;
 var API_ROOT = config.apiEndpoint;
-var API_ENDPOINT = API_ROOT + '';
+var API_ENDPOINT = API_ROOT + VERSION;
 var PING_ENDPOINT = API_ENDPOINT + '/read/ping'
 var LOGIN_ENDPOINT = API_ENDPOINT + '/login'
 var GETACCOUNTS_ENDPOINT = API_ENDPOINT + '/read/getAccounts'
