@@ -170,13 +170,13 @@ module.exports = {
 		}
 	},
 	inlineImage: function(src) {
-		return 'https://misc.dermail.net/inline/?s=' + this.Base64.encode(src);
+		return API_ENDPOINT + '/safe/inline/?s=' + this.Base64.encode(src);
 	},
 	safeImage: function(src) {
-		return 'https://misc.dermail.net/image/?s=' + this.Base64.encode(src);
+		return API_ENDPOINT + '/safe/image/?s=' + this.Base64.encode(src);
 	},
 	safeLink: function(src) {
-		return 'https://misc.dermail.net/href/?s=' + this.Base64.encode(src);
+		return API_ENDPOINT + '/safe/href/?s=' + this.Base64.encode(src);
 	},
 	Base64: {
 		// private property
