@@ -1,4 +1,5 @@
-var API_ROOT = 'http://127.0.0.1:2000'
+var config = require('../../config.js');
+var API_ROOT = config.apiEndpoint;
 var API_ENDPOINT = API_ROOT + '';
 var PING_ENDPOINT = API_ENDPOINT + '/read/ping'
 var LOGIN_ENDPOINT = API_ENDPOINT + '/login'
@@ -15,8 +16,8 @@ var SEARCHMAILSINACCOUNT_ENDPOINT = API_ENDPOINT + '/read/searchMailsInAccount'
 var MODIFYFILTER_ENDPOINT = API_ENDPOINT + '/write/modifyFilter'
 var UPDATEMAIL_ENDPOINT = API_ENDPOINT + '/write/updateMail'
 var UPDATEFOLDER_ENDPOINT = API_ENDPOINT + '/write/updateFolder'
-var SENDMAIL_ENDPOINT = API_ENDPOINT + '/write/sendMail'
 var PUSHSUB_ENDPOINT = API_ENDPOINT + '/write/pushSubscriptions'
+var SENDMAIL_ENDPOINT = API_ENDPOINT + '/relay/sendMail'
 
 var queue = require('./socket.js');
 
