@@ -74,6 +74,10 @@ module.exports = {
 					this.st.setAuthenticated(true);
 					api.queue().connect(this, api);
 
+					api.s3(this).then(function(s3) {
+						this.st.setS3(s3.data);
+					});
+
 					this.st.alert.success('Welcome back!');
 					this.$route.router.go({ name: 'accounts' })
 				};

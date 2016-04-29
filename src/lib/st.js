@@ -53,9 +53,10 @@ module.exports = {
 
 	alert: alertify.reset().closeLogOnClick(true).logPosition("bottom right"),
 
-	s3: {
-		endpoint: 's3.fmt01.sdapi.net',
-		bucket: 'dermail-attachments'
+	s3: {},
+
+	setS3: function(s3) {
+		this.s3 = s3;
 	},
 
 	putMail: function(mail) {

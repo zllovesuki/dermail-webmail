@@ -2,8 +2,9 @@ var config = require('../../config.js');
 var VERSION = '/v' + config.apiVersion;
 var API_ROOT = config.apiEndpoint;
 var API_ENDPOINT = API_ROOT + VERSION;
-var PING_ENDPOINT = API_ENDPOINT + '/read/ping'
 var LOGIN_ENDPOINT = API_ENDPOINT + '/login'
+var PING_ENDPOINT = API_ENDPOINT + '/read/ping'
+var S3_ENDPOINT = API_ENDPOINT + '/read/s3'
 var GETACCOUNTS_ENDPOINT = API_ENDPOINT + '/read/getAccounts'
 var GETACCOUNT_ENDPOINT = API_ENDPOINT + '/read/getAccount'
 var GETFOLDERS_ENDPOINT = API_ENDPOINT + '/read/getFoldersInAccount'
@@ -30,6 +31,11 @@ module.exports = {
 
 	ping: function(ct) {
 		return ct.$http.get(PING_ENDPOINT, {}, {
+			headers: ct.st.getHeader()
+		})
+	},
+	s3: function(ct) {
+		return ct.$http.get(S3_ENDPOINT, {}, {
 			headers: ct.st.getHeader()
 		})
 	},

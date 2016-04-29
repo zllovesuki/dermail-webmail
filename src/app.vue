@@ -52,6 +52,9 @@ module.exports = {
 					}
 					// Message queue
 					api.queue().connect(this, api);
+					api.s3(this).then(function(s3) {
+						this.st.setS3(s3.data);
+					});
 				}
 			}, function(res) {
 				if (res.data == 'Unauthorized') {
