@@ -4,3 +4,4 @@ dist/static/
 npm-debug.log
 public/app.js
 public/prod.js
+config.json
