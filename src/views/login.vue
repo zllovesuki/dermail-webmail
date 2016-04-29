@@ -72,7 +72,7 @@ module.exports = {
 				if (res.data.hasOwnProperty('token')) {
 					this.st.setToken(res.data.token);
 					this.st.setAuthenticated(true);
-					api.queue().connect(this);
+					api.queue().connect(this, api);
 
 					this.st.alert.success('Welcome back!');
 					this.$route.router.go({ name: 'accounts' })
