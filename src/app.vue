@@ -56,6 +56,10 @@ module.exports = {
 			}, function(res) {
 				if (res.data == 'Unauthorized') {
 					st.removeToken();
+					this.st.alert.error('Token invalid, please login again.');
+					this.$route.router.go({name: 'login'});
+				}else{
+					this.st.alert.error('Service not available, please try again later.');
 					this.$route.router.go({name: 'login'});
 				}
 			});
