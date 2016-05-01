@@ -77,7 +77,7 @@
 					<label for="folder">Move to folder: </label>
 					<select class="block col-12 mb2 field" v-model="post.folder">
 						<option value="default">(Default: Inbox)</option>
-						<option v-for="f in st._folders" value="{{ f.folderId }}">{{ f.displayName }}</option>
+						<option v-for="f in st._folders" value="{{ f.folderId }}" v-if="f.displayName !== 'Inbox' ">{{ f.displayName }}</option>
 					</select>
 					<label for="notify" class="block col-12 mb2">Do no notify:  <input type="checkbox" v-model="post.doNotNotify"></label>
 					<label for="read" class="block col-12 mb2">Mark read:  <input type="checkbox" v-model="post.markRead"></label>
