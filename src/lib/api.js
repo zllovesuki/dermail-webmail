@@ -191,10 +191,6 @@ module.exports = {
 		// public method for encoding
 		encode: function(input) {
 
-			if (typeof btoa === 'function') {
-				return btoa(input);
-			}
-
 			var output = "";
 			var chr1, chr2, chr3, enc1, enc2,
 				enc3, enc4;
@@ -234,10 +230,6 @@ module.exports = {
 
 		// public method for decoding
 		decode: function(input) {
-
-			if (typeof atob === 'function') {
-				return atob(input);
-			}
 
 			var output = "";
 			var chr1, chr2, chr3;
