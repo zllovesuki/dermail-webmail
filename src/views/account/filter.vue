@@ -51,7 +51,7 @@
 					<input type="text" class="field block col-12 mb1" v-model="pre.contain">
 					<label for="exclude">Does not have: <i>(and)</i></label>
 					<input type="text" class="field block col-12 mb1" v-model="pre.exclude">
-					<button class="block btn btn-primary">Search</button>
+					<button type="submit" class="block btn btn-primary">Search</button>
 				</form>
 			</span>
 		</modal>
@@ -66,8 +66,8 @@
 					</li>
 					<li v-if="searchResults.length === 0">No results.</li>
 				</ul>
-				<button @click="createFilter" class="inline-block btn btn-primary h5">Create filter</button>
-				<button @click="goBackToCriteria" class="inline-block btn btn-primary black bg-gray h5">Go Back</button>
+				<button type="submit" @click="createFilter" class="inline-block btn btn-primary h5">Create filter</button>
+				<button type="button" @click="goBackToCriteria" class="inline-block btn btn-primary black bg-gray h5">Go Back</button>
 			</span>
 		</modal>
 		<modal :show.sync="actionModal">
@@ -85,8 +85,8 @@
 					<label for="existing" class="block col-12 mb2">Apply to existing emails: </label>
 					<label for="folder" class="block col-12 mb2">Move to folder:  <input type="checkbox" v-model="existing.folder"></label>
 					<label for="read" class="block col-12 mb2">Mark Read:  <input type="checkbox" v-model="existing.markRead"></label>
-					<button class="mt2 inline-block btn btn-primary">Create</button>
-					<button @click="goBackToResults" class="mt2 inline-block btn btn-primary black bg-gray h5">Go Back</button>
+					<button type="submit" class="mt2 inline-block btn btn-primary">Create</button>
+					<button type="button" @click="goBackToResults" class="mt2 inline-block btn btn-primary black bg-gray h5">Go Back</button>
 				</form>
 			</span>
 		</modal>
