@@ -76,7 +76,8 @@
 				<form v-on:submit.prevent="doCreateFilter" class="h5">
 					<label for="folder">Move to folder: </label>
 					<select class="block col-12 mb2 field" v-model="post.folder">
-						<option v-for="f in st._folders" value="{{ f.displayName }}">{{ f.displayName }}</option>
+						<option value="default">(Default: Inbox)</option>
+						<option v-for="f in st._folders" value="{{ f.folderId }}">{{ f.displayName }}</option>
 					</select>
 					<label for="notify" class="block col-12 mb2">Do no notify:  <input type="checkbox" v-model="post.doNotNotify"></label>
 					<label for="read" class="block col-12 mb2">Mark read:  <input type="checkbox" v-model="post.markRead"></label>
@@ -115,7 +116,7 @@ module.exports = {
 			post: {
 				doNotNotify: false,
 				markRead: true,
-				folder: null
+				folder: 'default'
 			},
 			existing: {
 				markRead: false,

@@ -11,7 +11,7 @@
 						<span v-if="filter.pre.exclude"> -{{ filter.pre.exclude.join(', ') }}</span>
 						<span class="muted black"> -
 							<span class="h6 not-clickable">
-								<span v-if="filter.post.folder">Move to "{{ filter.post.folder }}", </span>
+								<span v-if="filter.post.folder">Move to "{{ filter.post.folder.displayName }}", </span>
 								<span v-if="filter.post.doNotNotify">{{ filter.post.doNotNotify ? 'Do not notify' : 'Notify' }}, </span>
 								<span v-if="filter.post.markRead">{{ filter.post.markRead ? 'Mark Read' : 'Do not mark Read' }}, </span>
 							</span>
