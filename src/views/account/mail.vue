@@ -123,7 +123,7 @@ module.exports = {
 					return true;
 				}
 				if (this.st.mail.html.match(/<img/)) { // Warning, it contains <img>
-					//return true;
+					return true;
 				}
 				if (this.st.mail.html.toLowerCase().replace(/ /g,'').match('position:absolute')) { // Warning, it contains absoulte
 					return true;
