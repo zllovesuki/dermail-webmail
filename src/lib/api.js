@@ -20,6 +20,7 @@ var UPDATEMAIL_ENDPOINT = API_ENDPOINT + '/write/updateMail'
 var UPDATEFOLDER_ENDPOINT = API_ENDPOINT + '/write/updateFolder'
 var PUSHSUB_ENDPOINT = API_ENDPOINT + '/write/pushSubscriptions'
 var SENDMAIL_ENDPOINT = API_ENDPOINT + '/relay/sendMail'
+var UPLOADS3STREAM_ENDPOINT = API_ENDPOINT + '/upload/s3Stream'
 
 var queue = require('./socket.js');
 
@@ -110,6 +111,11 @@ module.exports = {
 	},
 	sendMail: function(ct, data) {
 		return ct.$http.post(SENDMAIL_ENDPOINT, data, {
+			headers: ct.st.getHeader()
+		})
+	},
+	UploadS3Stream: function(ct, data) {
+		return ct.$http.post(UPLOADS3STREAM_ENDPOINT, data, {
 			headers: ct.st.getHeader()
 		})
 	},
