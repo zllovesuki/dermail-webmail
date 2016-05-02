@@ -48,7 +48,8 @@ module.exports = {
 			subject: null
 		},
 		addHTML: null,
-		addTo: []
+		addTo: [],
+		addAttachments: []
 	},
 
 	alert: alertify.reset().closeLogOnClick(true).logPosition("bottom right"),

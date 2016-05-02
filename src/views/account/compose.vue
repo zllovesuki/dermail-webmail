@@ -339,7 +339,6 @@ module.exports = {
 		}
 
 		if (this.st.compose.addTo.length > 0) {
-			var that = this;
 			this.st.compose.addTo.forEach(function(tag) {
 				that.pushTags('to', tag.account + '@' + tag.domain);
 			})
@@ -351,6 +350,13 @@ module.exports = {
 			this.st.compose.addSubject = {
 				subject: null
 			}
+		}
+
+		if (this.st.compose.addAttachments.length > 0) {
+			this.st.compose.addAttachments.forEach(function(attachment) {
+				that.compose.attachments.push(attachment);
+			})
+			this.st.compose.addAttachments = [];
 		}
 
 	}

@@ -223,7 +223,6 @@ module.exports = {
 				obj = this.st.mail.from[0];
 			}
 			this.st.compose.addTo.push(obj);
-			console.log(this.st.mail);
 			var dedup = this.st.mail.subject;
 			while (dedup.toLowerCase().trimLeft().indexOf('re:') === 0) {
 				dedup = dedup.slice(3)
@@ -233,6 +232,18 @@ module.exports = {
 				subject: dedup
 			};
 			this.st.compose.addHTML = "<br /><small>Original Email:</small><hr /><br />" + this.st.mail.html;
+			if (this.st.mail.attachments.length > 0) {
+				// Check if we have inline images, then we need to append them to reply
+				for (var i = 0; i < this.st.mail.attachments.length; i++) {
+					if (this.st.mail.attachments[i].contentDisposition === 'inline') {
+						this.st.compose.addAttachments.push({
+							filename: this.st.mail.attachments[i].generatedFileName,
+							cid: this.st.mail.attachments[i].contentId,
+							path: api.inlineImage('cid:' + this.st.mail.attachments[i].contentId)
+						});
+					}
+				}
+			}
 			return this.$route.router.go({ name: 'compose', params: { accountId: this.$route.params.accountId } })
 		},
 		downloadMail: function() {
