@@ -1,6 +1,6 @@
 {
   "name": "dermail-webmail",
-  "version": "2.3.2",
+  "version": "2.4.0",
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
