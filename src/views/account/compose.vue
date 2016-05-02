@@ -21,9 +21,9 @@
 			</div>
 			<div class="m0 p1">
 				<div class="clearfix">
-						<a class="muted h6 ml1 bold btn {{ st.color }}" @click="showMore">
-							...
-						</a>
+					<a class="muted h6 ml1 bold btn {{ st.color }}" @click="showMore">
+						...
+					</a>
 				</div>
 			</div>
 			<div class="m0 p1" v-show="compose.showMore">
@@ -68,11 +68,16 @@
 			<div class="m0 p1">
 				<div class="clearfix">
 					<span class="btn black h5 muted not-clickable">Attachments: </span>
+					<span class="btn black h6 muted {{ st.color }}">
+						<label for="attachment-select" style="cursor: pointer;" v-show="!attachDisabled">
+						(Attach a file)
+						</label>
+					</span>
 				</div>
+				<input type="file" v-on:change="handleUpload" style="display: none;" id="attachment-select">
 			</div>
-			<div class="m0 p1">
+			<div class="m0 p1" v-show="compose.attachments.length > 0">
 				<div class="clearfix">
-					<input type="file" v-on:change="handleUpload">
 					<template v-for="attachment in compose.attachments">
 						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ st.color }}" href="{{ attachment.path }}" target="_blank">
 							{{attachment.filename}}
@@ -125,7 +130,8 @@ module.exports = {
 				},
 				attachments: []
 			},
-			submitButtonDisabled: false
+			submitButtonDisabled: false,
+			attachDisabled: false
 		}
 	},
 	computed: {
@@ -232,9 +238,14 @@ module.exports = {
 			}
 		},
 		handleUpload: function(event) {
-			var file = event.target.files[0];
+			var file = event.target.files[0],
+				that = this;
 
 			if (!!!file) return;
+
+			that.attachDisabled = true;
+
+			that.st.loading.go(30);
 
 			var	form = new FormData(),
 				blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
@@ -243,7 +254,6 @@ module.exports = {
 				currentChunk = 0,
 				spark = new SparkMD5.ArrayBuffer(),
 				fileReader = new FileReader(),
-				that = this,
 				filename = file.name,
 				contentType = file.type || 'application/octet-stream',
 				hash,
@@ -257,7 +267,10 @@ module.exports = {
 				if (currentChunk < chunks) {
 					loadNext();
 				} else {
-					hash = spark.end();
+
+					that.st.loading.go(50);
+
+					var hash = spark.end();
 
 					form.append('checksum', hash);
 					form.append('filename', filename);
@@ -267,7 +280,10 @@ module.exports = {
 						that.compose.attachments.push({
 							filename: filename,
 							path: that.st.returnS3URL(hash, filename)
-						})
+						});
+						that.st.alert.success('File uploaded to S3!');
+						that.st.loading.go(100);
+						that.attachDisabled = false;
 					})
 					.catch(function(err) {
 						if (res.data.hasOwnProperty('message')) {
@@ -275,12 +291,16 @@ module.exports = {
 						}else{
 							that.st.alert.error(res.statusText);
 						}
+						that.st.loading.go(100);
+						that.attachDisabled = false;
 					})
 				}
 			};
 
 			fileReader.onerror = function() {
-				console.warn('oops, something went wrong.');
+				that.st.loading.go(100);
+				that.attachDisabled = false;
+				that.st.alert.error('Oops, something went wrong.');
 			};
 
 			var loadNext = function () {
