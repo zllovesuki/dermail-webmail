@@ -67,6 +67,23 @@
 		<div class="overflow-hidden bg-white border rounded mb2">
 			<div class="m0 p1">
 				<div class="clearfix">
+					<span class="btn black h5 muted not-clickable">Attachments: </span>
+				</div>
+			</div>
+			<div class="m0 p1">
+				<div class="clearfix">
+					<input type="file" v-on:change="handleUpload">
+					<template v-for="attachment in compose.attachments">
+						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ st.color }}" href="{{ attachment.path }}" target="_blank">
+							{{attachment.filename}}
+						</a>
+					</template>
+				</div>
+			</div>
+		</div>
+		<div class="overflow-hidden bg-white border rounded mb2">
+			<div class="m0 p1">
+				<div class="clearfix">
 					<div class="left">
 						<form v-on:submit.prevent="sanityCheck">
 							<button class="h6 ml1 bold btn btn-primary" type="submit" :disabled.sync="submitButtonDisabled">
@@ -84,6 +101,7 @@
 
 var st = require('../../lib/st.js');
 var api = require('../../lib/api.js');
+var SparkMD5 = require('spark-md5');
 var validator = require('validator');
 var marked = require('marked');
 marked.setOptions({
@@ -104,7 +122,8 @@ module.exports = {
 					to: [],
 					cc: [],
 					bcc: []
-				}
+				},
+				attachments: []
 			},
 			submitButtonDisabled: false
 		}
@@ -208,8 +227,68 @@ module.exports = {
 					to: [],
 					cc: [],
 					bcc: []
-				}
+				},
+				attachments: []
 			}
+		},
+		handleUpload: function(event) {
+			var file = event.target.files[0];
+
+			if (!!!file) return;
+
+			var	form = new FormData(),
+				blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
+				chunkSize = 2097152, // Read in chunks of 2MB
+				chunks = Math.ceil(file.size / chunkSize),
+				currentChunk = 0,
+				spark = new SparkMD5.ArrayBuffer(),
+				fileReader = new FileReader(),
+				that = this,
+				filename = file.name,
+				contentType = file.type || 'application/octet-stream',
+				hash,
+				s3URL;
+
+			form.append('attachment', file);
+
+			fileReader.onload = function(e) {
+				spark.append(e.target.result); // Append array buffer
+				currentChunk++;
+				if (currentChunk < chunks) {
+					loadNext();
+				} else {
+					hash = spark.end();
+
+					form.append('checksum', hash);
+					form.append('filename', filename);
+
+					api.UploadS3Stream(that, form)
+					.then(function(res) {
+						that.compose.attachments.push({
+							filename: filename,
+							path: that.st.returnS3URL(hash, filename)
+						})
+					})
+					.catch(function(err) {
+						if (res.data.hasOwnProperty('message')) {
+							that.st.alert.error(res.data.message);
+						}else{
+							that.st.alert.error(res.statusText);
+						}
+					})
+				}
+			};
+
+			fileReader.onerror = function() {
+				console.warn('oops, something went wrong.');
+			};
+
+			var loadNext = function () {
+				var start = currentChunk * chunkSize,
+				end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
+				fileReader.readAsArrayBuffer(blobSlice.call(file, start, end));
+			}
+			loadNext();
 		}
 	},
 	watch: {
