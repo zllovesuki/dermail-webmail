@@ -138,8 +138,10 @@ module.exports = {
 			}, function(res) {
 				if (res.data.hasOwnProperty('message')) {
 					this.st.alert.error(res.data.message);
-					this.st.loading.go(100);
+				}else{
+					this.st.alert.error(res.statusText);
 				}
+				this.st.loading.go(100);
 			});
 		},
 		goBackToCriteria: function() {

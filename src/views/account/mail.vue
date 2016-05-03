@@ -265,6 +265,8 @@ module.exports = {
 					}, function(res) {
 						if (res.data.hasOwnProperty('message')) {
 							that.st.alert.error(res.data.message);
+						}else{
+							that.st.alert.error(res.statusText);
 						}
 					});
 				}
