@@ -106,7 +106,6 @@
 
 var st = require('../../lib/st.js');
 var api = require('../../lib/api.js');
-var SparkMD5 = require('spark-md5');
 var validator = require('validator');
 var marked = require('marked');
 marked.setOptions({
@@ -248,67 +247,32 @@ module.exports = {
 			that.st.loading.go(30);
 
 			var	form = new FormData(),
-				blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
-				chunkSize = 2097152, // Read in chunks of 2MB
-				chunks = Math.ceil(file.size / chunkSize),
-				currentChunk = 0,
-				spark = new SparkMD5.ArrayBuffer(),
-				fileReader = new FileReader(),
 				filename = file.name,
-				contentType = file.type || 'application/octet-stream',
-				hash,
-				s3URL;
+				hash;
 
 			form.append('attachment', file);
+			form.append('filename', filename);
 
-			fileReader.onload = function(e) {
-				spark.append(e.target.result); // Append array buffer
-				currentChunk++;
-				if (currentChunk < chunks) {
-					loadNext();
-				} else {
-
-					that.st.loading.go(50);
-
-					var hash = spark.end();
-
-					form.append('checksum', hash);
-					form.append('filename', filename);
-
-					api.UploadS3Stream(that, form)
-					.then(function(res) {
-						that.compose.attachments.push({
-							filename: filename,
-							path: that.st.returnS3URL(hash, filename)
-						});
-						that.st.alert.success('File uploaded to S3!');
-						that.st.loading.go(100);
-						that.attachDisabled = false;
-					})
-					.catch(function(err) {
-						if (res.data.hasOwnProperty('message')) {
-							that.st.alert.error(res.data.message);
-						}else{
-							that.st.alert.error(res.statusText);
-						}
-						that.st.loading.go(100);
-						that.attachDisabled = false;
-					})
-				}
-			};
-
-			fileReader.onerror = function() {
+			api.UploadS3Stream(that, form)
+			.then(function(res) {
+				var hash = res.data.checksum;
+				that.compose.attachments.push({
+					filename: filename,
+					path: that.st.returnS3URL(hash, filename)
+				});
+				that.st.alert.success('File uploaded to S3!');
 				that.st.loading.go(100);
 				that.attachDisabled = false;
-				that.st.alert.error('Oops, something went wrong.');
-			};
-
-			var loadNext = function () {
-				var start = currentChunk * chunkSize,
-				end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
-				fileReader.readAsArrayBuffer(blobSlice.call(file, start, end));
-			}
-			loadNext();
+			})
+			.catch(function(err) {
+				if (res.data.hasOwnProperty('message')) {
+					that.st.alert.error(res.data.message);
+				}else{
+					that.st.alert.error(res.statusText);
+				}
+				that.st.loading.go(100);
+				that.attachDisabled = false;
+			})
 		}
 	},
 	watch: {
