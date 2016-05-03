@@ -237,6 +237,7 @@ module.exports = {
 				for (var i = 0; i < this.st.mail.attachments.length; i++) {
 					if (this.st.mail.attachments[i].contentDisposition === 'inline') {
 						this.st.compose.addAttachments.push({
+							mutable: false,
 							filename: this.st.mail.attachments[i].generatedFileName,
 							cid: this.st.mail.attachments[i].contentId,
 							path: api.inlineImage('cid:' + this.st.mail.attachments[i].contentId)

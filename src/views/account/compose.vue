@@ -79,7 +79,7 @@
 			<div class="m0 p1" v-show="compose.attachments.length > 0">
 				<div class="clearfix">
 					<template v-for="attachment in compose.attachments">
-						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ st.color }}" href="{{ attachment.path }}" target="_blank">
+						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ st.color }}" v-on:click="confirmDelete(attachment)">
 							{{attachment.filename}}
 						</a>
 					</template>
@@ -259,8 +259,9 @@ module.exports = {
 
 			api.UploadS3Stream(that, form)
 			.then(function(res) {
-				var hash = res.data.checksum;
+				hash = res.data.checksum;
 				that.compose.attachments.push({
+					mutable: true,
 					filename: filename,
 					path: that.st.returnS3URL(hash, filename)
 				});
@@ -277,6 +278,18 @@ module.exports = {
 				that.st.loading.go(100);
 				that.attachDisabled = false;
 			})
+		},
+		confirmDelete: function(attachment) {
+			var that = this;
+			if (!!!attachment.mutable) {
+				return that.st.alert.error('Cannot remove inline attachment.');
+			}
+			this.st.alert.confirm('Remove this attachment?', function() {
+				that.compose.attachments.$remove(attachment);
+				that.st.alert.success('File detached!');
+			}, function() {
+
+			});
 		}
 	},
 	watch: {
