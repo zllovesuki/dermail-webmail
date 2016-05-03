@@ -69,6 +69,8 @@ module.exports = {
 			}, function(res) {
 				if (res.data.hasOwnProperty('message')) {
 					this.st.alert.error(res.data.message);
+				}else{
+					this.st.alert.error(res.statusText);
 				}
 			});
 		},
@@ -87,6 +89,8 @@ module.exports = {
 				}, function(res) {
 					if (res.data.hasOwnProperty('message')) {
 						this.st.alert.error(res.data.message);
+					}else{
+						this.st.alert.error(res.statusText);
 					}
 				});
 			}
@@ -103,6 +107,8 @@ module.exports = {
 			}, function(res) {
 				if (res.data.hasOwnProperty('message')) {
 					this.st.alert.error(res.data.message);
+				}else{
+					this.st.alert.error(res.statusText);
 				}
 			});
 		},

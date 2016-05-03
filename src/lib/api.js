@@ -156,6 +156,8 @@ module.exports = {
 			}, function(res) {
 				if (res.data.hasOwnProperty('message')) {
 					ct.st.alert.error(res.data.message);
+				}else{
+					ct.st.alert.error(res.statusText);
 				}
 			});
 			case 2: //folder.vue
@@ -167,6 +169,8 @@ module.exports = {
 			}, function(res) {
 				if (res.data.hasOwnProperty('message')) {
 					ct.st.alert.error(res.data.message);
+				}else{
+					ct.st.alert.error(res.statusText);
 				}
 			});
 			case 1: //account.vue
@@ -180,6 +184,8 @@ module.exports = {
 				}, function(res) {
 					if (res.data.hasOwnProperty('message')) {
 						ct.st.alert.error(res.data.message);
+					}else{
+						ct.st.alert.error(res.statusText);
 					}
 				});
 			}
