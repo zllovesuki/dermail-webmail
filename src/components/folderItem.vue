@@ -27,13 +27,13 @@
 					<a class="btn gray h3" @click="flipMenuAndDescription" v-if="folder.mutable || folder.displayName.toLowerCase() == 'inbox'">
 						&#8942;
 					</a>
-					<a class="btn gray h4" @click="showTruncateFolder" v-if="st.hideInMoveOptions.indexOf(folder.displayName.toLowerCase()) !== -1">
+					<a class="btn gray h3" @click="showTruncateFolder" v-if="st.hideInMoveOptions.indexOf(folder.displayName.toLowerCase()) !== -1">
 						&#8709;
 					</a>
 				</div>
 			</div>
 		</div>
-		<ul class="m0"><folder-item v-for="folder in folder.child" :folder="folder"></folder-item></ul>
+		<ol class="m0"><folder-item v-for="folder in folder.child" :folder="folder"></folder-item></ol>
 		<modal :show.sync="truncateModal">
 			<h4 slot="header">Truncate a Folder</h4>
 			<span slot="body">
