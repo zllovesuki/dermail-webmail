@@ -26,8 +26,12 @@ var queue = require('./socket.js');
 
 module.exports = {
 
-	getEndpoint: function() {
+
+	getRoot: function() {
 		return API_ROOT;
+	},
+	getEndpoint: function() {
+		return API_ENDPOINT
 	},
 
 	ping: function(ct) {
