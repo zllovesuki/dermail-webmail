@@ -180,10 +180,16 @@ module.exports = {
 					e.preventDefault();
 					var href = e.target.href || e.target.parentElement.href;
 					var href = api.safeLink(href);
-					that.st.alert.confirm('Are you sure to leave?', function () {
-						return window.open(href);
-					}, function() {
+					that.st.alert
+					.okBtn("Yes")
+					.cancelBtn("No")
+					.confirm('Are you sure to leave?')
+					.then(function(resolved) {
+						resolved.event.preventDefault();
 
+						if (resolved.buttonClicked !== 'ok') return;
+
+						return window.open(href);
 					});
 				}
 			}

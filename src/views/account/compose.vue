@@ -193,9 +193,16 @@ module.exports = {
 
 			if (this.compose.subject.trim().length === 0) {
 				var that = this;
-				this.st.alert.confirm('Are you sure to send an email without a subject?', function () {
+				this.st.alert
+				.okBtn("Yes")
+				.cancelBtn("No")
+				.confirm('Are you sure to send an email without a subject?')
+				.then(function(resolved) {
+					resolved.event.preventDefault();
+
+					if (resolved.buttonClicked !== 'ok') return;
+
 					that.sendMail();
-				}, function() {
 
 				});
 			}else{
@@ -284,10 +291,17 @@ module.exports = {
 			if (!!!attachment.mutable) {
 				return that.st.alert.error('Cannot remove inline attachment.');
 			}
-			this.st.alert.confirm('Remove this attachment?', function() {
+			this.st.alert
+			.okBtn("Yes")
+			.cancelBtn("No")
+			.confirm('Are you sure to remove this attachment?')
+			.then(function(resolved) {
+				resolved.event.preventDefault();
+
+				if (resolved.buttonClicked !== 'ok') return;
+
 				that.compose.attachments.$remove(attachment);
 				that.st.alert.success('File detached!');
-			}, function() {
 
 			});
 		}

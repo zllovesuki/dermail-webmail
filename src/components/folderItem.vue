@@ -180,7 +180,16 @@ module.exports = {
 		doTruncateFolder: function(e) {
 
 			var that = this;
-			this.st.alert.confirm('Are you SURE?', function() {
+
+			this.st.alert
+			.okBtn("Yes")
+			.cancelBtn("No")
+			.confirm('Are you sure to truncate the folder?')
+			.then(function(resolved) {
+				resolved.event.preventDefault();
+
+				if (resolved.buttonClicked !== 'ok') return;
+
 				api.updateFolder(that, that.modal).then(function(res) {
 					that.st.alert.success('Folder truncated.');
 					that.houseKeeping();
@@ -192,14 +201,21 @@ module.exports = {
 						that.st.alert.error(res.statusText);
 					}
 				});
-			}, function() {
-
-			})
+			});
 		},
 		doDeleteFolder: function(e) {
 
 			var that = this;
-			this.st.alert.confirm('Are you SURE?', function() {
+
+			this.st.alert
+			.okBtn("Yes")
+			.cancelBtn("No")
+			.confirm('Are you sure to delete the folder?')
+			.then(function(resolved) {
+				resolved.event.preventDefault();
+
+				if (resolved.buttonClicked !== 'ok') return;
+
 				api.updateFolder(that, that.modal).then(function(res) {
 					that.st.alert.success('Folder deleted.');
 					that.houseKeeping();
@@ -211,9 +227,7 @@ module.exports = {
 						that.st.alert.error(res.statusText);
 					}
 				});
-			}, function() {
-
-			})
+			});
 		},
 		doEditFolder: function(e) {
 			api.updateFolder(this, this.modal).then(function(res) {
