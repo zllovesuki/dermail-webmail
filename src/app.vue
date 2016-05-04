@@ -39,12 +39,11 @@ module.exports = {
 	created: function() {
 		var destination = this.$route.path;
 		if (!this.st.isAuthenticated() && this.st.getToken()) {
-			this.st.alert.log('Token found, trying to login automagically.');
+			this.st.alert.success('Token found, trying to login automagically.');
 			api
 			.ping(this)
 			.then(function(res) {
 				if (res.data === 'pong') {
-					this.st.alert.success('Login successfully!');
 					// We are fine
 					this.st.setAuthenticated(true);
 					if (destination === '/') {
