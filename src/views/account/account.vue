@@ -43,10 +43,6 @@ module.exports = {
 	},
 	created: function() {
 
-		if (!this.st.isAuthenticated()) {
-			return this.$route.router.go({name: 'login'})
-		}
-
 		var that = this;
 
 		this.st.setTitle('Folders');

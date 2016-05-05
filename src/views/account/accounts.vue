@@ -73,10 +73,6 @@ module.exports = {
 	},
 	created: function() {
 
-		if (!this.st.isAuthenticated()) {
-			return this.$route.router.go({name: 'login'})
-		}
-
 		this.st.loading.go(50);
 
 		var that = this;

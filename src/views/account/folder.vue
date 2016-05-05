@@ -34,9 +34,6 @@ module.exports = {
 		}
 	},
 	created: function() {
-		if (!this.st.isAuthenticated() && !this.st.getToken()) {
-			return this.$route.router.go({name: 'login'})
-		}
 
 		var that = this;
 		this.st.mails = [];

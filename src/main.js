@@ -60,6 +60,14 @@ router.map({
 	}
 })
 
+router.beforeEach(function (transition) {
+	if (!st.isAuthenticated() && transition.to.name !== 'login') {
+		transition.redirect({name: 'login'});
+	}else{
+		transition.next();
+	}
+})
+
 window.App = App;
 
 router.start(App, '#app')

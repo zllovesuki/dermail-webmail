@@ -104,11 +104,6 @@ module.exports = {
 				if (cb) cb();
 			});
 		}
-	},
-	created: function() {
-		if (!this.st.isAuthenticated()) {
-			return this.$route.router.go({name: 'login'})
-		}
 	}
 }
 </script>

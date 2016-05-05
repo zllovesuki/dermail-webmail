@@ -287,10 +287,6 @@ module.exports = {
 	},
 	created: function() {
 
-		if (!this.st.isAuthenticated()) {
-			return this.$route.router.go({name: 'login'})
-		}
-
 		this.st.setTitle('Mail');
 
 		if (this.st._folders.length === 0) {

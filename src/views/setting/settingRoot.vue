@@ -172,13 +172,7 @@ module.exports = {
 		}
 	},
 	beforeCompile: function() {
-
-		if (!this.st.isAuthenticated()) {
-			return this.$route.router.go({name: 'login'})
-		}
-
 		this.st.setTitle('Settings');
-
 	},
 	ready: function() {
 		this.st.loading.go(100);

@@ -316,10 +316,6 @@ module.exports = {
 	},
 	created: function() {
 
-		if (!this.st.isAuthenticated()) {
-			return this.$route.router.go({name: 'login'})
-		}
-
 		this.resetCompose();
 
 		var that = this;

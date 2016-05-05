@@ -76,10 +76,10 @@ module.exports = {
 	},
 	methods: {
 		doLogout: function() {
+			this.st.setAuthenticated(false);
 			this.st.blockLoadingOnce = false;
 			api.queue().disconnect();
 			this.st.removeToken();
-			this.st.setAuthenticated(false)
 			this.$route.router.go({name: 'login'});
 			this.st.alert.success('Logout successfully!');
 		}
