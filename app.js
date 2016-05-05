@@ -24,6 +24,7 @@ module.exports = function() {
 			var apiEndpoint = config.apiEndpoint;
 			var version = '/v' + config.apiVersion;
 			var result = data.replace(/__APIENDPOINT__/g, apiEndpoint + version);
+			result = result.replace(/__SITEURL__/g, config.siteURL);
 			res.header("Content-Type", "text/javascript");
 			res.end(result);
 		})

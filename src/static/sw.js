@@ -51,11 +51,11 @@ self.addEventListener('notificationclick', function(event) {
 		if (!!data.accountId) {
 			for (var i = 0; i < clientList.length; i++) {
 				var client = clientList[i];
-				if (client.url == 'https://dermail.net/#!/accounts/' + data.accountId && 'focus' in client)
+				if (client.url == '__SITEURL__/accounts/' + data.accountId && 'focus' in client)
 					return client.focus();
 	    	}
 			if (clients.openWindow) {
-				return clients.openWindow('https://dermail.net/#!/accounts/' + data.accountId);
+				return clients.openWindow('__SITEURL__/accounts/' + data.accountId);
 			}
 		}
 	}));
