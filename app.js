@@ -8,16 +8,16 @@ module.exports = function() {
 
 	if (process.env.RDB_HOST) app.use(logger('dev'));
 
-	var root = __dirname + '/src/prod.html';
+	var root = __dirname + '/src/static/prod.html';
 
 	if (process.env.RDB_HOST) {
-		root = __dirname + '/src/dev.html'
+		root = __dirname + '/src/static/dev.html'
 	}
 
 	app.use(express.static(path.join(__dirname, 'public')));
 
 	app.get('/sw.js', function(req, res, next) {
-		fs.readFile(__dirname + '/src/sw.js', 'utf8', function (err, data) {
+		fs.readFile(__dirname + '/src/static/sw.js', 'utf8', function (err, data) {
 			if (err) {
 				return next(err);
 			}
