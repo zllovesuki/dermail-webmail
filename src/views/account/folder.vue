@@ -43,7 +43,9 @@ module.exports = {
 
 		api.grabDependencies(2, this, function(data) {
 			if (that.st._folders.length === 0) {
-				that.$dispatch('getFoldersInAccount');
+				that.$dispatch('getFoldersInAccount', function() {
+					that.st.loading.go(100);
+				});
 			}
 			that.st.setTitle(that.st.folder.displayName);
 		});

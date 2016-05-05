@@ -25,6 +25,7 @@ module.exports = {
 	computed: {
 	},
 	ready: function() {
+		this.st.loading.go(100);
 	},
 	beforeCompile: function() {
 		this.st.setTitle('404');

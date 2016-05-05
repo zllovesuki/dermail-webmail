@@ -60,7 +60,7 @@ module.exports = {
 					});
 				}
 			}, function(res) {
-				if (res.data == 'Unauthorized') {
+				if (res.status === 401) {
 					st.removeToken();
 					this.st.alert.error('Token invalid, please login again.');
 					this.$route.router.go({name: 'login'});
@@ -68,6 +68,7 @@ module.exports = {
 					this.st.alert.error('Service not available, please try again later.');
 					this.$route.router.go({name: 'login'});
 				}
+				this.st.loading.go(100);
 			});
 		}else{
 			this.st.blockLoadingOnce = false;

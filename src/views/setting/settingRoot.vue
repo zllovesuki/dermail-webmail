@@ -173,7 +173,7 @@ module.exports = {
 	},
 	beforeCompile: function() {
 
-		if (!this.st.isAuthenticated() && !this.st.getToken()) {
+		if (!this.st.isAuthenticated()) {
 			return this.$route.router.go({name: 'login'})
 		}
 
