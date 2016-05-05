@@ -13,8 +13,6 @@ var router = new VueRouter({
 	history: true
 })
 
-console.log(router);
-
 require('./lib/init.js')(st)
 require('./lib/registerIcons.js')(Vue)
 require('./lib/registerFilters.js')(Vue)
