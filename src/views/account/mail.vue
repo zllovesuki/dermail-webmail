@@ -41,7 +41,7 @@
 							Why?
 						</a>
 					</span>
-					<iframe id="mail-body"></iframe>
+					<iframe id="iframe-body"></iframe>
 				</div>
 				<div v-if="!containsStrangeTags" class="overflow-auto">
 					{{{ st.mail.html }}}
@@ -168,9 +168,9 @@ module.exports = {
 			}
 			return html;
 		},
-		safeLink: function(iframe) {
-			var a = iframe.getElementsByTagName('a');
-			var area = iframe.getElementsByTagName('area'); // DSW emails fix
+		safeLink: function(element) {
+			var a = element.getElementsByTagName('a');
+			var area = element.getElementsByTagName('area'); // DSW emails fix
 			var hrefs = [];
 			this.appendAll(hrefs, a);
 			this.appendAll(hrefs, area);
@@ -204,7 +204,7 @@ module.exports = {
 		},
 		writeFrame: function() {
 			if (this.containsStrangeTags) {
-				var frame = document.getElementById('mail-body');
+				var frame = document.getElementById('iframe-body');
 				var iframe = frame.contentWindow.document;
 				iframe.head.appendChild(this.createNormalized());
 				iframe.body.innerHTML = this.safeImage(this.st.mail.html);
