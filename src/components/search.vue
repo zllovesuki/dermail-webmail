@@ -1,6 +1,6 @@
 <template>
 	<span>
-		<div class="fixed top-0 right-0 m2" v-if="$route.params.accountId">
+		<div class="fixed top-0 right-0 m2" v-if="$route.params && $route.params.accountId">
 			<a class="btn block" @click="showModal">
 				<search-icon></search-icon>
 			</a>

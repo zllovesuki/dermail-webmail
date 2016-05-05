@@ -9,7 +9,11 @@ Vue.use(require('vue-resource'))
 Vue.use(require('vue-moment'))
 
 var App = Vue.extend(require('./app.vue'))
-var router = new VueRouter()
+var router = new VueRouter({
+	history: true
+})
+
+console.log(router);
 
 require('./lib/init.js')(st)
 require('./lib/registerIcons.js')(Vue)

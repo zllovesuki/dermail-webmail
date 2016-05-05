@@ -8,11 +8,13 @@ module.exports = function() {
 
 	if (process.env.RDB_HOST) app.use(logger('dev'));
 
+	var root = __dirname + '/src/prod.html';
+
 	if (process.env.RDB_HOST) {
-		app.get('/', function(req, res, next) {
-			res.sendFile(__dirname + '/src/dev.html');
-		});
+		root = __dirname + '/src/dev.html'
 	}
+
+	app.use(express.static(path.join(__dirname, 'public')));
 
 	app.get('/sw.js', function(req, res, next) {
 		fs.readFile(__dirname + '/src/sw.js', 'utf8', function (err, data) {
@@ -27,13 +29,8 @@ module.exports = function() {
 		})
 	});
 
-	app.use(express.static(path.join(__dirname, 'public')));
-
-	// catch 404 and forward to error handler
-	app.use(function(req, res, next) {
-	  var err = new Error('Not Found');
-	  err.status = 404;
-	  next(err);
+	app.use('/*', function(req, res, next) {
+		return res.sendFile(root);
 	});
 
 	// error handlers

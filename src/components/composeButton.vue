@@ -1,6 +1,6 @@
 <template>
 	<span>
-		<div class="fixed top-0 left-0 m2" v-if="$route.params.accountId && !isInCompose">
+		<div class="fixed top-0 left-0 m2" v-if="$route.params && $route.params.accountId && !isInCompose">
 			<a class="btn block" @click="goToCompose">
 				<mail-icon></mail-icon>
 			</a>
