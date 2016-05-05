@@ -10,7 +10,7 @@ function isDoubleByte(str) {
 module.exports = function(Vue) {
 	Vue.filter('excerpt',
 		function(value, length) {
-			if (!value || value.length === 0) {
+			if (typeof value === 'undefined' || value.length === 0) {
 				return '...';
 			}
 			if (isDoubleByte(value)) length = length / 2;
