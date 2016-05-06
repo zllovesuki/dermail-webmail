@@ -1,5 +1,5 @@
 {
 	"port": 3000,
-	"apiEndpoint": "http://dermail-ci-dummy.api.blue,
+	"apiEndpoint": "http://dermail-ci-dummy.api.blue",
 	"siteURL": "http://127.0.0.1:3000"
 }
