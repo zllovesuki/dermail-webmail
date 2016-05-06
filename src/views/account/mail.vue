@@ -43,7 +43,7 @@
 					</span>
 					<iframe id="iframe-body"></iframe>
 				</div>
-				<div v-if="!containsStrangeTags" class="overflow-auto">
+				<div v-if="!containsStrangeTags" class="overflow-auto" id="html-body">
 					{{{ st.mail.html }}}
 				</div>
 			</div>
@@ -212,6 +212,11 @@ module.exports = {
 					frame.style.height = (iframe.body.scrollHeight) + 'px';
 				}, 500);
 				this.safeLink(iframe);
+			}else{
+				this.$nextTick(function() {
+					var body = document.getElementById('html-body');
+					this.safeLink(body);
+				})
 			}
 		},
 		emailToObject: function(email) {
