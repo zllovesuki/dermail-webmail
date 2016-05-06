@@ -2,8 +2,7 @@ image: node:4.4.3
 
 stages:
   - prep
-  - build
-  - web
+  - prod
 
 prep:
   stage: prep
@@ -13,14 +12,10 @@ prep:
     - npm install forever browserify uglifyjs -g
     - cp .gitlab-ci.config.json config.json
 
-build:
-  stage: build
+prod:
+  stage: prod
   script:
     - npm run prod
-
-web:
-  stage: web
-  script:
     - forever start server.js
     - sleep 5
     - curl http://127.0.0.1:3000/prod.js
