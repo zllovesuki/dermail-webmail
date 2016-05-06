@@ -4,7 +4,7 @@ module.exports = {
 	socket: '',
 	connect: function(that, api) {
 		var _this = this;
-		this.socket = io.connect(api.getSocketEndpoint());
+		this.socket = io.connect(api.getRoot());
 		this.socket.on('connect', function() {
 			_this.socket
 			.emit('authenticate', { token: that.st.getToken() })

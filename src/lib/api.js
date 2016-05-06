@@ -1,7 +1,6 @@
 var config = require('../../config.js');
 var VERSION = '/v' + config.apiVersion;
 var API_ROOT = config.apiEndpoint;
-var SOCKET_ENDPOINT = config.socketEndpoint;
 var API_ENDPOINT = API_ROOT + VERSION;
 var LOGIN_ENDPOINT = API_ENDPOINT + '/login'
 var PING_ENDPOINT = API_ENDPOINT + '/read/ping'
@@ -27,15 +26,11 @@ var queue = require('./socket.js');
 
 module.exports = {
 
-
 	getRoot: function() {
 		return API_ROOT;
 	},
 	getEndpoint: function() {
 		return API_ENDPOINT
-	},
-	getSocketEndpoint: function() {
-		return SOCKET_ENDPOINT
 	},
 
 	ping: function(ct) {
