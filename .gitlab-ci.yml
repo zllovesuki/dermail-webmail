@@ -12,15 +12,15 @@ prep:
     - npm install
     - npm install forever browserify uglifyjs -g
     - cp .gitlab-ci.config.json config.json
-    - forever start server.js
-    - sleep 5
 
 build:
   stage: build
   script:
-    - curl http://127.0.0.1:3000/prod.js
+    - npm run prod
 
 web:
   stage: web
   script:
-    - npm run prod
+    - forever start server.js
+    - sleep 5
+    - curl http://127.0.0.1:3000/prod.js
