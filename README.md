@@ -1,6 +1,6 @@
 ## dermail-webmail
 
-[![build status](https://git.fm/zllovesuki/dermail-webmail/badges/master/build.svg)](https://github.com/zllovesuki/dermail-webmail/commits/master)
+[![build status](https://git.fm/zllovesuki/dermail-webmail/badges/master/build.svg)](https://git.fm/zllovesuki/dermail-webmail/commits/master)
 
 A front-end interface for Dermail system. Written in Vue.js.
 
