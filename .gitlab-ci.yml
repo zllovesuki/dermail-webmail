@@ -1,0 +1,26 @@
+image: node:4.4.3
+
+stages:
+  - prep
+  - build
+  - web
+
+prep:
+  stage: prep
+  script:
+    - apt-get update -qq && apt-get install -y -qq curl
+    - npm install
+    - npm install forever -g
+    - cp .gitlab-ci.config.json config.json
+    - forever start server.js
+    - sleep 5
+
+build:
+  stage: build
+  script:
+    - curl http://127.0.0.1:3000/prod.js
+
+web:
+  stage: web
+  script:
+    - npm run prod
