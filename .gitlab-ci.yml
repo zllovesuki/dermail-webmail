@@ -1,19 +1,21 @@
 image: node:4.4.3
 
+before_script:
+  - apt-get update -qq && apt-get install -y -qq curl
+  - npm install
+  - npm install forever browserify uglifyjs -g
+  - cp .gitlab-ci.config.json config.json
+
+cache:
+  paths:
+    - node_modules/
+    - config.json
+
 stages:
-  - prep
-  - prod
+  - build
 
-prep:
-  stage: prep
-  script:
-    - apt-get update -qq && apt-get install -y -qq curl
-    - npm install
-    - npm install forever browserify uglifyjs -g
-    - cp .gitlab-ci.config.json config.json
-
-prod:
-  stage: prod
+build:
+  stage: build
   script:
     - npm run prod
     - forever start server.js
