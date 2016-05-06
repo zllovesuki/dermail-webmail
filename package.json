@@ -15,10 +15,10 @@
   "devDependencies": {
     "alertify.js": "^1.0.9",
     "autosize": "^3.0.15",
-    "babel-core": "^6.6.5",
-    "babel-plugin-transform-runtime": "^6.6.0",
+    "babel-core": "^6.8.0",
+    "babel-plugin-transform-runtime": "^6.8.0",
     "babel-preset-es2015": "^6.6.0",
-    "babel-runtime": "^5.8.35",
+    "babel-runtime": "^6.6.1",
     "marked": "^0.3.5",
     "nanobar": "^0.2.1",
     "socket.io-client": "^1.4.5",
@@ -29,7 +29,7 @@
     "vue-moment": "^1.0.7",
     "vue-resource": "^0.7.0",
     "vue-router": "^0.7.11",
-    "vueify": "^8.3.5",
+    "vueify": "^8.4.1",
     "vueify-insert-css": "^1.0.0"
   }
 }
