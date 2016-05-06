@@ -11,13 +11,10 @@ cache:
     - node_modules/
     - config.json
 
-stages:
-  - build
-
 build:
   stage: build
   script:
     - npm run prod
     - forever start server.js
     - sleep 5
-    - curl http://127.0.0.1:3000/prod.js
+    - curl -I http://127.0.0.1:3000/prod.js
