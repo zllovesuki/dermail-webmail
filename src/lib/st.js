@@ -1,4 +1,5 @@
-var alertify = require('alertify.js');
+var alertify = require('alertify.js'),
+	Nanobar = require('nanobar');
 
 module.exports = {
 
@@ -18,8 +19,7 @@ module.exports = {
 	filters: [],
 
 	color: 'black',
-	Nanobar: Object,
-	loading: null,
+	loading: new Nanobar(),
 	blockLoadingOnce: true,
 
 	hideInMoveOptions: [

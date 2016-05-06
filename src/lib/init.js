@@ -8,11 +8,5 @@ module.exports = function(st) {
 	var color = localStorage.getItem('color');
 	if (!color) color = randomColor();
 
-	var colorCode = st.getStyleRuleValue('color', '.' + color);
-
-	//st.setBarColor(color);
-
 	st.color = color; // set color scheme
-	st.Nanobar = require('nanobar');
-	st.loading = new st.Nanobar({ bg: colorCode, id: 'nanobar'});
 }
