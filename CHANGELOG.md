@@ -1,5 +1,9 @@
 ## Changelog
 
+05/06/2016 -> 2.6.x -> 2.7.1
+1. Reverting to running Socket.io with API processes.
+2. Please see Dermail-API changelog for details
+
 05/05/2016 -> 2.6.0 -> 2.6.1
 1. Actually, a simple nginx trick will require no modification for existing code:
 ```
