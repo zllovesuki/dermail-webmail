@@ -48,15 +48,17 @@ self.addEventListener('notificationclick', function(event) {
 	event.waitUntil(clients.matchAll({
 		type: "window"
 	}).then(function(clientList) {
-		if (!!data.accountId) {
-			for (var i = 0; i < clientList.length; i++) {
-				var client = clientList[i];
-				if (client.url == '__SITEURL__/accounts/' + data.accountId && 'focus' in client)
-					return client.focus();
-	    	}
+		if (!!data.folder && !!data.accountId) {
+			if (clients.openWindow) {
+				return clients.openWindow('__SITEURL__/accounts/' + data.accountId + '/' + data.folder.folderId + '/' + data.messageId);
+			}
+		}else if(!!data.accountId) {
 			if (clients.openWindow) {
 				return clients.openWindow('__SITEURL__/accounts/' + data.accountId);
 			}
+		}else{
+			// do nothing
+			return;
 		}
 	}));
 });
