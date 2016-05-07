@@ -191,7 +191,9 @@ module.exports = {
 				if (resolved.buttonClicked !== 'ok') return;
 
 				api.updateFolder(that, that.modal).then(function(res) {
-					that.st.alert.success('Folder truncated.');
+					if (res.data.hasOwnProperty('message')) {
+						that.st.alert.success(res.data.message);
+					}
 					that.houseKeeping();
 					that.truncateModal = false;
 				}, function(res) {
@@ -217,7 +219,9 @@ module.exports = {
 				if (resolved.buttonClicked !== 'ok') return;
 
 				api.updateFolder(that, that.modal).then(function(res) {
-					that.st.alert.success('Folder deleted.');
+					if (res.data.hasOwnProperty('message')) {
+						that.st.alert.success(res.data.message);
+					}
 					that.houseKeeping();
 					that.deleteModal = false;
 				}, function(res) {
@@ -231,7 +235,9 @@ module.exports = {
 		},
 		doEditFolder: function(e) {
 			api.updateFolder(this, this.modal).then(function(res) {
-				this.st.alert.success('Folder updated.');
+				if (res.data.hasOwnProperty('message')) {
+					this.st.alert.success(res.data.message);
+				}
 				this.houseKeeping();
 				this.editModal = false;
 			}, function(res) {
@@ -245,7 +251,9 @@ module.exports = {
 		doAddFolder: function(e) {
 
 			api.updateFolder(this, this.modal).then(function(res) {
-				this.st.alert.success('New folder added.');
+				if (res.data.hasOwnProperty('message')) {
+					this.st.alert.success(res.data.message);
+				}
 				this.houseKeeping();
 				this.addModal = false;
 			}, function(res) {
