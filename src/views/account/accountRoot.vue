@@ -27,7 +27,7 @@
 				</span>
 			</span>
 		</div>
-		<div class="mt1 mb1">
+		<div class="mt2 mb1">
 			<router-view transition="fade"></router-view>
 		</div>
 	</div>
