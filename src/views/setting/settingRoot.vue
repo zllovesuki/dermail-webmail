@@ -1,7 +1,7 @@
 <template>
 	<div>
-		<div class="mt1 mb1">
-			<span class="btn button-narrow" v-link="{ name: 'settings' }">Settings</span>
+		<div class="ml1 mt1 mb1">
+			<span class="btn button-narrow mxn1" v-link="{ name: 'settings' }">Settings</span>
 			<chevron-right></chevron-right>
 		</div>
 		<div class="mt2 mb1">

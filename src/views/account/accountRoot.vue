@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div class="mt1 mb1">
+		<div class="ml1 mt1 mb1">
 			<span class="btn button-narrow mxn1" v-link="{ name: 'accounts' }">Accounts</span>
 			<chevron-right></chevron-right>
 			<span v-if="$route.params.accountId">
