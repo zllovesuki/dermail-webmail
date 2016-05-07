@@ -16,13 +16,13 @@
 				</div>
 				<div class="m0 p2 border-top">
 					<div class="clearfix">
-						<button type="submit" class="h6 btn btn-outline {{ st.color }} mr2" v-if="canSubscribe" :disabled="disabled" @click="subscribe">
+						<button type="submit" class="h6 btn btn-outline {{ st.color }} ml1 mb1" v-if="canSubscribe" :disabled="disabled" @click="subscribe">
 							Subscribe
 						</button>
-						<button type="submit" class="h6 btn btn-outline {{ st.color }} mr2" v-if="canUnsubscribe" :disabled="disabled" @click="unsubscribe">
+						<button type="submit" class="h6 btn btn-outline {{ st.color }} ml1 mb1" v-if="canUnsubscribe" :disabled="disabled" @click="unsubscribe">
 							Unsubscribe
 						</button>
-						<button type="submit" class="h6 btn btn-outline {{ st.color }} mr2" v-if="canUnsubscribe" :disabled="disabled" @click="test">
+						<button type="submit" class="h6 btn btn-outline {{ st.color }} ml1 mb1" v-if="canUnsubscribe" :disabled="disabled" @click="test">
 							Send a test notification
 						</button>
 					</div>
@@ -44,7 +44,7 @@
 						<select class="block col-3 mb2 field" v-model="st.color">
 							<option v-for="color in st.colors" value="{{ color }}">{{ color }}</option>
 						</select>
-						<button class="h6 btn btn-outline {{ st.color }}" @click="saveColor">Save</button>
+						<button class="h6 btn btn-outline {{ st.color }} ml1 mb1" @click="saveColor">Save</button>
 					</div>
 				</div>
 			</div>
