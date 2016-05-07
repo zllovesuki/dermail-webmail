@@ -41,7 +41,7 @@
 					<label for="displayName">Are you sure to truncate the folder <span class="bold">{{ modal.displayName }}</span>?</label>
 					<hr />
 					<span class="block">All mails under this folder will be <span class="bold">deleted</span>.</span>
-					<button class="mt2 block btn btn-outline red">Truncate</button>
+					<button type="submit" class="mt2 block btn btn-outline red">Truncate</button>
 				</form>
 			</span>
 		</modal>
@@ -53,7 +53,7 @@
 					<hr />
 					<span class="block">All mails under this folder will be moved to "Trash".</span>
 					<span class="block">If this folder is a parent folder, you need to delete the children folders first.</span>
-					<button class="mt2 block btn btn-outline red">Delete</button>
+					<button type="submit" class="mt2 block btn btn-outline red">Delete</button>
 				</form>
 			</span>
 		</modal>
@@ -70,7 +70,7 @@
 						<option value="/root">(Root)</option>
 						<option v-for="f in st._folders" v-if="f.displayName != 'Trash' && f.folderId != modal.folderId" value="{{ f.folderId }}">{{ f.displayName }}</option>
 					</select>
-					<button class="btn btn-primary">Edit</button>
+					<button type="submit" class="btn btn-primary">Edit</button>
 				</form>
 			</span>
 		</modal>
@@ -87,7 +87,7 @@
 						<option value="/root">(Root)</option>
 						<option v-for="f in st._folders" v-if="f.displayName != 'Trash'" value="{{ f.folderId }}">{{ f.displayName }}</option>
 					</select>
-					<button class="btn btn-primary">Add</button>
+					<button type="submit" class="btn btn-primary">Add</button>
 				</form>
 			</span>
 		</modal>
