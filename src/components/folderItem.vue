@@ -40,8 +40,8 @@
 				<form v-on:submit.prevent="doTruncateFolder" class="h5">
 					<label for="displayName">Are you sure to truncate the folder <span class="bold">{{ modal.displayName }}</span>?</label>
 					<hr />
-					<span class="block">All mails under this folder will be <span class="bold">deleted</span>.</span>
-					<button type="submit" class="mt2 block btn btn-outline red">Truncate</button>
+					<span class="block mb2">All mails under this folder will be <span class="bold">deleted</span>.</span>
+					<button type="submit" class="block btn btn-outline red">Truncate</button>
 				</form>
 			</span>
 		</modal>
@@ -51,9 +51,9 @@
 				<form v-on:submit.prevent="doDeleteFolder" class="h5">
 					<label for="displayName">Are you sure to delete folder <span class="bold">{{ modal.displayName }}</span>?</label>
 					<hr />
-					<span class="block">All mails under this folder will be moved to "Trash".</span>
-					<span class="block">If this folder is a parent folder, you need to delete the children folders first.</span>
-					<button type="submit" class="mt2 block btn btn-outline red">Delete</button>
+					<span class="block mb1">All mails under this folder will be moved to "Trash".</span>
+					<span class="block mb2">If this folder is a parent folder, you need to delete the children folders first.</span>
+					<button type="submit" class="block btn btn-outline red">Delete</button>
 				</form>
 			</span>
 		</modal>
