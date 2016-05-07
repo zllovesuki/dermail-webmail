@@ -60,7 +60,7 @@
 			<span slot="body">
 				<ul class="list-reset block y-scrollable">
 					<li class="overflow-hidden" v-for="result in searchResults">
-					<a @click="resultModal = false" v-link="{ name: 'mail', params: { accountId: this.$route.params.accountId, folderId: result.folder.folderId, messageId: result.messageId }}" class="btn">
+					<a @click="resultModal = false" v-link="{ name: 'mail', params: { accountId: $route.params.accountId, folderId: result.folder.folderId, messageId: result.messageId }}" class="btn">
 							<i>{{ result.folder.displayName }}</i> - {{ result.subject }}
 						</a>
 					</li>

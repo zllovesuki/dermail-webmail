@@ -4,24 +4,24 @@
 			<span class="btn button-narrow mxn1" v-link="{ name: 'accounts' }">Accounts</span>
 			<chevron-right></chevron-right>
 			<span v-if="$route.params.accountId">
-				<span class="btn button-narrow mxn1" v-link="{ name: 'account', params: { accountId: this.$route.params.accountId } }">
+				<span class="btn button-narrow mxn1" v-link="{ name: 'account', params: { accountId: $route.params.accountId } }">
 					{{ st.account.displayName }}
 				</span>
 				<span v-if="isInCompose">
 					<chevron-right></chevron-right>
-					<span class="btn button-narrow mxn1" v-link="{ name: 'compose', params: { accountId: this.$route.params.accountId } }">
+					<span class="btn button-narrow mxn1" v-link="{ name: 'compose', params: { accountId: $route.params.accountId } }">
 						Compose
 					</span>
 				</span>
 				<span v-if="isInFilter">
 					<chevron-right></chevron-right>
-					<span class="btn button-narrow mxn1" v-link="{ name: 'filter', params: { accountId: this.$route.params.accountId } }">
+					<span class="btn button-narrow mxn1" v-link="{ name: 'filter', params: { accountId: $route.params.accountId } }">
 						Filter
 					</span>
 				</span>
 				<span v-if="$route.params.folderId">
 					<chevron-right></chevron-right>
-					<span class="btn button-narrow mxn1" v-link="{ name: 'folder', params: { accountId: this.$route.params.accountId, folderId: this.$route.params.folderId } }">
+					<span class="btn button-narrow mxn1" v-link="{ name: 'folder', params: { accountId: $route.params.accountId, folderId: $route.params.folderId } }">
 						{{ st.folder.displayName }}
 					</span>
 				</span>

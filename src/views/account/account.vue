@@ -22,7 +22,7 @@
 				</div>
 				<div class="m0 p2 border-top">
 					<div class="clearfix">
-						<a class="muted h6 ml1 bold btn btn-outline {{ st.color }}" v-link="{ name: 'filter', params: { accountId: this.$route.params.accountId } }">Filters</a>
+						<a class="muted h6 ml1 bold btn btn-outline {{ st.color }}" v-link="{ name: 'filter', params: { accountId: $route.params.accountId } }">Filters</a>
 					</div>
 				</div>
 			</div>
