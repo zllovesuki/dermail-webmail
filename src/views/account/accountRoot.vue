@@ -1,33 +1,33 @@
 <template>
 	<div>
-		<div class="mt2 mb2">
-			<span class="btn button-narrow" v-link="{ name: 'accounts' }">Accounts</span>
+		<div class="mt1 mb1">
+			<span class="btn button-narrow mxn1" v-link="{ name: 'accounts' }">Accounts</span>
 			<chevron-right></chevron-right>
 			<span v-if="$route.params.accountId">
-				<span class="btn button-narrow" v-link="{ name: 'account', params: { accountId: this.$route.params.accountId } }">
+				<span class="btn button-narrow mxn1" v-link="{ name: 'account', params: { accountId: this.$route.params.accountId } }">
 					{{ st.account.displayName }}
 				</span>
 				<span v-if="isInCompose">
 					<chevron-right></chevron-right>
-					<span class="btn button-narrow" v-link="{ name: 'compose', params: { accountId: this.$route.params.accountId } }">
+					<span class="btn button-narrow mxn1" v-link="{ name: 'compose', params: { accountId: this.$route.params.accountId } }">
 						Compose
 					</span>
 				</span>
 				<span v-if="isInFilter">
 					<chevron-right></chevron-right>
-					<span class="btn button-narrow" v-link="{ name: 'filter', params: { accountId: this.$route.params.accountId } }">
+					<span class="btn button-narrow mxn1" v-link="{ name: 'filter', params: { accountId: this.$route.params.accountId } }">
 						Filter
 					</span>
 				</span>
 				<span v-if="$route.params.folderId">
 					<chevron-right></chevron-right>
-					<span class="btn button-narrow" v-link="{ name: 'folder', params: { accountId: this.$route.params.accountId, folderId: this.$route.params.folderId } }">
+					<span class="btn button-narrow mxn1" v-link="{ name: 'folder', params: { accountId: this.$route.params.accountId, folderId: this.$route.params.folderId } }">
 						{{ st.folder.displayName }}
 					</span>
 				</span>
 			</span>
 		</div>
-		<div class="mt2 mb2">
+		<div class="mt1 mb1">
 			<router-view transition="fade"></router-view>
 		</div>
 	</div>

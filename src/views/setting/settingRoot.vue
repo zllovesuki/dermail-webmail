@@ -1,10 +1,10 @@
 <template>
 	<div>
-		<div class="mt2 mb2">
+		<div class="mt1 mb1">
 			<span class="btn button-narrow" v-link="{ name: 'settings' }">Settings</span>
 			<chevron-right></chevron-right>
 		</div>
-		<div class="mt2 mb2">
+		<div class="mt1 mb1">
 			<div class="overflow-hidden bg-white rounded mb2">
 				<div class="m0 p1">
 					<div class="clearfix">
