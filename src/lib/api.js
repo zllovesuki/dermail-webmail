@@ -18,6 +18,7 @@ var SEARCHMAILSINACCOUNT_ENDPOINT = API_ENDPOINT + '/read/searchMailsInAccount'
 var MODIFYFILTER_ENDPOINT = API_ENDPOINT + '/write/modifyFilter'
 var UPDATEMAIL_ENDPOINT = API_ENDPOINT + '/write/updateMail'
 var UPDATEFOLDER_ENDPOINT = API_ENDPOINT + '/write/updateFolder'
+var UPDATEDOMAIN_ENDPOINT = API_ENDPOINT + '/write/updateDomain'
 var PUSHSUB_ENDPOINT = API_ENDPOINT + '/write/pushSubscriptions'
 var SENDMAIL_ENDPOINT = API_ENDPOINT + '/relay/sendMail'
 var UPLOADS3STREAM_ENDPOINT = API_ENDPOINT + '/upload/s3Stream'
@@ -109,6 +110,11 @@ module.exports = {
 	},
 	updateFolder: function(ct, data) {
 		return ct.$http.post(UPDATEFOLDER_ENDPOINT, data, {
+			headers: ct.st.getHeader()
+		})
+	},
+	updateDomain: function(ct, data) {
+		return ct.$http.post(UPDATEDOMAIN_ENDPOINT, data, {
 			headers: ct.st.getHeader()
 		})
 	},

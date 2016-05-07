@@ -53,22 +53,120 @@
 				</div>
 				<div class="m0 p2 border-top">
 					<div class="clearfix">
-						<a class="muted h6 ml1 bold btn btn-outline {{ st.color }}" >Add alias to domain</a>
-						<a class="muted h6 ml1 bold btn btn-outline {{ st.color }}" >Add an account</a>
+						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ st.color }}" @click="alias.selectDomainModal = true">Manage alias</a>
+						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ st.color }}" >Add an account</a>
+						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ st.color }}" >Add a domain</a>
 					</div>
 				</div>
 			</div>
 		</div>
+		<modal :show.sync="alias.selectDomainModal">
+			<h4 slot="header">Select a domain</h4>
+			<span slot="body">
+				<form v-on:submit.prevent="selectDomain" class="h5">
+					<label for="domain">For domain:</label>
+					<select class="block col-12 mb2 field" v-model="alias.selectedDomain">
+						<option v-for="account in st.accounts" value="{{ account.domainId }}">{{ account.domain }}</option>
+					</select>
+					<hr />
+					<span class="block mb1">Alias allows you to receive mails from multiple domain names under one account.</span>
+					<button type="submit" class="btn btn-primary mb1" :disabled="!hasSelectedDomain">View</button>
+				</form>
+			</span>
+		</modal>
+		<modal :show.sync="alias.editModal">
+			<h4 slot="header">Modify aliases</h4>
+			<span slot="body">
+				<form v-on:submit.prevent="editDomainAlias" class="h5">
+					<label for="alias">Alias (one per line):</label>
+					<textarea class="block field col-12 mb1" style="resize: none; line-height: 1em; min-height: 6em;" v-model="aliasList"></textarea>
+					<hr />
+					<span class="block mb1">Make sure that you <i>didn't</i> remove an alias by accident.</span>
+					<button type="submit" class="btn btn-primary">Modify</button>
+					<button type="button" class="btn btn-primary black bg-gray ml1" @click="toggleViewAndModify">Go back</button>
+				</form>
+			</span>
+		</modal>
 	</div>
 </template>
 <script>
 
+var api = require('../../lib/api.js');
 var st = require('../../lib/st.js');
 
 module.exports = {
 	data: function() {
 		return {
 			st: st,
+			alias: {
+				selectDomainModal: false,
+				selectedDomain: null,
+				editModal: false,
+				byDomainId: []
+			}
+		}
+	},
+	computed: {
+		aliasList: {
+			get: function() {
+				return this.alias.byDomainId.join("\n");
+			},
+			set: function(val) {
+				val = val.split("\n");
+				val = val || [];
+				this.alias.byDomainId = val.filter(function(str) {
+					return /\S/.test(str) && /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/.test(str);
+				});
+			}
+		},
+		hasSelectedDomain: function() {
+			return !!this.alias.selectedDomain;
+		}
+	},
+	methods: {
+		selectDomain: function() {
+			for (var i = 0; i < this.st.accounts.length; i++) {
+				if (this.st.accounts[i].hasOwnProperty('domainId') && this.st.accounts[i].domainId === this.alias.selectedDomain) {
+					this.alias.byDomainId = this.st.accounts[i].alias;
+				}
+			}
+			this.toggleViewAndModify();
+		},
+		toggleViewAndModify: function() {
+			this.alias.selectDomainModal = !this.alias.selectDomainModal
+			this.alias.editModal = !this.alias.editModal;
+		},
+		editDomainAlias: function() {
+			var that = this;
+			this.st.loading.go(30);
+			api.updateDomain(this, {
+				action: 'updateAlias',
+				domainId: this.alias.selectedDomain,
+				alias: this.alias.byDomainId
+			}).then(function(res) {
+				if (res.data.hasOwnProperty('message')) {
+					this.st.alert.success(res.data.message);
+				}
+				this.resetAliasState();
+				this.$dispatch('getAccounts', function() {
+					that.st.loading.go(100);
+				});
+			}, function(res) {
+				if (res.data.hasOwnProperty('message')) {
+					this.st.alert.error(res.data.message);
+				}else{
+					this.st.alert.error(res.statusText);
+				}
+				this.st.loading.go(100);
+			})
+		},
+		resetAliasState: function() {
+			this.alias = {
+				selectDomainModal: false,
+				selectedDomain: null,
+				editModal: false,
+				byDomainId: []
+			}
 		}
 	},
 	created: function() {
