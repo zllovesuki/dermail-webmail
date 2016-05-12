@@ -19,7 +19,11 @@ module.exports = {
 				document.getElementById('sound').play();
 				that.st.alert.success(data.message, function(ev) {
 					ev.preventDefault();
-					that.$route.router.go({ name: 'account', params: { accountId: data.accountId } })
+					if (data.folder) {
+						that.$route.router.go({ name: 'mail', params: { accountId: data.accountId, folderId: data.folder.folderId, messageId: data.messageId } })
+					}else{
+						that.$route.router.go({ name: 'account', params: { accountId: data.accountId } })
+					}
 				});
 			}
 		});
