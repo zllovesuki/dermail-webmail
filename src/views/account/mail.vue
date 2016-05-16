@@ -210,7 +210,6 @@ module.exports = {
 				var iframe = frame.contentWindow.document;
 				iframe.head.appendChild(this.createNormalized());
 				iframe.body.innerHTML = this.safeImage(this.st.mail.html);
-				console.log(iframe.body.innerHTML);
 				setTimeout(function() {
 					frame.style.height = (iframe.body.scrollHeight) + 'px';
 				}, 500);
