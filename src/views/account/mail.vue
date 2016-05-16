@@ -164,6 +164,8 @@ module.exports = {
 				cssURL.forEach(function(img) {
 					var src = img.match(/(?:\(['|"]?)(.*?)(?:['|"]?\))/i)[1];
 					html = html.replace('url(' + src, 'url(' + api.safeImage(src));
+					html = html.replace('url(\'' + src + '\'', 'url(' + api.safeImage(src));
+					html = html.replace('url("' + src + '"', 'url(' + api.safeImage(src));
 				})
 			}
 			return html;
@@ -208,6 +210,7 @@ module.exports = {
 				var iframe = frame.contentWindow.document;
 				iframe.head.appendChild(this.createNormalized());
 				iframe.body.innerHTML = this.safeImage(this.st.mail.html);
+				console.log(iframe.body.innerHTML);
 				setTimeout(function() {
 					frame.style.height = (iframe.body.scrollHeight) + 'px';
 				}, 500);
