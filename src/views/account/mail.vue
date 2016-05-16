@@ -159,6 +159,13 @@ module.exports = {
 					}
 				})
 			}
+			var bgTags = html.match(/background\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/gi);
+			if (bgTags) {
+				bgTags.forEach(function(img) {
+					var src = img.match(/background\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/i)[1];
+					html = html.replace(src, api.safeImage(src));
+				})
+			}
 			var cssURL = html.match(/(?:\(['|"]?)(.*?)(?:['|"]?\))/gi);
 			if (cssURL) {
 				cssURL.forEach(function(img) {
