@@ -270,7 +270,7 @@ module.exports = {
 				that.compose.attachments.push({
 					mutable: true,
 					filename: filename,
-					path: that.st.returnS3URL(hash, filename)
+					path: that.st.returnS3URL(hash, encodeURIComponent(filename))
 				});
 				that.st.alert.success('File uploaded to S3!');
 				that.st.loading.go(100);
