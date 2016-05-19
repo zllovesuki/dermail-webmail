@@ -275,8 +275,7 @@ module.exports = {
 				that.st.alert.success('File uploaded to S3!');
 				that.st.loading.go(100);
 				that.attachDisabled = false;
-			})
-			.catch(function(err) {
+			}, function(res) {
 				if (res.data.hasOwnProperty('message')) {
 					that.st.alert.error(res.data.message);
 				}else{
