@@ -1,27 +1,12 @@
 module.exports = function() {
 	var express = require('express'),
 		path = require('path'),
-		logger = require('morgan'),
 		config = require('./config.js'),
 		fs = require('fs'),
 		app = express();
 
 	app.enable('trust proxy');
 	app.set('trust proxy', 'loopback, linklocal, uniquelocal');
-
-	if (!!config.graylog) {
-		app.use(require('express-bunyan-logger')({
-			name: 'Webmail',
-			streams: [{
-				type: 'raw',
-				stream: require('gelf-stream').forBunyan(config.graylog.host, config.graylog.port)
-			}]
-		}));
-	}else{
-		app.use(require('express-bunyan-logger')({
-			name: 'Webmail'
-		}));
-	}
 
 	var root = __dirname + '/src/static/prod.html';
 
@@ -48,20 +33,6 @@ module.exports = function() {
 	app.use('/*', function(req, res, next) {
 		return res.sendFile(root);
 	});
-
-	// error handlers
-
-	// development error handler
-	// will print stacktrace
-	if (app.get('env') === 'development') {
-	  app.use(function(err, req, res, next) {
-	    res.status(err.status || 500);
-		res.send({
-			message: err.message,
-			error: err
-	    });
-	  });
-	}
 
 	// production error handler
 	// no stacktraces leaked to user

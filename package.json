@@ -8,12 +8,8 @@
     "watch": "watchify -t vueify -e src/main.js -o public/app.js -v"
   },
   "dependencies": {
-    "bunyan": "^1.8.1",
     "debug": "~2.2.0",
-    "express": "~4.13.1",
-    "express-bunyan-logger": "^1.2.0",
-    "gelf-stream": "git+https://github.com/zllovesuki/gelf-stream.git",
-    "morgan": "~1.7.0"
+    "express": "~4.13.1"
   },
   "devDependencies": {
     "alertify.js": "^1.0.9",
