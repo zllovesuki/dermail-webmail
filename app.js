@@ -6,7 +6,19 @@ module.exports = function() {
 		fs = require('fs'),
 		app = express();
 
-	if (process.env.RDB_HOST) app.use(logger('dev'));
+	if (!!config.graylog) {
+		app.use(require('express-bunyan-logger')({
+			name: 'Webmail',
+			streams: [{
+				type: 'raw',
+				stream: require('gelf-stream').forBunyan(config.graylog)
+			}]
+		}));
+	}else{
+		app.use(require('express-bunyan-logger')({
+			name: 'Webmail'
+		}));
+	}
 
 	var root = __dirname + '/src/static/prod.html';
 
