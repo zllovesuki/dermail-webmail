@@ -6,6 +6,9 @@ module.exports = function() {
 		fs = require('fs'),
 		app = express();
 
+	app.enable('trust proxy');
+	app.set('trust proxy', 'loopback, linklocal, uniquelocal');
+
 	if (!!config.graylog) {
 		app.use(require('express-bunyan-logger')({
 			name: 'Webmail',
