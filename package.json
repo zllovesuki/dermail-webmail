@@ -12,7 +12,7 @@
     "debug": "~2.2.0",
     "express": "~4.13.1",
     "express-bunyan-logger": "^1.2.0",
-    "gelf-stream": "^1.1.1",
+    "gelf-stream": "git+https://github.com/zllovesuki/gelf-stream.git",
     "morgan": "~1.7.0"
   },
   "devDependencies": {
