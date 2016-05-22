@@ -14,8 +14,8 @@ self.addEventListener("push", function(event){
 	if (event.data) {
 		var payload = event.data.json();
 		event.waitUntil(
-			self.registration.showNotification("New Mail", {
-				body: payload.message,
+			self.registration.showNotification(payload.header, {
+				body: payload.body,
 				data: payload,
 				icon: './mail_256x256.png',
 				vibrate: [300, 100, 300]
@@ -30,8 +30,8 @@ self.addEventListener("push", function(event){
 			.then(function(response) {
 				return response.json();
 			}).then(function(payload) {
-				return self.registration.showNotification("New Mail", {
-					body: payload.message,
+				return self.registration.showNotification(payload.header, {
+					body: payload.body,
 					data: payload,
 					icon: './mail_256x256.png',
 					vibrate: [300, 100, 300]
