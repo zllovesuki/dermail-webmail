@@ -24,6 +24,10 @@
 					<span class="btn button-narrow mxn1" v-link="{ name: 'folder', params: { accountId: $route.params.accountId, folderId: $route.params.folderId } }">
 						{{ st.folder.displayName }}
 					</span>
+					<chevron-right></chevron-right>
+					<span class="btn button-narrow mxn1" @click="flipStarOnly">
+						{{ st.starOnly === true ? '&#9733;': '&#9734;' }}
+					</span>
 				</span>
 			</span>
 		</div>
@@ -72,6 +76,10 @@ module.exports = {
 				}
 			});
 			return root;
+		},
+		flipStarOnly: function(e) {
+			this.st.starOnly = !this.st.starOnly;
+			this.$broadcast('reloadFolder');
 		}
 	},
 	events: {

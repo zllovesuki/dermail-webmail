@@ -16,6 +16,8 @@ module.exports = {
 	mails: [],
 	mail: {},
 
+	starOnly: false,
+
 	filters: [],
 
 	color: 'black',

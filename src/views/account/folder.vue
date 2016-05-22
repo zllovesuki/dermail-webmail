@@ -29,7 +29,8 @@ module.exports = {
 			disableLoadMore: false,
 			slice: {
 				perPage: 10,
-				date: null
+				date: null,
+				starOnly: st.starOnly
 			}
 		}
 	},
@@ -49,6 +50,17 @@ module.exports = {
 
 		this.loadMore();
 	},
+	events: {
+		'reloadFolder': function(msg) {
+			this.st.mails = [];
+			this.slice = {
+				perPage: 10,
+				date: null,
+				starOnly: st.starOnly
+			}
+			this.loadMore();
+		}
+	},
 	methods: {
 		More: function() {
 			var lastMail = this.st.mails.slice(-1)[0];
@@ -58,6 +70,7 @@ module.exports = {
 		},
 		loadMore: function() {
 			this.More();
+			console.log(this.slice);
 			api.getMailsInFolder(this, {
 				slice: this.slice
 			}).then(function(res) {
