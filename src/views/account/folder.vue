@@ -53,6 +53,7 @@ module.exports = {
 	events: {
 		'reloadFolder': function(msg) {
 			this.st.mails = [];
+			this.disableLoadMore = false;
 			this.slice = {
 				perPage: 10,
 				date: null,
