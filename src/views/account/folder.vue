@@ -70,7 +70,6 @@ module.exports = {
 		},
 		loadMore: function() {
 			this.More();
-			console.log(this.slice);
 			api.getMailsInFolder(this, {
 				slice: this.slice
 			}).then(function(res) {
