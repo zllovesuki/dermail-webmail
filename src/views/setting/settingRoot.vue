@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div class="ml1 mt1 mb1">
-			<span class="btn button-narrow mxn2">&nbsp;</span>
+			<span class="btn button-narrow mxn2 muted" v-link="{ name: 'accounts' }">#</span>
 			<chevron-right></chevron-right>
 		</div>
 		<div class="mt2 mb1">
