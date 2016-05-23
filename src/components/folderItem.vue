@@ -33,7 +33,7 @@
 				</div>
 			</div>
 		</div>
-		<ol class="m0"><folder-item v-for="folder in folder.child" :folder="folder" keep-alive></folder-item></ol>
+		<ol class="m0" v-if="folder.child.length > 0"><folder-item v-for="folder in folder.child" :folder="folder" keep-alive></folder-item></ol>
 		<modal :show.sync="truncateModal">
 			<h4 slot="header">Truncate a Folder</h4>
 			<span slot="body">
