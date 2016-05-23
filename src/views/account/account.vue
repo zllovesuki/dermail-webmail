@@ -1,13 +1,13 @@
 <template>
 	<div>
-		<div class="overflow-hidden bg-white rounded mb2" v-if="st.folders.length === 0">
+		<div class="overflow-hidden bg-white rounded mb2" v-show="st.folders.length === 0">
 			<div class="m0 p2">
 				<span class="p2 bold h5 m0 black">
 					No folders yet.
 				</span>
 			</div>
 		</div>
-		<div class="overflow-hidden bg-white rounded mb2 clearfix" v-if="st.folders.length > 0">
+		<div class="overflow-hidden bg-white rounded mb2 clearfix" v-show="st.folders.length > 0">
 			<folder-item v-for="folder in st.folders" :folder="folder" keep-alive></folder-item>
 		</div>
 		<div class="mt2 mb2">
