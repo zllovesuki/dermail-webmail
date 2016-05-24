@@ -116,13 +116,13 @@ module.exports = {
 		},
 		containsStrangeTags: function() {
 			if (this.st.mail.hasOwnProperty('html')) {
-				if (this.st.mail.html.match(/<style/)) { // Warning, it contains <style>
+				if (this.st.mail.html.toLowerCase().match(/<style/)) { // Warning, it contains <style>
 					return true;
 				}
-				if (this.st.mail.html.match(/<script/)) { // Warning, it contains <script>
+				if (this.st.mail.html.toLowerCase().match(/<script/)) { // Warning, it contains <script>
 					return true;
 				}
-				if (this.st.mail.html.match(/<img/)) { // Warning, it contains <img>
+				if (this.st.mail.html.toLowerCase().match(/<img/)) { // Warning, it contains <img>
 					return true;
 				}
 				if (this.st.mail.html.toLowerCase().replace(/ /g,'').match('position:absolute')) { // Warning, it contains absoulte
