@@ -247,6 +247,7 @@ module.exports = {
 			while (dedup.toLowerCase().trimLeft().indexOf('re:') === 0) {
 				dedup = dedup.slice(3)
 			}
+			this.st.compose.inReplyTo = this.st.mail._messageId;
 			this.st.compose.addSubject = {
 				type: 'Re: ',
 				subject: dedup

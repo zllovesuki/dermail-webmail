@@ -349,6 +349,10 @@ module.exports = {
 			this.st.compose.addAttachments = [];
 		}
 
+		if (this.st.compose.inReplyTo !== null) {
+			this.compose.inReplyTo = this.st.compose.inReplyTo;
+		}
+
 	}
 }
 </script>

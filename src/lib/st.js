@@ -44,6 +44,7 @@ module.exports = {
 	],
 
 	compose: {
+		inReplyTo: null,
 		markdown: '',
 		addSubject: {
 			type: '',
