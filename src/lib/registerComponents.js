@@ -9,5 +9,6 @@ module.exports = function(Vue) {
 	Vue.component('mail-item', require('../components/mailItem.vue'))
 	Vue.component('autoresize-textarea', require('../components/autoresizeTextArea.vue'))
 	Vue.component('spam', require('../components/reportSPAM.vue'))
+	Vue.component('spamc', require('../components/testSPAM.vue'))
 	Vue.component('filter-item', require('../components/filterItem.vue'))
 }

@@ -27,6 +27,9 @@ module.exports = {
 				});
 			}
 		});
+		this.socket.on('debug', function(data) {
+			console.log(data);
+		});
 	},
 	disconnect: function() {
 		this.socket.disconnect();
