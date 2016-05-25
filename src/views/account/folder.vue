@@ -77,6 +77,9 @@ module.exports = {
 				this.st.mails = this.st.mails.concat(res.data);
 				if (this.st.mails.length < this.slice.perPage || res.data.length < this.slice.perPage) {
 					this.disableLoadMore = true;
+					this.$nextTick(function() {
+						this.st.alert.error('No more mails to load!');
+					})
 				}
 				this.st.loading.go(100);
 			}, function(res) {

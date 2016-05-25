@@ -7,7 +7,7 @@
 				</span>
 			</div>
 		</div>
-		<div class="overflow-hidden bg-white rounded mb2 clearfix" v-show="st.folders.length > 0">
+		<div class="overflow-hidden bg-white rounded mb2 clearfix" v-if="st.folders.length > 0">
 			<folder-item v-for="folder in st.folders" :folder="folder" keep-alive></folder-item>
 		</div>
 		<div class="mt2 mb2">
@@ -48,9 +48,11 @@ module.exports = {
 		this.st.setTitle('Folders');
 
 		api.grabDependencies(1, this, function() {
-			that.$dispatch('getFoldersInAccount', function() {
-				that.st.loading.go(100);
-			});
+			that.$nextTick(function() {
+				that.$dispatch('getFoldersInAccount', function() {
+					that.st.loading.go(100);
+				});
+			})
 		});
 	}
 }
