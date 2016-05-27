@@ -24,6 +24,8 @@
 					<span class="btn button-narrow mxn1" v-link="{ name: 'folder', params: { accountId: $route.params.accountId, folderId: $route.params.folderId } }">
 						{{ st.folder.displayName }}
 					</span>
+				</span>
+				<span v-if="isInFolder">
 					<chevron-right></chevron-right>
 					<span class="btn button-narrow mxn1" @click="flipStarOnly">
 						{{ st.starOnly === true ? '&#9733;': '&#9734;' }}
@@ -53,6 +55,9 @@ module.exports = {
 		},
 		isInFilter: function() {
 			return this.$route.name === 'filter'
+		},
+		isInFolder: function() {
+			return this.$route.name === 'folder'
 		}
 	},
 	methods: {
