@@ -151,39 +151,13 @@ module.exports = {
 	},
 
 	grabDependencies: function(priority, ct, cb) {
+		var that = this;
 		switch(priority) {
 			case 3: //mail.vue
-			this.getMail(ct).then(function(res) {
-				ct.st.putMail(res.data);
-				if (cb && priority === 3) {
-					cb(res.data);
-				}
-			}, function(res) {
-				if (res.data.hasOwnProperty('message')) {
-					ct.st.alert.error(res.data.message);
-				}else{
-					ct.st.alert.error(res.statusText);
-				}
-			});
-			case 2: //folder.vue
-			this.getFolder(ct).then(function(res) {
-				ct.st.putFolder(res.data);
-				if (cb && priority === 2) {
-					cb(res.data);
-				}
-			}, function(res) {
-				if (res.data.hasOwnProperty('message')) {
-					ct.st.alert.error(res.data.message);
-				}else{
-					ct.st.alert.error(res.statusText);
-				}
-			});
-			case 1: //account.vue
-			if (Object.keys(ct.st.account).length === 0 || priority === 1) {
-				this.getAccount(ct).then(function(res) {
-					res.data.displayName = res.data['account'] + '@' + res.data['domain'];
-					ct.st.putAccount(res.data);
-					if (cb && priority === 1) {
+			ct.$nextTick(function() {
+				that.getMail(ct).then(function(res) {
+					ct.st.putMail(res.data);
+					if (cb && priority === 3) {
 						cb(res.data);
 					}
 				}, function(res) {
@@ -193,6 +167,39 @@ module.exports = {
 						ct.st.alert.error(res.statusText);
 					}
 				});
+			})
+			case 2: //folder.vue
+			ct.$nextTick(function() {
+				that.getFolder(ct).then(function(res) {
+					ct.st.putFolder(res.data);
+					if (cb && priority === 2) {
+						cb(res.data);
+					}
+				}, function(res) {
+					if (res.data.hasOwnProperty('message')) {
+						ct.st.alert.error(res.data.message);
+					}else{
+						ct.st.alert.error(res.statusText);
+					}
+				});
+			})
+			case 1: //account.vue
+			if (Object.keys(ct.st.account).length === 0 || priority === 1) {
+				ct.$nextTick(function() {
+					that.getAccount(ct).then(function(res) {
+						res.data.displayName = res.data['account'] + '@' + res.data['domain'];
+						ct.st.putAccount(res.data);
+						if (cb && priority === 1) {
+							cb(res.data);
+						}
+					}, function(res) {
+						if (res.data.hasOwnProperty('message')) {
+							ct.st.alert.error(res.data.message);
+						}else{
+							ct.st.alert.error(res.statusText);
+						}
+					});
+				})
 			}
 		}
 	},
