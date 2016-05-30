@@ -150,6 +150,11 @@ module.exports = {
 		},
 		safeImage: function(html) {
 			return new Bluebird(function(resolve) {
+				
+				if (html.indexOf('http://fonts.googleapis.com') !== -1) {
+					html = html.replace('http://fonts.googleapis.com', 'https://fonts.googleapis.com');
+				}
+
 				var imgTags = html.match(/<img\s[^>]*?src\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/gi);
 				if (imgTags) {
 					imgTags.forEach(function(img) {
