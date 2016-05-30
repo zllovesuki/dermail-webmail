@@ -149,6 +149,12 @@ module.exports = {
 			return style;
 		},
 		safeImage: function(html) {
+
+			// use https for google fonts
+			if (html.indexOf('http://fonts.googleapis.com') !== -1) {
+				html = html.replace('http://fonts.googleapis.com', 'https://fonts.googleapis.com');
+			}
+			
 			var imgTags = html.match(/<img\s[^>]*?src\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/gi);
 			if (imgTags) {
 				imgTags.forEach(function(img) {
@@ -171,15 +177,12 @@ module.exports = {
 			if (cssURL) {
 				cssURL.forEach(function(img) {
 					var src = img.match(/(?:\(['|"]?)(.*?)(?:['|"]?\))/i)[1];
-					// use https for google fonts
-					if (src.indexOf('http://fonts.googleapis.com') !== -1) {
-						src = src.replace('http://fonts.googleapis.com', 'https://fonts.googleapis.com');
-					}
 					html = html.replace('url(' + src, 'url(' + api.safeImage(src));
 					html = html.replace('url(\'' + src + '\'', 'url(' + api.safeImage(src));
 					html = html.replace('url("' + src + '"', 'url(' + api.safeImage(src));
 				})
 			}
+
 			return html;
 		},
 		safeLink: function(element) {
