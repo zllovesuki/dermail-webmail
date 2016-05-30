@@ -69,18 +69,22 @@ module.exports = {
 			var root = [];
 			var lookup = {};
 
-			list.forEach(function(obj) {
+			return Bluebird.map(list, function(obj) {
 				lookup[obj[idAttr]] = obj;
 				obj[childrenAttr] = [];
-			});
-			list.forEach(function(obj) {
-				if (obj[parentAttr] != null) {
-					lookup[obj[parentAttr]][childrenAttr].push(obj);
-				}else{
-					root.push(obj);
-				}
-			});
-			return root;
+			}, { concurrency: 3 })
+			.then(function() {
+				return Bluebird.map(list, function(obj) {
+					if (obj[parentAttr] != null) {
+						lookup[obj[parentAttr]][childrenAttr].push(obj);
+					}else{
+						root.push(obj);
+					}
+				}, { concurrency: 3 })
+			})
+			.then(function() {
+				return root;
+			})
 		},
 		flipStarOnly: function(e) {
 			this.st.starOnly = !this.st.starOnly;
@@ -89,11 +93,16 @@ module.exports = {
 	},
 	events: {
 		'getFoldersInAccount': function(cb) {
+			var that = this;
 			this.st.loading.go(50);
 			api.getFoldersInAccount(this).then(function(res) {
-				this.st.putFoldersTree(this.buildTree(res.data));
-				this.st.putFoldersFlat(res.data);
-				if (cb) cb();
+				this.$nextTick(function() {
+					this.buildTree(res.data).then(function(tree) {
+						that.st.putFoldersTree(tree);
+					})
+					this.st.putFoldersFlat(res.data);
+					if (cb) cb();
+				});
 			}, function(res) {
 				if (res.data.hasOwnProperty('message')) {
 					this.st.alert.error(res.data.message);
@@ -106,8 +115,10 @@ module.exports = {
 		'getAccounts': function(cb) {
 			this.st.loading.go(50);
 			api.getAccounts(this).then(function(res) {
-				this.st.putAccounts(res.data);
-				if (cb) cb();
+				this.$nextTick(function() {
+					this.st.putAccounts(res.data);
+					if (cb) cb();
+				});
 			}, function(res) {
 				if (res.data.hasOwnProperty('message')) {
 					this.st.alert.error(res.data.message);
