@@ -171,6 +171,10 @@ module.exports = {
 			if (cssURL) {
 				cssURL.forEach(function(img) {
 					var src = img.match(/(?:\(['|"]?)(.*?)(?:['|"]?\))/i)[1];
+					// use https for google fonts
+					if (src.indexOf('http://fonts.googleapis.com') !== -1) {
+						src = src.replace('http://fonts.googleapis.com', 'https://fonts.googleapis.com');
+					}
 					html = html.replace('url(' + src, 'url(' + api.safeImage(src));
 					html = html.replace('url(\'' + src + '\'', 'url(' + api.safeImage(src));
 					html = html.replace('url("' + src + '"', 'url(' + api.safeImage(src));
