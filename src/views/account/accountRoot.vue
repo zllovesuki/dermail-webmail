@@ -101,15 +101,13 @@ module.exports = {
 			var that = this;
 			this.st.loading.go(50);
 			api.getFoldersInAccount(this).then(function(res) {
-				this.$nextTick(function() {
-					this.st.putFoldersTree(this.listToTree(res.data, {
-						idKey: 'folderId',
-						parentKey: 'parent',
-						childrenKey: 'child'
-					}))
-					this.st.putFoldersFlat(res.data);
-					if (cb) cb();
-				});
+				this.st.putFoldersTree(this.listToTree(res.data, {
+					idKey: 'folderId',
+					parentKey: 'parent',
+					childrenKey: 'child'
+				}))
+				this.st.putFoldersFlat(res.data);
+				if (cb) cb();
 			}, function(res) {
 				if (res.data.hasOwnProperty('message')) {
 					this.st.alert.error(res.data.message);
@@ -122,10 +120,8 @@ module.exports = {
 		'getAccounts': function(cb) {
 			this.st.loading.go(50);
 			api.getAccounts(this).then(function(res) {
-				this.$nextTick(function() {
-					this.st.putAccounts(res.data);
-					if (cb) cb();
-				});
+				this.st.putAccounts(res.data);
+				if (cb) cb();
 			}, function(res) {
 				if (res.data.hasOwnProperty('message')) {
 					this.st.alert.error(res.data.message);

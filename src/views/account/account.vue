@@ -48,11 +48,9 @@ module.exports = {
 		this.st.setTitle('Folders');
 
 		api.grabDependencies(1, this, function() {
-			that.$nextTick(function() {
-				that.$dispatch('getFoldersInAccount', function() {
-					that.st.loading.go(100);
-				});
-			})
+			that.$dispatch('getFoldersInAccount', function() {
+				that.st.loading.go(100);
+			});
 		});
 	}
 }
