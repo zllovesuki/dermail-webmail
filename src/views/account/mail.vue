@@ -149,41 +149,37 @@ module.exports = {
 			return style;
 		},
 		safeImage: function(html) {
-
-			// use https for google fonts
-			if (html.indexOf('http://fonts.googleapis.com') !== -1) {
-				html = html.replace('http://fonts.googleapis.com', 'https://fonts.googleapis.com');
-			}
-			
-			var imgTags = html.match(/<img\s[^>]*?src\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/gi);
-			if (imgTags) {
-				imgTags.forEach(function(img) {
-					var src = img.match(/<img\s[^>]*?src\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/i)[1];
-					if (src.substring(0, 3) === 'cid') {
-						html = html.replace(src, api.inlineImage(src));
-					}else{
+			return new Bluebird(function(resolve) {
+				var imgTags = html.match(/<img\s[^>]*?src\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/gi);
+				if (imgTags) {
+					imgTags.forEach(function(img) {
+						var src = img.match(/<img\s[^>]*?src\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/i)[1];
+						if (src.substring(0, 3) === 'cid') {
+							html = html.replace(src, api.inlineImage(src));
+						}else{
+							html = html.replace(src, api.safeImage(src));
+						}
+					})
+				}
+				var bgTags = html.match(/background\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/gi);
+				if (bgTags) {
+					bgTags.forEach(function(img) {
+						var src = img.match(/background\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/i)[1];
 						html = html.replace(src, api.safeImage(src));
-					}
-				})
-			}
-			var bgTags = html.match(/background\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/gi);
-			if (bgTags) {
-				bgTags.forEach(function(img) {
-					var src = img.match(/background\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/i)[1];
-					html = html.replace(src, api.safeImage(src));
-				})
-			}
-			var cssURL = html.match(/(?:\(['|"]?)(.*?)(?:['|"]?\))/gi);
-			if (cssURL) {
-				cssURL.forEach(function(img) {
-					var src = img.match(/(?:\(['|"]?)(.*?)(?:['|"]?\))/i)[1];
-					html = html.replace('url(' + src, 'url(' + api.safeImage(src));
-					html = html.replace('url(\'' + src + '\'', 'url(' + api.safeImage(src));
-					html = html.replace('url("' + src + '"', 'url(' + api.safeImage(src));
-				})
-			}
+					})
+				}
+				var cssURL = html.match(/(?:\(['|"]?)(.*?)(?:['|"]?\))/gi);
+				if (cssURL) {
+					cssURL.forEach(function(img) {
+						var src = img.match(/(?:\(['|"]?)(.*?)(?:['|"]?\))/i)[1];
+						html = html.replace('url(' + src, 'url(' + api.safeImage(src));
+						html = html.replace('url(\'' + src + '\'', 'url(' + api.safeImage(src));
+						html = html.replace('url("' + src + '"', 'url(' + api.safeImage(src));
+					})
+				}
 
-			return html;
+				return resolve(html);
+			})
 		},
 		safeLink: function(element) {
 			var a = element.getElementsByTagName('a');
@@ -223,12 +219,15 @@ module.exports = {
 			if (this.containsStrangeTags) {
 				var frame = document.getElementById('iframe-body');
 				var iframe = frame.contentWindow.document;
+				var that = this;
 				iframe.head.appendChild(this.createNormalized());
-				iframe.body.innerHTML = this.safeImage(this.st.mail.html);
-				setTimeout(function() {
-					frame.style.height = (iframe.body.scrollHeight) + 'px';
-				}, 500);
-				this.safeLink(iframe);
+				this.safeImage(this.st.mail.html).then(function(html) {
+					iframe.body.innerHTML = html;
+					setTimeout(function() {
+						frame.style.height = (iframe.body.scrollHeight) + 'px';
+					}, 500);
+					that.safeLink(iframe);
+				})
 			}else{
 				this.$nextTick(function() {
 					var body = document.getElementById('html-body');
