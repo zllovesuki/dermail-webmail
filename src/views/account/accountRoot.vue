@@ -61,30 +61,35 @@ module.exports = {
 		}
 	},
 	methods: {
-		buildTree: function(list) {
-			var idAttr = 'folderId';
-			var parentAttr = 'parent';
-			var childrenAttr = 'child';
+		listToTree: function(data, options) {
+			options = options || {};
+		    var ID_KEY = options.idKey || 'id';
+		    var PARENT_KEY = options.parentKey || 'parent';
+		    var CHILDREN_KEY = options.childrenKey || 'children';
 
-			var root = [];
-			var lookup = {};
+		    var tree = [],
+		        childrenOf = {};
+		    var item, id, parentId;
 
-			return Bluebird.map(list, function(obj) {
-				lookup[obj[idAttr]] = obj;
-				obj[childrenAttr] = [];
-			}, { concurrency: 3 })
-			.then(function() {
-				return Bluebird.map(list, function(obj) {
-					if (obj[parentAttr] != null) {
-						lookup[obj[parentAttr]][childrenAttr].push(obj);
-					}else{
-						root.push(obj);
-					}
-				}, { concurrency: 3 })
-			})
-			.then(function() {
-				return root;
-			})
+		    for (var i = 0, length = data.length; i < length; i++) {
+		        item = data[i];
+		        id = item[ID_KEY];
+		        parentId = item[PARENT_KEY] || 0;
+		        // every item may have children
+		        childrenOf[id] = childrenOf[id] || [];
+		        // init its children
+		        item[CHILDREN_KEY] = childrenOf[id];
+		        if (parentId != 0) {
+		            // init its parent's children object
+		            childrenOf[parentId] = childrenOf[parentId] || [];
+		            // push it into its parent's children object
+		            childrenOf[parentId].push(item);
+		        } else {
+		            tree.push(item);
+		        }
+		    };
+
+		    return tree;
 		},
 		flipStarOnly: function(e) {
 			this.st.starOnly = !this.st.starOnly;
@@ -97,9 +102,11 @@ module.exports = {
 			this.st.loading.go(50);
 			api.getFoldersInAccount(this).then(function(res) {
 				this.$nextTick(function() {
-					this.buildTree(res.data).then(function(tree) {
-						that.st.putFoldersTree(tree);
-					})
+					this.st.putFoldersTree(this.listToTree(res.data, {
+						idKey: 'folderId',
+						parentKey: 'parent',
+						childrenKey: 'child'
+					}))
 					this.st.putFoldersFlat(res.data);
 					if (cb) cb();
 				});
