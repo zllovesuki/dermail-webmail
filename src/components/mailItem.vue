@@ -3,16 +3,22 @@
 		<div class="overflow-hidden bg-white rounded mb2 mail-{{ mail.messageId }}">
 			<div class="m0 p1 border-bottom">
 				<div class="clearfix">
-					<div class="left black">
+					<div class="left-{{ mail.messageId }} left black">
 						<star-button :message-id="mail.messageId" :is-star.sync="mail.isStar"></star-button>
 						<span class="mxn2 btn h6 muted not-clickable">
 							{{ mail.date | moment "from"}}
 						</span>
 					</div>
 					<div class="right">
-						<address-button origin-text="From" :origin="mail.from" v-if="!atSentFolder"></address-button>
-						<address-button origin-text="To" :origin="mail.to" v-if="atSentFolder"></address-button>
-						<a class="btn h3 gray" @click="flipMenuAndBody">
+						<span class="menu-{{ mail.messageId }} hide">
+							<mail-menu :context="mail"></mail-menu>
+							<spam :folder-name="st.folder.displayName" :message-id="mail.messageId" :folder-id="mail.folderId" v-if="st.hideSpamButton.indexOf(st.folder.displayName.toLowerCase()) === -1"></spam>
+						</span>
+						<span class="address-{{ mail.messageId }}">
+							<address-button origin-text="From" :origin="mail.from" v-if="!atSentFolder"></address-button>
+							<address-button origin-text="To" :origin="mail.to" v-if="atSentFolder"></address-button>
+						</span>
+						<a class="btn h3 gray" @click="flipMenu">
 							&#8942;
 						</a>
 					</div>
@@ -21,18 +27,14 @@
 			<div class="m0 p1">
 				<div class="clearfix">
 					<div class="left">
-						<a class="subject-{{ mail.messageId }} btn h5 m0 black not-clickable">
+						<a class="btn h5 m0 black not-clickable">
 							{{ mail.subject | excerpt 50 }}
 						</a>
 					</div>
-					<div class="body-{{ mail.messageId }} clickable bodyblock right{{ mail.isRead === true ? ' muted' : ''}}" v-link="{ name: 'mail', params: { accountId: st.folder.accountId, folderId: st.folder.folderId, messageId: mail.messageId } }">
+					<div class="clickable bodyblock right{{ mail.isRead === true ? ' muted' : ''}}" v-link="{ name: 'mail', params: { accountId: st.folder.accountId, folderId: st.folder.folderId, messageId: mail.messageId } }">
 						<span class="btn h5 m0 black">
 							{{ mail.text | excerpt 75 }}
 						</span>
-					</div>
-					<div class="menu-{{ mail.messageId }} right hide">
-						<mail-menu :context="mail"></mail-menu>
-						<spam :folder-name="st.folder.displayName" :message-id="mail.messageId" :folder-id="mail.folderId" v-if="st.hideSpamButton.indexOf(st.folder.displayName.toLowerCase()) === -1"></spam>
 					</div>
 				</div>
 			</div>
@@ -65,25 +67,21 @@ module.exports = {
 		}
 	},
 	methods: {
-		flipMenuAndBody: function() {
+		flipMenu: function() {
 			var messageId = this.mail.messageId;
 			var menuVisible = this.menuVisible;
 			var menuBlock = document.getElementsByClassName('menu-' + messageId)[0];
-			var subjectBlock = document.getElementsByClassName('subject-' + messageId)[0];
-			var bodyBlock = document.getElementsByClassName('body-' + messageId)[0];
+			var leftBlock = document.getElementsByClassName('left-' + messageId)[0];
+			var addressBlock = document.getElementsByClassName('address-' + messageId)[0];
 			var currentRead = this.mail.isRead;
 
-			var menuClass = 'menu-' + messageId + ' right';
-			var subjectClass = 'subject-' + messageId + ' btn h5 m0 black not-clickable';
-			var bodyClass = 'body-' + messageId + ' clickable bodyblock right';
-
-			if (currentRead) {
-				bodyClass += ' muted';
-			}
+			var menuClass = 'menu-' + messageId;
+			var leftClass = 'left-' + messageId + ' left black';
+			var addressClass = 'address-' + messageId;
 
 			if (menuVisible === false) {
-				subjectClass += ' hide';
-				bodyClass += ' hide';
+				leftClass += ' hide';
+				addressClass += ' hide';
 				this.menuVisible = true;
 			}else{
 				menuClass += ' hide';
@@ -91,8 +89,8 @@ module.exports = {
 			}
 
 			menuBlock.className = menuClass;
-			subjectBlock.className = subjectClass;
-			bodyBlock.className = bodyClass;
+			leftBlock.className = leftClass;
+			addressBlock.className = addressClass;
 		}
 	}
 }
