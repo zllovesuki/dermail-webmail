@@ -3,7 +3,7 @@
 		<div class="overflow-hidden bg-white rounded mb2" v-show="st.folders.length === 0">
 			<div class="m0 p2">
 				<span class="p2 bold h5 m0 black">
-					No folders yet.
+					Loading folders for this account...
 				</span>
 			</div>
 		</div>
@@ -44,12 +44,15 @@ module.exports = {
 	created: function() {
 
 		var that = this;
-		
+
 		this.st.folders = [];
+
+		this.st.loading.go(50);
 
 		this.st.setTitle('Folders');
 
 		api.grabDependencies(1, this, function() {
+			that.st.loading.go(70);
 			that.$dispatch('getFoldersInAccount', function() {
 				that.st.loading.go(100);
 			});
