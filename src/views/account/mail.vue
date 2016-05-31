@@ -5,7 +5,7 @@
 				<div class="clearfix" v-if="ready">
 					<div class="left">
 						<star-button :message-id="st.mail.messageId" :is-star.sync="st.mail.isStar"></star-button>
-						<span class="btn h6 muted black not-clickable">
+						<span class="mxn2 btn h6 muted black not-clickable">
 							{{ st.mail.date | moment "MMMM Do YYYY, h:mm:ss a"}}
 						</span>
 					</div>

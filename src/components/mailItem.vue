@@ -5,14 +5,14 @@
 				<div class="clearfix">
 					<div class="left black">
 						<star-button :message-id="mail.messageId" :is-star.sync="mail.isStar"></star-button>
-						<span class="btn h6 muted not-clickable">
+						<span class="mxn2 btn h6 muted not-clickable">
 							{{ mail.date | moment "from"}}
 						</span>
 					</div>
 					<div class="right">
 						<address-button origin-text="From" :origin="mail.from" v-if="!atSentFolder"></address-button>
 						<address-button origin-text="To" :origin="mail.to" v-if="atSentFolder"></address-button>
-						<a class="btn h3 gray" @click="flipMenuAndBody">
+						<a class="mxn1 btn h3 gray" @click="flipMenuAndBody">
 							&#8942;
 						</a>
 					</div>
