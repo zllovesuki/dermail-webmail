@@ -178,7 +178,6 @@ module.exports = {
 		this.st.setTitle('Accounts');
 
 		this.$dispatch('getAccounts', function() {
-			that.st.folders = [];
 			that.st.loading.go(100);
 		});
 

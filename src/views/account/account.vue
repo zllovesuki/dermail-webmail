@@ -44,6 +44,8 @@ module.exports = {
 	created: function() {
 
 		var that = this;
+		
+		this.st.folders = [];
 
 		this.st.setTitle('Folders');
 
