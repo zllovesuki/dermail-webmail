@@ -51,12 +51,14 @@ module.exports = {
 
 		this.st.setTitle('Folders');
 
-		api.grabDependencies(1, this, function() {
+		api.grabDependencies(1, this)
+		.then(function(data) {
 			that.st.loading.go(70);
 			that.$dispatch('getFoldersInAccount', function() {
 				that.st.loading.go(100);
 			});
-		});
+		})
+		.catch(function(e) {});
 	}
 }
 </script>

@@ -41,7 +41,8 @@ module.exports = {
 
 		this.st.loading.go(50);
 
-		api.grabDependencies(2, this, function(data) {
+		api.grabDependencies(2, this)
+		.then(function() {
 			that.st.setTitle(that.st.folder.displayName);
 			if (that.st._folders.length === 0) {
 				that.$dispatch('getFoldersInAccount', function() {
@@ -50,7 +51,8 @@ module.exports = {
 			}else{
 				that.loadMore();
 			}
-		});
+		})
+		.catch(function(e) {});
 	},
 	events: {
 		'reloadFolder': function(msg) {

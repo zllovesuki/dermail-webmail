@@ -141,68 +141,67 @@ module.exports = {
 	grabFilters: function(ct) {
 		this.getFilters(ct).then(function(res) {
 			ct.st.putFilters(res.data);
-			ct.st.loading.go(100);
-		}, function(res) {
+		})
+		.catch(function(res) {
 			if (res.data.hasOwnProperty('message')) {
 				ct.st.alert.error(res.data.message);
+			}else{
+				ct.st.alert.error(res.statusText);
 			}
+		})
+		.finally(function() {
 			ct.st.loading.go(100);
-		});
+		})
 	},
 
-	grabDependencies: function(priority, ct, cb) {
+	grabDependencies: Bluebird.method(function(priority, ct) {
 		var that = this;
-		switch(priority) {
-			case 3: //mail.vue
-			ct.$nextTick(function() {
-				that.getMail(ct).then(function(res) {
-					ct.st.putMail(res.data);
-					if (cb && priority === 3) {
-						cb(res.data);
-					}
-				}, function(res) {
-					if (res.data.hasOwnProperty('message')) {
-						ct.st.alert.error(res.data.message);
-					}else{
-						ct.st.alert.error(res.statusText);
-					}
-				});
-			})
-			case 2: //folder.vue
-			ct.$nextTick(function() {
-				that.getFolder(ct).then(function(res) {
-					ct.st.putFolder(res.data);
-					if (cb && priority === 2) {
-						cb(res.data);
-					}
-				}, function(res) {
-					if (res.data.hasOwnProperty('message')) {
-						ct.st.alert.error(res.data.message);
-					}else{
-						ct.st.alert.error(res.statusText);
-					}
-				});
-			})
-			case 1: //account.vue
-			if (Object.keys(ct.st.account).length === 0 || priority === 1) {
-				ct.$nextTick(function() {
-					that.getAccount(ct).then(function(res) {
+		var returnData;
+		var listOfDependencies = [
+			Bluebird.method(function(ct) {
+				if (Object.keys(ct.st.account).length === 0 || priority === 1) {
+					return that.getAccount(ct).then(function(res) {
 						res.data.displayName = res.data['account'] + '@' + res.data['domain'];
 						ct.st.putAccount(res.data);
-						if (cb && priority === 1) {
-							cb(res.data);
-						}
-					}, function(res) {
-						if (res.data.hasOwnProperty('message')) {
-							ct.st.alert.error(res.data.message);
-						}else{
-							ct.st.alert.error(res.statusText);
-						}
+						return res.data;
 					});
-				})
+				}
+			}),
+			Bluebird.method(function(ct) {
+				return that.getFolder(ct).then(function(res) {
+					ct.st.putFolder(res.data);
+					return res.data;
+				});
+			}),
+			Bluebird.method(function(ct) {
+				return that.getMail(ct).then(function(res) {
+					ct.st.putMail(res.data);
+					return res.data;
+				});
+			})
+		];
+
+		return Bluebird.mapSeries(listOfDependencies, function(data, index) {
+			var eval = index + 1;
+			if (eval > priority) return;
+			return listOfDependencies[index](ct).then(function(res) {
+				if (priority === eval) {
+					returnData = res;
+				}
+			})
+		})
+		.then(function() {
+			return returnData;
+		})
+		.catch(function(e) {
+			if (e.data.hasOwnProperty('message')) {
+				ct.st.alert.error(e.data.message);
+			}else{
+				ct.st.alert.error(e.statusText);
 			}
-		}
-	},
+			throw e;
+		})
+	}),
 	inlineImage: function(src) {
 		return API_ENDPOINT + '/safe/inline/?s=' + encodeURIComponent(src);
 	},

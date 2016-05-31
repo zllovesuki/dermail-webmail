@@ -191,11 +191,13 @@ module.exports = {
 
 		this.st.setTitle('Filter');
 
-		api.grabDependencies(1, this, function() {
+		api.grabDependencies(1, this)
+		.then(function() {
 			that.$dispatch('getFoldersInAccount', function() {
 				api.grabFilters(that);
 			});
-		});
+		})
+		.catch(function(e) {});
 
 	}
 }

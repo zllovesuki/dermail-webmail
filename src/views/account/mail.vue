@@ -283,7 +283,8 @@ module.exports = {
 		downloadMail: function() {
 			var that = this;
 			this.st.loading.go(70);
-			api.grabDependencies(3, this, function(data) {
+			api.grabDependencies(3, this)
+			.then(function(data) {
 				that.writeFrame();
 				that.st.loading.go(100);
 				that.ready = true;
@@ -305,7 +306,8 @@ module.exports = {
 						}
 					});
 				}
-			});
+			})
+			.catch(function(e) {});
 		}
 	},
 	watch: {

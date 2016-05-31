@@ -320,9 +320,11 @@ module.exports = {
 		var that = this;
 		this.st.setTitle('Compose');
 
-		api.grabDependencies(1, this, function() {
+		api.grabDependencies(1, this)
+		.then(function() {
 			that.st.loading.go(100);
-		});
+		})
+		.catch(function(e) {});
 
 		if (this.st.accounts.length === 0) {
 			this.$dispatch('getAccounts');
