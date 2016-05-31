@@ -64,7 +64,7 @@ module.exports = {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, .5);
+  background-color: rgba(0, 0, 0, .3);
   display: table;
   transition: opacity .3s ease;
 }
@@ -107,7 +107,6 @@ module.exports = {
 
 .modal-enter .modal-container,
 .modal-leave .modal-container {
-  -webkit-transform: scale(1.1);
-  transform: scale(1.1);
+  transition: all .33s cubic-bezier(.25, .8, .25, 1)
 }
 </style>
