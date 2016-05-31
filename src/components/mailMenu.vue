@@ -1,9 +1,9 @@
 <template>
 	<span>
-		<a class="muted h6 btn {{ st.color }} mail-marker" @click="flipReadAndChangeBody" v-if="st.hideEditing.indexOf(st.folder.displayName.toLowerCase()) === -1">
+		<a class="muted h6 btn {{ st.color }} mail-marker" @click="flipReadAndChangeBody" v-if="st.hideReadUnread.indexOf(st.folder.displayName.toLowerCase()) === -1">
 			{{ context.isRead === true ? 'Mark Unread': 'Mark Read' }}
 		</a>
-		<a class="muted h6 btn {{ st.color }}" @click="showMoveFolder" v-if="st.hideEditing.indexOf(st.folder.displayName.toLowerCase()) === -1">
+		<a class="muted h6 btn {{ st.color }}" @click="showMoveFolder" v-if="st.hideMoveToFolder.indexOf(st.folder.displayName.toLowerCase()) === -1">
 			Move to Folder
 		</a>
 		<a class="h6 bold btn red" @click.prevent="oneClickToTrash" v-if="st.hideMoveToTrash.indexOf(st.folder.displayName.toLowerCase()) === -1">

@@ -29,7 +29,11 @@ module.exports = {
 		'trash'
 	],
 
-	hideEditing: [ // this includes read/unread, move to folder
+	hideReadUnread: [
+		'sent'
+	],
+
+	hideMoveToFolder: [
 		'sent',
 		'spam'
 	],
