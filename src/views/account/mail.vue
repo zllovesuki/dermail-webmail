@@ -57,7 +57,7 @@
 							Forward
 						</a>
 					</div>
-					<div class="right">
+					<div class="right mr1">
 						<spamc :message-id="st.mail.messageId"></spamc>
 						<spam :folder-name="st.folder.displayName" :message-id="st.mail.messageId" :folder-id="st.mail.folderId" v-if="st.hideSpamButton.indexOf(st.folder.displayName.toLowerCase()) === -1"></spam>
 					</div>

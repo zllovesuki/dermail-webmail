@@ -1,9 +1,9 @@
 <template>
 	<span>
-		<a class="h6 btn red" @click="moveToSPAM" v-if="alreadySpam">
+		<a class="h6 mxn1 btn red" @click="moveToSPAM" v-if="alreadySpam">
 			This is a Spam!
 		</a>
-		<a class="h6 btn green" @click="notSPAM" v-if="!alreadySpam">
+		<a class="h6 mxn1 btn green" @click="notSPAM" v-if="!alreadySpam">
 			This is NOT a Spam!
 		</a>
 	</span>

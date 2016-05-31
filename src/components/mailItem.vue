@@ -12,7 +12,7 @@
 					<div class="right">
 						<address-button origin-text="From" :origin="mail.from" v-if="!atSentFolder"></address-button>
 						<address-button origin-text="To" :origin="mail.to" v-if="atSentFolder"></address-button>
-						<a class="mxn1 btn h3 gray" @click="flipMenuAndBody">
+						<a class="btn h3 gray" @click="flipMenuAndBody">
 							&#8942;
 						</a>
 					</div>
