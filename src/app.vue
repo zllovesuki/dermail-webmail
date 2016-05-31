@@ -20,7 +20,7 @@
 			</div>
 		</div>
 		<audio id="sound" preload="auto">
-			<source src="sound/yoda.ogg" type="audio/ogg">
+			<source src="/public/sound/yoda.ogg" type="audio/ogg">
 		</audio>
 		<compose-button></compose-button>
 	</section>

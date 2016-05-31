@@ -17,7 +17,7 @@ self.addEventListener("push", function(event){
 			self.registration.showNotification(payload.header, {
 				body: payload.body,
 				data: payload,
-				icon: './mail_256x256.png',
+				icon: '/public/mail_256x256.png',
 				vibrate: [300, 100, 300]
 			})
 		)
@@ -33,7 +33,7 @@ self.addEventListener("push", function(event){
 				return self.registration.showNotification(payload.header, {
 					body: payload.body,
 					data: payload,
-					icon: './mail_256x256.png',
+					icon: '/public/mail_256x256.png',
 					vibrate: [300, 100, 300]
 				})
 			})
