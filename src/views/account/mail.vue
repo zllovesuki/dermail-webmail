@@ -150,7 +150,7 @@ module.exports = {
 		},
 		safeImage: function(html) {
 			return new Bluebird(function(resolve) {
-				
+
 				if (html.indexOf('http://fonts.googleapis.com') !== -1) {
 					html = html.replace('http://fonts.googleapis.com', 'https://fonts.googleapis.com');
 				}
@@ -160,9 +160,9 @@ module.exports = {
 					imgTags.forEach(function(img) {
 						var src = img.match(/<img\s[^>]*?src\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/i)[1];
 						if (src.substring(0, 3) === 'cid') {
-							html = html.replace(src, api.inlineImage(src));
+							html = html.replace(img, img.replace(src, api.inlineImage(src)));
 						}else{
-							html = html.replace(src, api.safeImage(src));
+							html = html.replace(img, img.replace(src, api.safeImage(src)));
 						}
 					})
 				}
@@ -170,7 +170,7 @@ module.exports = {
 				if (bgTags) {
 					bgTags.forEach(function(img) {
 						var src = img.match(/background\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/i)[1];
-						html = html.replace(src, api.safeImage(src));
+						html = html.replace(img, img.replace(src, api.safeImage(src)));
 					})
 				}
 				var cssURL = html.match(/(?:\(['|"]?)(.*?)(?:['|"]?\))/gi);
