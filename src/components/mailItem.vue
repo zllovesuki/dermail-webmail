@@ -26,7 +26,7 @@
 						</a>
 					</div>
 					<div class="body-{{ mail.messageId }} clickable bodyblock right{{ mail.isRead === true ? ' muted' : ''}}" v-link="{ name: 'mail', params: { accountId: st.folder.accountId, folderId: st.folder.folderId, messageId: mail.messageId } }">
-						<span class="btn h5 m0 black">
+						<span class="btn h5 m0 black" style="word-wrap: break-word;">
 							{{ mail.text | excerpt 75 }}
 						</span>
 					</div>
