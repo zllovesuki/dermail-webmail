@@ -33,9 +33,9 @@
 							</a>
 						</div>
 						<div class="right">
-							<span class="btn h6 muted not-clickable">
-								{{ account.alias.join(', ') }}
-							</span>
+							<a class="btn h6 muted" @click="popup" data-account="{{account.account}}@{{account.domain}}" data-alias="{{ account.alias.join(', ') }}" v-show="account.alias.length > 0">
+								show
+							</a>
 						</div>
 					</div>
 				</div>
@@ -124,6 +124,14 @@ module.exports = {
 		}
 	},
 	methods: {
+		popup: function(e) {
+			var msg = '';
+			var account = e.target.attributes['data-account'].value;
+			var alias = e.target.attributes['data-alias'].value;
+			msg += '<p class="h4 muted">' + account + ':</p>';
+			msg += '<span class="h5 bold">' + alias + '</span>';
+			this.st.alert.alert(msg);
+		},
 		selectDomain: function() {
 			for (var i = 0; i < this.st.accounts.length; i++) {
 				if (this.st.accounts[i].hasOwnProperty('domainId') && this.st.accounts[i].domainId === this.alias.selectedDomain) {
