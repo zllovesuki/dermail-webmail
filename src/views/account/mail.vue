@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div class="overflow-hidden bg-white rounded mb2">
-			<div class="m0 p1">
+			<div class="mxn1 p1">
 				<div class="clearfix" v-if="ready">
 					<div class="left">
 						<star-button :message-id="st.mail.messageId" :is-star.sync="st.mail.isStar"></star-button>
@@ -9,7 +9,7 @@
 							{{ st.mail.date | moment "MM/DD/YYYY, HH:mm:ss"}}
 						</span>
 					</div>
-					<div class="right">
+					<div class="right mr1">
 						<mail-menu :context="st.mail"></mail-menu>
 					</div>
 				</div>
