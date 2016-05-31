@@ -46,9 +46,8 @@ module.exports = {
 				});
 			}
 			that.st.setTitle(that.st.folder.displayName);
+			that.loadMore();
 		});
-
-		this.loadMore();
 	},
 	events: {
 		'reloadFolder': function(msg) {
