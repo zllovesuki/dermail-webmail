@@ -14,7 +14,7 @@ module.exports = function() {
 		root = __dirname + '/src/static/dev.html'
 	}
 
-	app.use(express.static(path.join(__dirname, 'public')));
+	app.use('/public', express.static(path.join(__dirname, 'public')));
 
 	app.get('/sw.js', function(req, res, next) {
 		fs.readFile(__dirname + '/src/static/sw.js', 'utf8', function (err, data) {
