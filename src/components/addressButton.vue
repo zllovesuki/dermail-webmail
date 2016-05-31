@@ -33,10 +33,10 @@ module.exports = {
 			var name = e.target.attributes['data-name'].value;
 			var email = e.target.attributes['data-email'].value
 			if (name.length > 1) {
-				msg += '<span>' + name + '</span>';
+				msg += '<span class="muted h5">' + name + '</span>';
 			}
 			if (email.length > 1) {
-				msg += ' <span class="bold" style="word-wrap: break-word;">&lt;' + email + '></span>';
+				msg += ' <span class="bold h5" style="word-wrap: break-word;">&lt;' + email + '></span>';
 			}
 			this.st.alert.alert(msg);
 		}
