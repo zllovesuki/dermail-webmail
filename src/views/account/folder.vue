@@ -42,11 +42,14 @@ module.exports = {
 		this.st.loading.go(50);
 
 		api.grabDependencies(2, this, function(data) {
-			if (that.st._folders.length === 0) {
-				that.$dispatch('getFoldersInAccount');
-			}
 			that.st.setTitle(that.st.folder.displayName);
-			that.loadMore();
+			if (that.st._folders.length === 0) {
+				that.$dispatch('getFoldersInAccount', function() {
+					that.loadMore();
+				});
+			}else{
+				that.loadMore();
+			}
 		});
 	},
 	events: {

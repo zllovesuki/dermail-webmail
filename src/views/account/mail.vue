@@ -282,6 +282,7 @@ module.exports = {
 		},
 		downloadMail: function() {
 			var that = this;
+			this.st.loading.go(70);
 			api.grabDependencies(3, this, function(data) {
 				that.writeFrame();
 				that.st.loading.go(100);
@@ -314,13 +315,19 @@ module.exports = {
 	},
 	created: function() {
 
+		var that = this;
+
 		this.st.setTitle('Mail');
 
-		if (this.st._folders.length === 0) {
-			this.$dispatch('getFoldersInAccount');
-		}
+		this.st.loading.go(50);
 
-		this.downloadMail();
+		if (this.st._folders.length === 0) {
+			this.$dispatch('getFoldersInAccount', function() {
+				that.downloadMail();
+			});
+		}else{
+			this.downloadMail();
+		}
 
 	}
 }
