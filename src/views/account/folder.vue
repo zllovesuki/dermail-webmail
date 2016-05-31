@@ -39,11 +39,11 @@ module.exports = {
 		var that = this;
 		this.st.mails = [];
 
+		this.st.loading.go(50);
+
 		api.grabDependencies(2, this, function(data) {
 			if (that.st._folders.length === 0) {
-				that.$dispatch('getFoldersInAccount', function() {
-					that.st.loading.go(100);
-				});
+				that.$dispatch('getFoldersInAccount');
 			}
 			that.st.setTitle(that.st.folder.displayName);
 			that.loadMore();
@@ -69,6 +69,7 @@ module.exports = {
 			}
 		},
 		loadMore: function() {
+			this.st.loading.go(70);
 			this.More();
 			api.getMailsInFolder(this, {
 				slice: this.slice
