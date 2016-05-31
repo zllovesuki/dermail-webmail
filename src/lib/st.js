@@ -118,7 +118,7 @@ module.exports = {
 		this.authenticated = state;
 	},
 
-	getStyleRuleValue: function(style, selector, sheet) {
+	/*getStyleRuleValue: function(style, selector, sheet) {
 	    var sheets = typeof sheet !== 'undefined' ? [sheet] : document.styleSheets;
 	    for (var i = 0, l = sheets.length; i < l; i++) {
 	        var sheet = sheets[i];
@@ -148,7 +148,7 @@ module.exports = {
 				metas[i].setAttribute("content", color + "-translucent");
 			}
 		}
-	},
+	},*/
 
 	returnS3URL: function(checksum, fileName) {
 		return 'https://' + this.s3.bucket + '.' + this.s3.endpoint + '/' + checksum + '/' + fileName;

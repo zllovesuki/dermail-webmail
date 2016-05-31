@@ -16,31 +16,31 @@
 			</div>
 			<div class="m0 p1">
 				<div class="clearfix x-scrollable">
-					<span class="p2 bold h2 m0 black">
+					<span class="p2 bold h3 m0 black">
 						{{ st.mail.subject }}
 					</span>
 				</div>
 			</div>
 			<div class="m0 p1">
 				<div class="clearfix" v-if="ready">
-					<div class="left">
+					<div class="left ml1">
 						<address-button origin-text="From" :origin="st.mail.from"></address-button>
 					</div>
-					<div class="right">
+					<div class="right mr1">
 						<address-button origin-text="To" :origin="st.mail.to"></address-button>
 					</div>
 				</div>
 			</div>
 			<div class="m0 p2 border-top">
 				<div v-show="containsStrangeTags">
-					<span class="h6 muted black mb2 left">
+					<div class="h6 muted black mb2 left">
 						<a class="btn not-clickable">
 							Mail body displayed in iframe.
 						</a>
 						<a class="btn btn-outline" @click="helpModal = true">
 							Why?
 						</a>
-					</span>
+					</div>
 					<iframe id="iframe-body"></iframe>
 				</div>
 				<div v-if="!containsStrangeTags" class="overflow-auto" id="html-body">
