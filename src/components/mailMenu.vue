@@ -1,13 +1,13 @@
 <template>
 	<span>
 		<a class="muted h6 mxn1 btn {{ st.color }} mail-marker" @click="flipReadAndChangeBody" v-if="st.hideReadUnread.indexOf(st.folder.displayName.toLowerCase()) === -1">
-			{{ context.isRead === true ? 'Mark Unread': 'Mark Read' }}
+			{{ context.isRead === true ? '> Unread': '> Read' }}
 		</a>
 		<a class="muted h6 mxn1 btn {{ st.color }}" @click="showMoveFolder" v-if="st.hideMoveToFolder.indexOf(st.folder.displayName.toLowerCase()) === -1">
-			Move to Folder
+			> Folder
 		</a>
 		<a class="h6 bold mxn1 btn red" @click.prevent="oneClickToTrash" v-if="st.hideMoveToTrash.indexOf(st.folder.displayName.toLowerCase()) === -1">
-			Move to Trash
+			> Trash
 		</a>
 		<modal :show.sync="folderModal">
 			<h4 slot="header">Move to a Folder</h4>
@@ -60,9 +60,9 @@ module.exports = {
 				action: newRead
 			}).then(function(res) {
 
-				this.st.alert.success('Marked to: ' + (newRead !== 'read' ? 'Unread' : 'Read'));
+				this.st.alert.success((newRead !== 'read' ? 'Unread' : 'Read') + ' : 👍');
 
-				e.target.innerHTML = 'Mark ' + (newRead === 'read' ? 'Unread' : 'Read');
+				e.target.innerHTML = '> ' + (newRead === 'read' ? 'Unread' : 'Read');
 				this.context.isRead = (newRead === 'read' ? true : false);
 
 				if (typeof this.$parent.flipMenuAndBody == 'function') this.$parent.flipMenuAndBody();

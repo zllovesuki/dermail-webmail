@@ -1,6 +1,6 @@
 <template>
 	<span>
-		<a class="btn h3" @click="flipStar">
+		<a class="btn h4" @click="flipStar">
 			{{ isStar === true ? '&#9733;': '&#9734;' }}
 		</a>
 	</span>
@@ -41,7 +41,7 @@ module.exports = {
 			}).then(function(res) {
 				var star = (newStar === 'star' ? '&#9733;' : '&#9734;')
 				e.target.innerHTML = star;
-				this.st.alert.success('Updated to: ' + star);
+				this.st.alert.success(star + ' : 👍');
 			}, function(res) {
 				if (res.data.hasOwnProperty('message')) {
 					this.st.alert.error(res.data.message);

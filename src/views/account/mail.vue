@@ -6,7 +6,7 @@
 					<div class="left">
 						<star-button :message-id="st.mail.messageId" :is-star.sync="st.mail.isStar"></star-button>
 						<span class="mxn2 btn h6 muted black not-clickable">
-							{{ st.mail.date | moment "MMMM Do YYYY, h:mm:ss a"}}
+							{{ st.mail.date | moment "MM/DD/YYYY, HH:mm:ss"}}
 						</span>
 					</div>
 					<div class="right">

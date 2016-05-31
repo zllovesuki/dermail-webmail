@@ -1,10 +1,10 @@
 <template>
 	<span>
 		<a class="h6 mxn1 btn red" @click="moveToSPAM" v-if="alreadySpam">
-			This is a Spam!
+			> Spam!
 		</a>
 		<a class="h6 mxn1 btn green" @click="notSPAM" v-if="!alreadySpam">
-			This is NOT a Spam!
+			> NOT Spam!
 		</a>
 	</span>
 </template>
