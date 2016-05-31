@@ -15,17 +15,6 @@
 							default body
 						</slot>
 					</div>
-
-					<div class="modal-footer">
-						<slot name="footer">
-							<span class="white">
-								placeholder
-							</span>
-							<a class="btn black h2 right" @click="show = false">
-								&#10005;
-							</a>
-						</slot>
-					</div>
 				</div>
 			</div>
 		</div>
