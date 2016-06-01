@@ -79,8 +79,9 @@ module.exports = {
 					api.s3(this)
 					.then(function(s3) {
 						this.st.setS3(s3.data);
-					//}, function(err) {
-					//	this.st.alert.error('Unable to fetch S3 information, attachments may be impacted.');
+					})
+					.catch(function(err) {
+						this.st.alert.error('Unable to fetch S3 information, attachment functionalities may be impacted.');
 					});
 
 					this.st.alert.success('Welcome back!');
