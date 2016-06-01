@@ -36,52 +36,14 @@ module.exports = {
 			st: st
 		}
 	},
-	created: function() {
-		var destination = this.$route.path;
-		if (!this.st.isAuthenticated() && this.st.getToken()) {
-			this.st.alert.success('Token found, trying to login automagically.');
-			api
-			.ping(this)
-			.then(function(res) {
-				if (res.data === 'pong') {
-					// We are fine
-					this.st.setAuthenticated(true);
-					if (destination === '/') {
-						this.$route.router.go({name: 'accounts'});
-					}else{
-						this.$route.router.go(destination);
-					}
-					// Message queue
-					api.queue().connect(this, api);
-					api.s3(this).then(function(s3) {
-						this.st.setS3(s3.data);
-					}, function(err) {
-						this.st.alert.error('Unable to fetch S3 information, attachments may be impacted.');
-					});
-				}
-			}, function(res) {
-				if (res.status === 401) {
-					st.removeToken();
-					this.st.alert.error('Token invalid, please login again.');
-					this.$route.router.go({name: 'login'});
-				}else{
-					this.st.alert.error('Service not available, please try again later.');
-					this.$route.router.go({name: 'login'});
-				}
-				this.st.loading.go(100);
-			});
-		}else{
-			this.st.blockLoadingOnce = false;
-		}
-	},
 	methods: {
 		doLogout: function() {
 			this.st.setAuthenticated(false);
 			this.st.blockLoadingOnce = false;
 			api.queue().disconnect();
 			this.st.removeToken();
-			this.$route.router.go({name: 'login'});
 			this.st.alert.success('Logout successfully!');
+			this.$route.router.go({name: 'login'});
 		}
 	}
 }

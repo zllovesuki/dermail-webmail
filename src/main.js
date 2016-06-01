@@ -13,12 +13,6 @@ var router = new VueRouter({
 	history: true
 })
 
-require('./lib/init.js')(st)
-require('./lib/registerIcons.js')(Vue)
-require('./lib/registerFilters.js')(Vue)
-require('./lib/registerComponents.js')(Vue)
-require('./lib/registerTransistions.js')(Vue, st)
-
 router.map({
 	'/': {
 		name: 'login',
@@ -62,13 +56,11 @@ router.map({
 	}
 })
 
-router.beforeEach(function (transition) {
-	if (!st.isAuthenticated() && transition.to.name !== 'login') {
-		transition.redirect({name: 'login'});
-	}else{
-		transition.next();
-	}
-})
+require('./lib/init.js')(api, st, router)
+require('./lib/registerIcons.js')(Vue)
+require('./lib/registerFilters.js')(Vue)
+require('./lib/registerComponents.js')(Vue)
+require('./lib/registerTransistions.js')(Vue, st)
 
 window.App = App;
 

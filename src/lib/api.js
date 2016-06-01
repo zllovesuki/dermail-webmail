@@ -65,10 +65,14 @@ module.exports = {
 	},
 
 	ping: function(ctx) {
-		return this.getWithHeader(ctx, PING_ENDPOINT);
+		return ctx.$http.get(PING_ENDPOINT, {}, {
+			headers: ctx.st.getHeader()
+		})
 	},
 	s3: function(ctx) {
-		return this.getWithHeader(ctx, S3_ENDPOINT);
+		return ctx.$http.get(S3_ENDPOINT, {}, {
+			headers: ctx.st.getHeader()
+		})
 	},
 	getAccounts: function(ctx) {
 		return this.getWithHeader(ctx, GETACCOUNTS_ENDPOINT);
