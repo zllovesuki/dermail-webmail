@@ -307,6 +307,8 @@ module.exports = {
 	},
 	watch: {
 		'$route.params': function(val, oldVal) {
+			this.ready = false;
+			this.st.mail = {};
 			this.downloadMail();
 		}
 	},
