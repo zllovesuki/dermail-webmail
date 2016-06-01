@@ -42,7 +42,8 @@ module.exports = {
 		this.st.loading.go(50);
 
 		api.grabDependencies(2, this)
-		.then(function() {
+		.then(function(res) {
+			if (typeof res === 'undefined') return;
 			that.st.setTitle(that.st.folder.displayName);
 			if (that.st._folders.length === 0) {
 				that.$dispatch('getFoldersInAccount', function() {
@@ -52,7 +53,6 @@ module.exports = {
 				that.loadMore();
 			}
 		})
-		.catch(function(e) {});
 	},
 	events: {
 		'reloadFolder': function(msg) {
@@ -78,18 +78,15 @@ module.exports = {
 			this.More();
 			api.getMailsInFolder(this, {
 				slice: this.slice
-			}).then(function(res) {
+			})
+			.then(function(res) {
+				if (typeof res === 'undefined') return;
 				this.st.mails = this.st.mails.concat(res.data);
 				if (this.st.mails.length < this.slice.perPage || res.data.length < this.slice.perPage) {
 					this.disableLoadMore = true;
 				}
-				this.st.loading.go(100);
-			}, function(res) {
-				if (res.data.hasOwnProperty('message')) {
-					this.st.alert.error(res.data.message);
-				}else{
-					this.st.alert.error(res.statusText);
-				}
+			})
+			.finally(function() {
 				this.st.loading.go(100);
 			});
 		}

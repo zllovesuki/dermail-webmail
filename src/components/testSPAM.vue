@@ -29,15 +29,11 @@ module.exports = {
 				messageId: this.messageId,
 				action: 'spamc'
 			};
-			api.updateMail(this, data).then(function(res) {
+			api.updateMail(this, data)
+			.then(function(res) {
+				if (typeof res === 'undefined') return;
 				this.st.alert.success('Job queued.');
-			}, function(res) {
-				if (res.data.hasOwnProperty('message')) {
-					this.st.alert.error(res.data.message);
-				}else{
-					this.st.alert.error(res.statusText);
-				}
-			});
+			})
 		}
 	}
 }

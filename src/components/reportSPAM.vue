@@ -46,16 +46,12 @@ module.exports = {
 				action: 'spam'
 			};
 			var currentFolder = this.folderId;
-			api.updateMail(this, data).then(function(res) {
+			api.updateMail(this, data)
+			.then(function(res) {
+				if (typeof res === 'undefined') return;
 				this.st.alert.success('I hate SPAM!');
 				this.houseKeeping(currentFolder);
-			}, function(res) {
-				if (res.data.hasOwnProperty('message')) {
-					this.st.alert.error(res.data.message);
-				}else{
-					this.st.alert.error(res.statusText);
-				}
-			});
+			})
 		},
 		notSPAM: function() {
 			var data = {
@@ -63,16 +59,12 @@ module.exports = {
 				messageId: this.messageId,
 				action: 'notspam'
 			};
-			api.updateMail(this, data).then(function(res) {
+			api.updateMail(this, data)
+			.then(function(res) {
+				if (typeof res === 'undefined') return;
 				this.st.alert.success('Got it.');
 				this.houseKeeping(res.data);
-			}, function(res) {
-				if (res.data.hasOwnProperty('message')) {
-					this.st.alert.error(res.data.message);
-				}else{
-					this.st.alert.error(res.statusText);
-				}
-			});
+			})
 		},
 		houseKeeping: function(folderId) {
 			var messageId = this.messageId

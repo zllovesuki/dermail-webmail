@@ -58,7 +58,9 @@ module.exports = {
 				accountId: accountId,
 				messageId: messageId,
 				action: newRead
-			}).then(function(res) {
+			})
+			.then(function(res) {
+				if (typeof res === 'undefined') return;
 
 				this.st.alert.success((newRead !== 'read' ? 'Unread' : 'Read') + ' : 👍');
 
@@ -66,13 +68,7 @@ module.exports = {
 				this.context.isRead = (newRead === 'read' ? true : false);
 
 				if (typeof this.$parent.flipMenuAndBody == 'function') this.$parent.flipMenuAndBody();
-			}, function(res) {
-				if (res.data.hasOwnProperty('message')) {
-					this.st.alert.error(res.data.message);
-				}else{
-					this.st.alert.error(res.statusText);
-				}
-			});
+			})
 		},
 		showMoveFolder: function(e) {
 			this.folderModal = true;
@@ -83,16 +79,12 @@ module.exports = {
 		doMoveToFolder: function(e) {
 
 			if (this.modal.oldFolder != this.modal.folderId) { // Not in this folder anymore
-				api.updateMail(this, this.modal).then(function(res) {
+				api.updateMail(this, this.modal)
+				.then(function(res) {
+					if (typeof res === 'undefined') return;
 					this.st.alert.success('Moved to a folder.');
 					this.houseKeeping(this.modal.folderId);
-				}, function(res) {
-					if (res.data.hasOwnProperty('message')) {
-						this.st.alert.error(res.data.message);
-					}else{
-						this.st.alert.error(res.statusText);
-					}
-				});
+				})
 			}
 			this.folderModal = false;
 		},
@@ -100,17 +92,13 @@ module.exports = {
 
 			this.modal.action = 'trash';
 
-			api.updateMail(this, this.modal).then(function(res) {
+			api.updateMail(this, this.modal)
+			.then(function(res) {
+				if (typeof res === 'undefined') return;
 				this.st.alert.success('Moved to Trash.');
 				this.modal.folderId = res.data; // see line 96 in showMoveFolder()
 				this.houseKeeping(res.data);
-			}, function(res) {
-				if (res.data.hasOwnProperty('message')) {
-					this.st.alert.error(res.data.message);
-				}else{
-					this.st.alert.error(res.statusText);
-				}
-			});
+			})
 		},
 		houseKeeping: function(folderId) {
 			var messageId = this.modal.messageId

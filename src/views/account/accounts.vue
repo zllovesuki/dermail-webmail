@@ -151,21 +151,18 @@ module.exports = {
 				action: 'updateAlias',
 				domainId: this.alias.selectedDomain,
 				alias: this.alias.byDomainId
-			}).then(function(res) {
+			})
+			.then(function(res) {
+				if (typeof res === 'undefined') return;
 				if (res.data.hasOwnProperty('message')) {
 					this.st.alert.success(res.data.message);
 				}
 				this.resetAliasState();
+			})
+			.finally(function() {
 				this.$dispatch('getAccounts', function() {
 					that.st.loading.go(100);
 				});
-			}, function(res) {
-				if (res.data.hasOwnProperty('message')) {
-					this.st.alert.error(res.data.message);
-				}else{
-					this.st.alert.error(res.statusText);
-				}
-				this.st.loading.go(100);
 			})
 		},
 		resetAliasState: function() {

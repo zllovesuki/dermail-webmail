@@ -144,7 +144,8 @@ module.exports = {
 				api.getAddress(this, {
 					accountId: this.$route.params.accountId,
 					email: tag.toLowerCase().trim()
-				}).then(function(res) {
+				})
+				.then(function(res) {
 					if (res.data.hasOwnProperty('friendlyName')) {
 						var address = {};
 						address.name = res.data.friendlyName;
@@ -154,13 +155,7 @@ module.exports = {
 							return index == self.indexOf(elem); // remove duplicate
 						}) // http://stackoverflow.com/questions/16747798/delete-duplicate-elements-from-an-array
 					}
-				}, function(res) {
-					if (res.data.hasOwnProperty('message')) {
-						this.st.alert.error(res.data.message);
-					}else{
-						this.st.alert.error(res.statusText);
-					}
-				})
+				});
 			}
 		},
 		removeRecipient: function(e) {
@@ -219,18 +214,15 @@ module.exports = {
 				this.st.compose.addHTML = null;
 			}
 
-			api.sendMail(this, this.compose).then(function(res) {
+			api.sendMail(this, this.compose)
+			.then(function(res) {
+				if (typeof res === 'undefined') return;
 				this.$route.router.go({ name: 'account', params: { accountId: this.$route.params.accountId } });
-				this.st.loading.go(100);
-			}, function(res) {
-				if (res.data.hasOwnProperty('message')) {
-					this.st.alert.error(res.data.message);
-				}else{
-					this.st.alert.error(res.statusText);
-				}
+			})
+			.finally(function() {
 				this.st.loading.go(100);
 				this.submitButtonDisabled = false;
-			});
+			})
 		},
 		resetCompose: function() {
 			this.compose = {
@@ -266,6 +258,7 @@ module.exports = {
 
 			api.UploadS3Stream(that, form)
 			.then(function(res) {
+				if (typeof res === 'undefined') return;
 				hash = res.data.checksum;
 				that.compose.attachments.push({
 					mutable: true,
@@ -273,14 +266,8 @@ module.exports = {
 					path: that.st.returnS3URL(hash, encodeURIComponent(filename))
 				});
 				that.st.alert.success('File uploaded to S3!');
-				that.st.loading.go(100);
-				that.attachDisabled = false;
-			}, function(res) {
-				if (res.data.hasOwnProperty('message')) {
-					that.st.alert.error(res.data.message);
-				}else{
-					that.st.alert.error(res.statusText);
-				}
+			})
+			.finally(function() {
 				that.st.loading.go(100);
 				that.attachDisabled = false;
 			})
@@ -321,10 +308,10 @@ module.exports = {
 		this.st.setTitle('Compose');
 
 		api.grabDependencies(1, this)
-		.then(function() {
+		.then(function(res) {
+			if (typeof res === 'undefined') return;
 			that.st.loading.go(100);
 		})
-		.catch(function(e) {});
 
 		if (this.st.accounts.length === 0) {
 			this.$dispatch('getAccounts');

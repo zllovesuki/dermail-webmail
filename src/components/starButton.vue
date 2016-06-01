@@ -38,17 +38,13 @@ module.exports = {
 				accountId: this.$route.params.accountId,
 				messageId: messageId,
 				action: newStar
-			}).then(function(res) {
+			})
+			.then(function(res) {
+				if (typeof res === 'undefined') return;
 				var star = (newStar === 'star' ? '&#9733;' : '&#9734;')
 				e.target.innerHTML = star;
 				this.st.alert.success(star + ' : 👍');
-			}, function(res) {
-				if (res.data.hasOwnProperty('message')) {
-					this.st.alert.error(res.data.message);
-				}else{
-					this.st.alert.error(res.statusText);
-				}
-			});
+			})
 		}
 	}
 }

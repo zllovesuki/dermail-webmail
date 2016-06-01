@@ -100,36 +100,30 @@ module.exports = {
 		'getFoldersInAccount': function(cb) {
 			var that = this;
 			this.st.loading.go(50);
-			api.getFoldersInAccount(this).then(function(res) {
+			api.getFoldersInAccount(this)
+			.then(function(res) {
+				if (typeof res === 'undefined') return;
 				this.st.putFoldersTree(this.listToTree(res.data, {
 					idKey: 'folderId',
 					parentKey: 'parent',
 					childrenKey: 'child'
 				}))
 				this.st.putFoldersFlat(res.data);
+			})
+			.finally(function() {
 				if (cb) cb();
-			}, function(res) {
-				if (res.data.hasOwnProperty('message')) {
-					this.st.alert.error(res.data.message);
-				}else{
-					this.st.alert.error(res.statusText);
-				}
-				if (cb) cb();
-			});
+			})
 		},
 		'getAccounts': function(cb) {
 			this.st.loading.go(50);
-			api.getAccounts(this).then(function(res) {
+			api.getAccounts(this)
+			.then(function(res) {
+				if (typeof res === 'undefined') return;
 				this.st.putAccounts(res.data);
+			})
+			.finally(function() {
 				if (cb) cb();
-			}, function(res) {
-				if (res.data.hasOwnProperty('message')) {
-					this.st.alert.error(res.data.message);
-				}else{
-					this.st.alert.error(res.statusText);
-				}
-				if (cb) cb();
-			});
+			})
 		}
 	}
 }

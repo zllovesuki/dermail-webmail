@@ -58,18 +58,16 @@ module.exports = {
 				accountId: this.$route.params.accountId,
 				filterId: this.filter.filterId,
 				op: 'delete'
-			}).then(function(res) {
+			})
+			.then(function(res) {
+				if (typeof res === 'undefined') return;
 				this.deleteModal = false;
 				this.st.alert.success('Filter deleted.');
 				api.grabFilters(this);
-			}, function(res) {
-				if (res.data.hasOwnProperty('message')) {
-					this.st.alert.error(res.data.message);
-					this.st.loading.go(100);
-				}else{
-					this.st.alert.error(res.statusText);
-				}
-			});
+			})
+			.finally(function() {
+				this.st.loading.go(100);
+			})
 		},
 		showDeleteFilter: function(e) {
 			this.deleteModal = true;

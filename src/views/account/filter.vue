@@ -138,19 +138,16 @@ module.exports = {
 			api.searchWithFilter(this, {
 				accountId: this.$route.params.accountId,
 				criteria: this.pre
-			}).then(function(res) {
+			})
+			.then(function(res) {
+				if (typeof res === 'undefined') return;
 				this.searchResults = res.data;
 				this.addModal = false;
 				this.resultModal = true;
+			})
+			.finally(function() {
 				this.st.loading.go(100);
-			}, function(res) {
-				if (res.data.hasOwnProperty('message')) {
-					this.st.alert.error(res.data.message);
-				}else{
-					this.st.alert.error(res.statusText);
-				}
-				this.st.loading.go(100);
-			});
+			})
 		},
 		goBackToCriteria: function() {
 			this.resultModal = false;
@@ -172,16 +169,13 @@ module.exports = {
 				criteria: this.pre,
 				action: this.post,
 				existing: this.existing
-			}).then(function(res) {
+			})
+			.then(function(res) {
+				if (typeof res === 'undefined') return;
 				this.actionModal = false;
-				api.grabFilters(this);
 				this.st.alert.success('Filter created.');
-			}, function(res) {
-				if (res.data.hasOwnProperty('message')) {
-					this.st.alert.error(res.data.message);
-					this.st.loading.go(100);
-				}
-			});
+				api.grabFilters(this);
+			})
 		}
 	},
 	created: function() {
@@ -192,12 +186,15 @@ module.exports = {
 		this.st.setTitle('Filter');
 
 		api.grabDependencies(1, this)
-		.then(function() {
+		.then(function(res) {
+			if (typeof res === 'undefined') return;
 			that.$dispatch('getFoldersInAccount', function() {
-				api.grabFilters(that);
+				api.grabFilters(that)
+				.then(function() {
+					that.st.loading.go(100);
+				})
 			});
 		})
-		.catch(function(e) {});
 
 	}
 }

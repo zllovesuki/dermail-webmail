@@ -44,15 +44,11 @@ module.exports = {
 			api.searchMailsInAccount(this, {
 				accountId: this.$route.params.accountId,
 				searchString: val
-			}).then(function(res) {
+			})
+			.then(function(res) {
+				if (typeof res === 'undefined') return;
 				this.search.results = res.data;
-			}, function(res) {
-				if (res.data.hasOwnProperty('message')) {
-					this.st.alert.error(res.data.message);
-				}else{
-					this.st.alert.error(res.statusText);
-				}
-			});
+			})
 		}
 	},
 	methods: {

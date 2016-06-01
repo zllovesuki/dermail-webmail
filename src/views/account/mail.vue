@@ -285,6 +285,7 @@ module.exports = {
 			this.st.loading.go(70);
 			api.grabDependencies(3, this)
 			.then(function(data) {
+				if (typeof data === 'undefined') return;
 				that.writeFrame();
 				that.st.loading.go(100);
 				that.ready = true;
@@ -294,20 +295,14 @@ module.exports = {
 						accountId: that.$route.params.accountId,
 						messageId: that.$route.params.messageId,
 						action: 'read'
-					}).then(function(res) {
+					})
+					.then(function(res) {
 						that.st.mail.isRead = true;
 						var element = document.getElementsByClassName('mail-marker')[0];
 						if (element) element.innerHTML = 'Mark Unread';
-					}, function(res) {
-						if (res.data.hasOwnProperty('message')) {
-							that.st.alert.error(res.data.message);
-						}else{
-							that.st.alert.error(res.statusText);
-						}
 					});
 				}
 			})
-			.catch(function(e) {});
 		}
 	},
 	watch: {

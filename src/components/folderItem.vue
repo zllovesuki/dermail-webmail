@@ -190,19 +190,13 @@ module.exports = {
 
 				if (resolved.buttonClicked !== 'ok') return;
 
-				api.updateFolder(that, that.modal).then(function(res) {
-					if (res.data.hasOwnProperty('message')) {
-						that.st.alert.success(res.data.message);
-					}
-					that.houseKeeping();
+				api.updateFolder(that, that.modal)
+				.then(function(res) {
+					if (typeof res === 'undefined') return;
+					that.st.alert.success('Action "truncateFolder" queued.');
 					that.truncateModal = false;
-				}, function(res) {
-					if (res.data.hasOwnProperty('message')) {
-						that.st.alert.error(res.data.message);
-					}else{
-						that.st.alert.error(res.statusText);
-					}
-				});
+					that.houseKeeping();
+				})
 			});
 		},
 		doDeleteFolder: function(e) {
@@ -218,51 +212,33 @@ module.exports = {
 
 				if (resolved.buttonClicked !== 'ok') return;
 
-				api.updateFolder(that, that.modal).then(function(res) {
-					if (res.data.hasOwnProperty('message')) {
-						that.st.alert.success(res.data.message);
-					}
-					that.houseKeeping();
+				api.updateFolder(that, that.modal)
+				.then(function(res) {
+					if (typeof res === 'undefined') return;
+					that.st.alert.success('Folder deleted.');
 					that.deleteModal = false;
-				}, function(res) {
-					if (res.data.hasOwnProperty('message')) {
-						that.st.alert.error(res.data.message);
-					}else{
-						that.st.alert.error(res.statusText);
-					}
-				});
+					that.houseKeeping();
+				})
 			});
 		},
 		doEditFolder: function(e) {
-			api.updateFolder(this, this.modal).then(function(res) {
-				if (res.data.hasOwnProperty('message')) {
-					this.st.alert.success(res.data.message);
-				}
-				this.houseKeeping();
+			api.updateFolder(this, this.modal)
+			.then(function(res) {
+				if (typeof res === 'undefined') return;
+				this.st.alert.success('Folder updated.');
 				this.editModal = false;
-			}, function(res) {
-				if (res.data.hasOwnProperty('message')) {
-					this.st.alert.error(res.data.message);
-				}else{
-					this.st.alert.error(res.statusText);
-				}
-			});
+				this.houseKeeping();
+			})
 		},
 		doAddFolder: function(e) {
 
-			api.updateFolder(this, this.modal).then(function(res) {
-				if (res.data.hasOwnProperty('message')) {
-					this.st.alert.success(res.data.message);
-				}
-				this.houseKeeping();
+			api.updateFolder(this, this.modal)
+			.then(function(res) {
+				if (typeof res === 'undefined') return;
+				this.st.alert.success('New folder created.');
 				this.addModal = false;
-			}, function(res) {
-				if (res.data.hasOwnProperty('message')) {
-					this.st.alert.error(res.data.message);
-				}else{
-					this.st.alert.error(res.statusText);
-				}
-			});
+				this.houseKeeping();
+			})
 		},
 		houseKeeping: function() {
 			var that = this;

@@ -34,113 +34,12 @@ module.exports = {
 		return API_ENDPOINT
 	},
 
-	ping: function(ct) {
-		return ct.$http.get(PING_ENDPOINT, {}, {
+	getWithHeader: function(ct, endpoint) {
+		return ct.$http.get(endpoint, {}, {
 			headers: ct.st.getHeader()
 		})
-	},
-	s3: function(ct) {
-		return ct.$http.get(S3_ENDPOINT, {}, {
-			headers: ct.st.getHeader()
-		})
-	},
-	getAccounts: function(ct) {
-		return ct.$http.get(GETACCOUNTS_ENDPOINT, {}, {
-			headers: ct.st.getHeader()
-		})
-	},
-	login: function(ct, data) {
-		return ct.$http.post(LOGIN_ENDPOINT, data);
-	},
-	getAccount: function(ct) {
-		return ct.$http.post(GETACCOUNT_ENDPOINT, ct.$route.params, {
-			headers: ct.st.getHeader()
-		})
-	},
-	getFoldersInAccount: function(ct) {
-		return ct.$http.post(GETFOLDERS_ENDPOINT, ct.$route.params, {
-			headers: ct.st.getHeader()
-		})
-	},
-	getFolder: function(ct) {
-		return ct.$http.post(GETFOLDER_ENDPOINT, ct.$route.params, {
-			headers: ct.st.getHeader()
-		})
-	},
-	getMailsInFolder: function(ct, additional) {
-		var data = Object.assign(ct.$route.params, additional)
-		return ct.$http.post(GETMAILSINFOLDER_ENDPOINT, data, {
-			headers: ct.st.getHeader()
-		})
-	},
-	getMail: function(ct) {
-		return ct.$http.post(GETMAIL_ENDPOINT, ct.$route.params, {
-			headers: ct.st.getHeader()
-		})
-	},
-	getAddress: function(ct, data) {
-		return ct.$http.post(GETADDRESS_ENDPOINT, data, {
-			headers: ct.st.getHeader()
-		})
-	},
-	getFilters: function(ct) {
-		return ct.$http.post(GETFILTERS_ENDPOINT, ct.$route.params, {
-			headers: ct.st.getHeader()
-		})
-	},
-	modifyFilter: function(ct, data) {
-		return ct.$http.post(MODIFYFILTER_ENDPOINT, data, {
-			headers: ct.st.getHeader()
-		})
-	},
-	searchWithFilter: function(ct, data) {
-		return ct.$http.post(SEARCHWITHFILTER_ENDPOINT, data, {
-			headers: ct.st.getHeader()
-		})
-	},
-	searchMailsInAccount: function(ct, data) {
-		return ct.$http.post(SEARCHMAILSINACCOUNT_ENDPOINT, data, {
-			headers: ct.st.getHeader()
-		})
-	},
-	updateMail: function(ct, data) {
-		return ct.$http.post(UPDATEMAIL_ENDPOINT, data, {
-			headers: ct.st.getHeader()
-		})
-	},
-	updateFolder: function(ct, data) {
-		return ct.$http.post(UPDATEFOLDER_ENDPOINT, data, {
-			headers: ct.st.getHeader()
-		})
-	},
-	updateDomain: function(ct, data) {
-		return ct.$http.post(UPDATEDOMAIN_ENDPOINT, data, {
-			headers: ct.st.getHeader()
-		})
-	},
-	sendMail: function(ct, data) {
-		return ct.$http.post(SENDMAIL_ENDPOINT, data, {
-			headers: ct.st.getHeader()
-		})
-	},
-	UploadS3Stream: function(ct, data) {
-		return ct.$http.post(UPLOADS3STREAM_ENDPOINT, data, {
-			headers: ct.st.getHeader()
-		})
-	},
-	pushNotification: function(ct, data) {
-		return ct.$http.post(PUSHSUB_ENDPOINT, data, {
-			headers: ct.st.getHeader()
-		})
-	},
-
-	queue: function() {
-		return queue;
-	},
-
-	grabFilters: function(ct) {
-		this.getFilters(ct).then(function(res) {
-			ct.st.putFilters(res.data);
+		.then(function(res) {
+			return res;
 		})
 		.catch(function(res) {
 			if (res.data.hasOwnProperty('message')) {
@@ -149,8 +48,93 @@ module.exports = {
 				ct.st.alert.error(res.statusText);
 			}
 		})
-		.finally(function() {
-			ct.st.loading.go(100);
+	},
+
+	postWithHeader: function(ct, endpoint, data) {
+		return ct.$http.post(endpoint, data, {
+			headers: ct.st.getHeader()
+		})
+		.then(function(res) {
+			return res;
+		})
+		.catch(function(res) {
+			if (res.data.hasOwnProperty('message')) {
+				ct.st.alert.error(res.data.message);
+			}else{
+				ct.st.alert.error(res.statusText);
+			}
+		})
+	},
+
+	ping: function(ct) {
+		return this.getWithHeader(ct, PING_ENDPOINT);
+	},
+	s3: function(ct) {
+		return this.getWithHeader(ct, S3_ENDPOINT);
+	},
+	getAccounts: function(ct) {
+		return this.getWithHeader(ct, GETACCOUNTS_ENDPOINT);
+	},
+	login: function(ct, data) {
+		return ct.$http.post(LOGIN_ENDPOINT, data);
+	},
+	getAccount: function(ct) {
+		return this.postWithHeader(ct, GETACCOUNT_ENDPOINT, ct.$route.params);
+	},
+	getFoldersInAccount: function(ct) {
+		return this.postWithHeader(ct, GETFOLDERS_ENDPOINT, ct.$route.params);
+	},
+	getFolder: function(ct) {
+		return this.postWithHeader(ct, GETFOLDER_ENDPOINT, ct.$route.params);
+	},
+	getMailsInFolder: function(ct, additional) {
+		var data = Object.assign(ct.$route.params, additional)
+		return this.postWithHeader(ct, GETMAILSINFOLDER_ENDPOINT, data);
+	},
+	getMail: function(ct) {
+		return this.postWithHeader(ct, GETMAIL_ENDPOINT, ct.$route.params);
+	},
+	getAddress: function(ct, data) {
+		return this.postWithHeader(ct, GETADDRESS_ENDPOINT, data);
+	},
+	getFilters: function(ct) {
+		return this.postWithHeader(ct, GETFILTERS_ENDPOINT, ct.$route.params);
+	},
+	modifyFilter: function(ct, data) {
+		return this.postWithHeader(ct, MODIFYFILTER_ENDPOINT, data);
+	},
+	searchWithFilter: function(ct, data) {
+		return this.postWithHeader(ct, SEARCHWITHFILTER_ENDPOINT, data);
+	},
+	searchMailsInAccount: function(ct, data) {
+		return this.postWithHeader(ct, SEARCHMAILSINACCOUNT_ENDPOINT, data);
+	},
+	updateMail: function(ct, data) {
+		return this.postWithHeader(ct, UPDATEMAIL_ENDPOINT, data);
+	},
+	updateFolder: function(ct, data) {
+		return this.postWithHeader(ct, UPDATEFOLDER_ENDPOINT, data);
+	},
+	updateDomain: function(ct, data) {
+		return this.postWithHeader(ct, UPDATEDOMAIN_ENDPOINT, data);
+	},
+	sendMail: function(ct, data) {
+		return this.postWithHeader(ct, SENDMAIL_ENDPOINT, data);
+	},
+	UploadS3Stream: function(ct, data) {
+		return this.postWithHeader(ct, UPLOADS3STREAM_ENDPOINT, data);
+	},
+	pushNotification: function(ct, data) {
+		return this.postWithHeader(ct, PUSHSUB_ENDPOINT, data);
+	},
+
+	queue: function() {
+		return queue;
+	},
+
+	grabFilters: function(ct) {
+		return this.getFilters(ct).then(function(res) {
+			ct.st.putFilters(res.data);
 		})
 	},
 
@@ -161,6 +145,7 @@ module.exports = {
 			Bluebird.method(function(ct) {
 				if (Object.keys(ct.st.account).length === 0 || priority === 1) {
 					return that.getAccount(ct).then(function(res) {
+						if (typeof res === 'undefined') return;
 						res.data.displayName = res.data['account'] + '@' + res.data['domain'];
 						ct.st.putAccount(res.data);
 						return res.data;
@@ -169,12 +154,14 @@ module.exports = {
 			}),
 			Bluebird.method(function(ct) {
 				return that.getFolder(ct).then(function(res) {
+					if (typeof res === 'undefined') return;
 					ct.st.putFolder(res.data);
 					return res.data;
 				});
 			}),
 			Bluebird.method(function(ct) {
 				return that.getMail(ct).then(function(res) {
+					if (typeof res === 'undefined') return;
 					ct.st.putMail(res.data);
 					return res.data;
 				});
@@ -192,14 +179,6 @@ module.exports = {
 		})
 		.then(function() {
 			return returnData;
-		})
-		.catch(function(e) {
-			if (e.data.hasOwnProperty('message')) {
-				ct.st.alert.error(e.data.message);
-			}else{
-				ct.st.alert.error(e.statusText);
-			}
-			throw e;
 		})
 	}),
 	inlineImage: function(src) {
