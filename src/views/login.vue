@@ -68,31 +68,29 @@ module.exports = {
 		doLogin: function(e) {
 			this.disableSubmitButton();
 			this.st.loading.go(30);
-			api.login(this, this.credentials). then(function(res) {
+			api.login(this, this.credentials)
+			.then(function(res) {
+				if (typeof res === 'undefined') return;
 				if (res.data.hasOwnProperty('token')) {
 					this.st.setToken(res.data.token);
 					this.st.setAuthenticated(true);
 					api.queue().connect(this, api);
 
-					api.s3(this).then(function(s3) {
+					api.s3(this)
+					.then(function(s3) {
 						this.st.setS3(s3.data);
-					}, function(err) {
-						this.st.alert.error('Unable to fetch S3 information, attachments may be impacted.');
+					//}, function(err) {
+					//	this.st.alert.error('Unable to fetch S3 information, attachments may be impacted.');
 					});
 
 					this.st.alert.success('Welcome back!');
 					this.$route.router.go({ name: 'accounts' })
 				};
-			},
-			function (res) {
+			})
+			.finally(function() {
 				this.st.loading.go(100);
-				if (res.data.hasOwnProperty('message')) {
-					this.st.alert.error(res.data.message);
-				}else{
-					this.st.alert.error(res.statusText);
-				}
 				this.enableSubmitButton();
-			});
+			})
 		},
 		resetForm: function() {
 			this.credentials = {

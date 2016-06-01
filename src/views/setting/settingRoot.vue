@@ -85,16 +85,14 @@ module.exports = {
 					api.pushNotification(that, {
 						action: 'subscribe',
 						payload: payload
-					}).then(function() {
-						that.disabled = false;
+					})
+					.then(function() {
 						that.canSubscribe = false;
 						that.canUnsubscribe = true;
 						that.st.alert.success('Subscribed!');
-						that.st.loading.go(100);
-					}, function(res) {
+					})
+					.finally(function() {
 						that.disabled = false;
-						console.log(res);
-						that.st.alert.error('API Error!');
 						that.st.loading.go(100);
 					})
 				})
@@ -120,18 +118,16 @@ module.exports = {
 						api.pushNotification(that, {
 							action: 'unsubscribe',
 							payload: payload
-						}).then(function() {
+						})
+						.then(function() {
 							return subscription.unsubscribe().then(function(successful) {
-								that.disabled = false;
 								that.canSubscribe = true;
 								that.canUnsubscribe = false;
 								that.st.alert.success('Unsubscribed!');
-								that.st.loading.go(100);
 							})
-						}, function(res) {
+						})
+						.finally(function() {
 							that.disabled = false;
-							console.log(res);
-							that.st.alert.error('API Error!');
 							that.st.loading.go(100);
 						})
 					}else{

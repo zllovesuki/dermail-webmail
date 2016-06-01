@@ -76,7 +76,17 @@ module.exports = {
 		return this.getWithHeader(ct, GETACCOUNTS_ENDPOINT);
 	},
 	login: function(ct, data) {
-		return ct.$http.post(LOGIN_ENDPOINT, data);
+		return ct.$http.post(LOGIN_ENDPOINT, data)
+		.then(function(res) {
+			return res;
+		})
+		.catch(function(res) {
+			if (res.data.hasOwnProperty('message')) {
+				ct.st.alert.error(res.data.message);
+			}else{
+				ct.st.alert.error(res.statusText);
+			}
+		})
 	},
 	getAccount: function(ct) {
 		return this.postWithHeader(ct, GETACCOUNT_ENDPOINT, ct.$route.params);
