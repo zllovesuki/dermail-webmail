@@ -128,7 +128,8 @@ module.exports = {
 					cc: [],
 					bcc: []
 				},
-				attachments: []
+				attachments: [],
+				references: []
 			},
 			submitButtonDisabled: false,
 			attachDisabled: false
@@ -239,7 +240,8 @@ module.exports = {
 					cc: [],
 					bcc: []
 				},
-				attachments: []
+				attachments: [],
+				references: []
 			}
 		},
 		handleUpload: function(event) {
@@ -333,8 +335,16 @@ module.exports = {
 			this.st.compose.addAttachments = [];
 		}
 
+		if (this.st.compose.references.length > 0) {
+			this.st.compose.references.forEach(function(attachment) {
+				that.compose.references.push(attachment);
+			})
+			this.st.compose.references = [];
+		}
+
 		if (this.st.compose.inReplyTo !== null) {
 			this.compose.inReplyTo = this.st.compose.inReplyTo;
+			this.st.compose.inReplyTo = null;
 		}
 
 	},

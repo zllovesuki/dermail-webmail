@@ -49,6 +49,7 @@ module.exports = {
 
 	compose: {
 		inReplyTo: null,
+		references: [],
 		markdown: '',
 		addSubject: {
 			type: '',

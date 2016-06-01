@@ -260,6 +260,10 @@ module.exports = {
 				dedup = dedup.slice(3)
 			}
 			this.st.compose.inReplyTo = this.st.mail._messageId;
+			if (typeof this.st.mail.references === 'object') {
+				this.st.compose.references = this.st.mail.references;
+			}
+			this.st.compose.references.push(this.st.compose.inReplyTo);
 			this.st.compose.addSubject = {
 				type: 'Re: ',
 				subject: dedup
