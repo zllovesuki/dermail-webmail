@@ -299,7 +299,7 @@ module.exports = {
 					.then(function(res) {
 						that.st.mail.isRead = true;
 						var element = document.getElementsByClassName('mail-marker')[0];
-						if (element) element.innerHTML = 'Mark Unread';
+						if (element) element.innerHTML = '> Unread';
 					});
 				}
 			})
