@@ -268,7 +268,13 @@ module.exports = {
 				type: 'Re: ',
 				subject: dedup
 			};
-			this.st.compose.addHTML = "<br /><small>Original Email:</small><hr /><br />" + this.st.mail.html;
+			var name = obj.friendlyName;
+			var email = obj.account + '@' + obj.domain;
+			this.st.compose.addHTML = '<div class="dermail_extra"><br>' +
+									'<div class="dermail_quote">On ' + this.$moment(this.st.mail.date).format("ddd, MMM D, YYYY [at] hh:mm a") +
+									', ' + name + ' &lt;<a href="' + email + '" target="_blank">' + email +
+									'</a>&gt; wrote: <br><blockquote class="dermail_quote" style="margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">' +
+									this.st.mail.html + '</blockquote></div></div>';
 			if (this.st.mail.attachments.length > 0) {
 				// Check if we have inline images, then we need to append them to reply
 				for (var i = 0; i < this.st.mail.attachments.length; i++) {
