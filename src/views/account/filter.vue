@@ -174,7 +174,12 @@ module.exports = {
 				if (typeof res === 'undefined') return;
 				this.actionModal = false;
 				this.st.alert.success('Filter created.');
-				api.grabFilters(this);
+			})
+			.finally(function() {
+				api.grabFilters(this)
+				.then(function() {
+					this.st.loading.go(100);
+				})
 			})
 		}
 	},
