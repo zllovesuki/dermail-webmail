@@ -141,7 +141,7 @@ module.exports = {
 		var returnData;
 		var listOfDependencies = [
 			Bluebird.method(function(ctx) {
-				if (Objectx.keys(ctx.st.account).length === 0 || priority === 1) {
+				if (Object.keys(ctx.st.account).length === 0 || priority === 1) {
 					return that.getAccount(ctx).then(function(res) {
 						if (typeof res === 'undefined') return;
 						res.data.displayName = res.data['account'] + '@' + res.data['domain'];
