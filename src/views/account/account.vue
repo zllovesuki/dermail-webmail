@@ -42,10 +42,13 @@ module.exports = {
 		}
 	},
 	created: function() {
+		this.st.folder = {};
+		this.st.folders = [];
+		this.st._folders = [];
+	},
+	compiled: function() {
 
 		var that = this;
-
-		this.st.folders = [];
 
 		this.st.loading.go(50);
 

@@ -25,7 +25,7 @@
 						{{ st.folder.displayName }}
 					</span>
 				</span>
-				<span v-if="isInFolder">
+				<span v-if="isInFolder && st.folder.displayName">
 					<chevron-right></chevron-right>
 					<span class="btn button-narrow mxn1" @click="flipStarOnly">
 						{{ st.starOnly === true ? '&#9733;': '&#9734;' }}

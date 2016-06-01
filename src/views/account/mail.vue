@@ -311,6 +311,9 @@ module.exports = {
 		}
 	},
 	created: function() {
+		this.st.mail = {};
+	},
+	compiled: function() {
 
 		var that = this;
 

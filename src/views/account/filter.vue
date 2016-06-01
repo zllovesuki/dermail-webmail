@@ -184,9 +184,11 @@ module.exports = {
 		}
 	},
 	created: function() {
+		this.st.filters = [];
+	},
+	compiled: function() {
 
 		var that = this;
-		this.st.filters = [];
 
 		this.st.setTitle('Filter');
 

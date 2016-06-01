@@ -173,6 +173,9 @@ module.exports = {
 		}
 	},
 	created: function() {
+		this.st.account = {};
+	},
+	compiled: function() {
 
 		this.st.loading.go(50);
 

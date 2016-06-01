@@ -305,18 +305,7 @@ module.exports = {
 
 		this.resetCompose();
 
-		var that = this;
 		this.st.setTitle('Compose');
-
-		api.grabDependencies(1, this)
-		.then(function(res) {
-			if (typeof res === 'undefined') return;
-			that.st.loading.go(100);
-		})
-
-		if (this.st.accounts.length === 0) {
-			this.$dispatch('getAccounts');
-		}
 
 		if (this.st.compose.addTo.length > 0) {
 			this.st.compose.addTo.forEach(function(tag) {
@@ -343,6 +332,18 @@ module.exports = {
 			this.compose.inReplyTo = this.st.compose.inReplyTo;
 		}
 
+	},
+	compiled: function() {
+		var that = this;
+		api.grabDependencies(1, this)
+		.then(function(res) {
+			if (typeof res === 'undefined') return;
+			that.st.loading.go(100);
+		})
+
+		if (this.st.accounts.length === 0) {
+			this.$dispatch('getAccounts');
+		}
 	}
 }
 </script>

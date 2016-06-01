@@ -35,9 +35,11 @@ module.exports = {
 		}
 	},
 	created: function() {
+		this.st.mails = [];
+	},
+	compiled: function() {
 
 		var that = this;
-		this.st.mails = [];
 
 		this.st.loading.go(50);
 
