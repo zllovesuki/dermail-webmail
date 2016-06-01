@@ -3,14 +3,14 @@
 		<div class="overflow-hidden bg-white border rounded mb2">
 			<div class="m0 p1">
 				<div class="clearfix">
-					<div class="left">
+					<div class="left ml2">
 						<address-button origin-text="From" :origin="accountForceToArray"></address-button>
 					</div>
 				</div>
 			</div>
 			<div class="m0 p1">
 				<div class="clearfix">
-					<span class="btn black h6 muted not-clickable inline">To: </span>
+					<span class="btn black h6 not-clickable inline">To: </span>
 					<template v-for="to in compose.recipients.to">
 						<a class="muted h6 ml1 bold btn {{ st.color }}" @click="removeRecipient" data-where="to" data-recipient="{{ to.address }}">
 							{{ to.name + ' <' + to.address + '>' }}
@@ -28,7 +28,7 @@
 			</div>
 			<div class="m0 p1" v-show="compose.showMore">
 				<div class="clearfix">
-					<span class="btn black h6 muted not-clickable inline">Cc: </span>
+					<span class="btn black h6 not-clickable inline">Cc: </span>
 					<template v-for="cc in compose.recipients.cc">
 						<a
 							class="muted h6 ml1 bold btn {{ st.color }}" @click="removeRecipient" data-where="cc" data-recipient="{{ cc.address }}" >
@@ -40,7 +40,7 @@
 			</div>
 			<div class="m0 p1" v-show="compose.showMore">
 				<div class="clearfix">
-					<span class="btn black h6 muted not-clickable inline">Bcc: </span>
+					<span class="btn black h6 not-clickable inline">Bcc: </span>
 					<template v-for="bcc in compose.recipients.bcc">
 						<a
 							class="muted h6 ml1 bold btn {{ st.color }}" @click="removeRecipient" data-where="bcc" data-recipient="{{ bcc.address }}">
