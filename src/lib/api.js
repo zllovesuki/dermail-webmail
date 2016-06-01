@@ -86,7 +86,7 @@ module.exports = {
 		return this.postWithHeader(ctx, GETFOLDER_ENDPOINT, ctx.$route.params);
 	},
 	getMailsInFolder: function(ctx, additional) {
-		var data = Objectx.assign(ctx.$route.params, additional)
+		var data = Object.assign(ctx.$route.params, additional)
 		return this.postWithHeader(ctx, GETMAILSINFOLDER_ENDPOINT, data);
 	},
 	getMail: function(ctx) {
