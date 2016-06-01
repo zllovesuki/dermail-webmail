@@ -170,7 +170,7 @@ module.exports = {
 			})
 		];
 
-		return Bluebird.mapSeries(listOfDependencies, function(data, index) {
+		return Bluebird.map(listOfDependencies, function(data, index) {
 			var eval = index + 1;
 			if (eval > priority) return;
 			return listOfDependencies[index](ctx).then(function(res) {
@@ -178,7 +178,7 @@ module.exports = {
 					returnData = res;
 				}
 			})
-		})
+		}, { concurrency: 3 })
 		.then(function() {
 			return returnData;
 		})
