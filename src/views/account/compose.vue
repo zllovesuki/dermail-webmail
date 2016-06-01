@@ -226,6 +226,7 @@ module.exports = {
 			})
 		},
 		resetCompose: function() {
+			this.st.compose.markdown = '';
 			this.compose = {
 				accountId: '',
 				showMore: false,
