@@ -154,9 +154,7 @@ module.exports = {
 			})
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
-				if (res.data.hasOwnProperty('message')) {
-					this.st.alert.success(res.data.message);
-				}
+				this.st.alert.success('Domain updated.');
 				this.resetAliasState();
 			})
 			.finally(function() {
