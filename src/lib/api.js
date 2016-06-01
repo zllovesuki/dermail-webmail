@@ -136,7 +136,7 @@ module.exports = {
 		})
 	},
 
-	grabDependencies: Bluebird.method(function(priority, ct) {
+	grabDependencies: Bluebird.method(function(priority, ctx) {
 		var that = this;
 		var returnData;
 		var listOfDependencies = [
