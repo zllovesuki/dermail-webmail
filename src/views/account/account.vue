@@ -58,7 +58,6 @@ module.exports = {
 				that.st.loading.go(100);
 			});
 		})
-		.catch(function(e) {});
 	}
 }
 </script>
