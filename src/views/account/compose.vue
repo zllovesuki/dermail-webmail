@@ -67,10 +67,10 @@
 		<div class="overflow-hidden bg-white border rounded mb2">
 			<div class="m0 p1">
 				<div class="clearfix">
-					<span class="btn black h5 muted not-clickable">Attachments: </span>
-					<span class="btn black h6 muted {{ st.color }}">
+					<span class="btn black h6 not-clickable">Attachments: </span>
+					<span class="btn black h5 muted {{ st.color }}">
 						<label for="attachment-select" style="cursor: pointer;" v-show="!attachDisabled">
-						(Attach a file)
+						(Click to attach a file)
 						</label>
 					</span>
 				</div>
