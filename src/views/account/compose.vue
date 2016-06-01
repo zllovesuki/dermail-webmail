@@ -303,6 +303,8 @@ module.exports = {
 	},
 	created: function() {
 
+		var that = this;
+
 		this.resetCompose();
 
 		this.st.setTitle('Compose');
