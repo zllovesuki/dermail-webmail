@@ -23,7 +23,7 @@
 			</div>
 			<div class="m0 p1">
 				<div class="clearfix" v-if="ready">
-					<div class="left ml1">
+					<div class="left ml2">
 						<address-button origin-text="From" :origin="st.mail.from"></address-button>
 					</div>
 					<div class="right mr1">
