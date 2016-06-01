@@ -146,6 +146,7 @@ module.exports = {
 					email: tag.toLowerCase().trim()
 				})
 				.then(function(res) {
+					if (typeof res === 'undefined') return;
 					if (res.data.hasOwnProperty('friendlyName')) {
 						var address = {};
 						address.name = res.data.friendlyName;
