@@ -112,7 +112,7 @@ module.exports = {
 				return this.alias.byDomainId.join("\n");
 			},
 			set: function(val) {
-				val = val.split("\n");
+				val = val.toLowerCase().split("\n");
 				val = val || [];
 				this.alias.byDomainId = val.filter(function(str) {
 					return /\S/.test(str) && /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/.test(str);
