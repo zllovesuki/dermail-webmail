@@ -92,7 +92,7 @@
 					<div class="left">
 						<form v-on:submit.prevent="sanityCheck">
 							<button class="h6 ml1 bold btn btn-primary" type="submit" :disabled.sync="submitButtonDisabled">
-								Send
+								{{ reply ? 'Reply' : 'Send' }}
 							</button>
 						</form>
 					</div>
@@ -116,6 +116,7 @@ module.exports = {
 	data: function() {
 		return {
 			st: st,
+			reply: false,
 			compose: {
 				accountId: '',
 				showMore: false,
@@ -311,6 +312,7 @@ module.exports = {
 		this.st.setTitle('Compose');
 
 		if (this.st.compose.addTo.length > 0) {
+			this.reply = true;
 			this.st.compose.addTo.forEach(function(tag) {
 				that.pushTags('to', tag.account + '@' + tag.domain);
 			})
