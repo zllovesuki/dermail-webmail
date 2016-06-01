@@ -34,117 +34,105 @@ module.exports = {
 		return API_ENDPOINT
 	},
 
-	getWithHeader: function(ct, endpoint) {
-		return ct.$http.get(endpoint, {}, {
-			headers: ct.st.getHeader()
-		})
+	http: function(ctx, action, endpoint, header, data) {
+		header = !!header ? {
+			headers: ctx.st.getHeader()
+		}: {};
+		data = data || {};
+		return ctx.$http[action](endpoint, data, header)
 		.then(function(res) {
 			return res;
 		})
 		.catch(function(res) {
 			if (res.data.hasOwnProperty('message')) {
-				ct.st.alert.error(res.data.message);
+				ctx.st.alert.error(res.data.message);
 			}else{
-				ct.st.alert.error(res.statusText);
+				ctx.st.alert.error(res.statusText);
 			}
 		})
 	},
 
-	postWithHeader: function(ct, endpoint, data) {
-		return ct.$http.post(endpoint, data, {
-			headers: ct.st.getHeader()
-		})
-		.then(function(res) {
-			return res;
-		})
-		.catch(function(res) {
-			if (res.data.hasOwnProperty('message')) {
-				ct.st.alert.error(res.data.message);
-			}else{
-				ct.st.alert.error(res.statusText);
-			}
-		})
+	getWithHeader: function(ctx, endpoint) {
+		return this.http(ctx, 'get', endpoint, true)
 	},
 
-	ping: function(ct) {
-		return this.getWithHeader(ct, PING_ENDPOINT);
+	postWithHeader: function(ctx, endpoint, data) {
+		return this.http(ctx, 'post', endpoint, true, data)
 	},
-	s3: function(ct) {
-		return this.getWithHeader(ct, S3_ENDPOINT);
+
+	postWithoutHeader: function(ctx, endpoint, data) {
+		return this.http(ctx, 'post', endpoint, false, data)
 	},
-	getAccounts: function(ct) {
-		return this.getWithHeader(ct, GETACCOUNTS_ENDPOINT);
+
+	ping: function(ctx) {
+		return this.getWithHeader(ctx, PING_ENDPOINT);
 	},
-	login: function(ct, data) {
-		return ct.$http.post(LOGIN_ENDPOINT, data)
-		.then(function(res) {
-			return res;
-		})
-		.catch(function(res) {
-			if (res.data.hasOwnProperty('message')) {
-				ct.st.alert.error(res.data.message);
-			}else{
-				ct.st.alert.error(res.statusText);
-			}
-		})
+	s3: function(ctx) {
+		return this.getWithHeader(ctx, S3_ENDPOINT);
 	},
-	getAccount: function(ct) {
-		return this.postWithHeader(ct, GETACCOUNT_ENDPOINT, ct.$route.params);
+	getAccounts: function(ctx) {
+		return this.getWithHeader(ctx, GETACCOUNTS_ENDPOINT);
 	},
-	getFoldersInAccount: function(ct) {
-		return this.postWithHeader(ct, GETFOLDERS_ENDPOINT, ct.$route.params);
+	login: function(ctx, data) {
+		return this.postWithoutHeader(ctx, LOGIN_ENDPOINT, data);
 	},
-	getFolder: function(ct) {
-		return this.postWithHeader(ct, GETFOLDER_ENDPOINT, ct.$route.params);
+	getAccount: function(ctx) {
+		return this.postWithHeader(ctx, GETACCOUNT_ENDPOINT, ctx.$route.params);
 	},
-	getMailsInFolder: function(ct, additional) {
-		var data = Object.assign(ct.$route.params, additional)
-		return this.postWithHeader(ct, GETMAILSINFOLDER_ENDPOINT, data);
+	getFoldersInAccount: function(ctx) {
+		return this.postWithHeader(ctx, GETFOLDERS_ENDPOINT, ctx.$route.params);
 	},
-	getMail: function(ct) {
-		return this.postWithHeader(ct, GETMAIL_ENDPOINT, ct.$route.params);
+	getFolder: function(ctx) {
+		return this.postWithHeader(ctx, GETFOLDER_ENDPOINT, ctx.$route.params);
 	},
-	getAddress: function(ct, data) {
-		return this.postWithHeader(ct, GETADDRESS_ENDPOINT, data);
+	getMailsInFolder: function(ctx, additional) {
+		var data = Objectx.assign(ctx.$route.params, additional)
+		return this.postWithHeader(ctx, GETMAILSINFOLDER_ENDPOINT, data);
 	},
-	getFilters: function(ct) {
-		return this.postWithHeader(ct, GETFILTERS_ENDPOINT, ct.$route.params);
+	getMail: function(ctx) {
+		return this.postWithHeader(ctx, GETMAIL_ENDPOINT, ctx.$route.params);
 	},
-	modifyFilter: function(ct, data) {
-		return this.postWithHeader(ct, MODIFYFILTER_ENDPOINT, data);
+	getAddress: function(ctx, data) {
+		return this.postWithHeader(ctx, GETADDRESS_ENDPOINT, data);
 	},
-	searchWithFilter: function(ct, data) {
-		return this.postWithHeader(ct, SEARCHWITHFILTER_ENDPOINT, data);
+	getFilters: function(ctx) {
+		return this.postWithHeader(ctx, GETFILTERS_ENDPOINT, ctx.$route.params);
 	},
-	searchMailsInAccount: function(ct, data) {
-		return this.postWithHeader(ct, SEARCHMAILSINACCOUNT_ENDPOINT, data);
+	modifyFilter: function(ctx, data) {
+		return this.postWithHeader(ctx, MODIFYFILTER_ENDPOINT, data);
 	},
-	updateMail: function(ct, data) {
-		return this.postWithHeader(ct, UPDATEMAIL_ENDPOINT, data);
+	searchWithFilter: function(ctx, data) {
+		return this.postWithHeader(ctx, SEARCHWITHFILTER_ENDPOINT, data);
 	},
-	updateFolder: function(ct, data) {
-		return this.postWithHeader(ct, UPDATEFOLDER_ENDPOINT, data);
+	searchMailsInAccount: function(ctx, data) {
+		return this.postWithHeader(ctx, SEARCHMAILSINACCOUNT_ENDPOINT, data);
 	},
-	updateDomain: function(ct, data) {
-		return this.postWithHeader(ct, UPDATEDOMAIN_ENDPOINT, data);
+	updateMail: function(ctx, data) {
+		return this.postWithHeader(ctx, UPDATEMAIL_ENDPOINT, data);
 	},
-	sendMail: function(ct, data) {
-		return this.postWithHeader(ct, SENDMAIL_ENDPOINT, data);
+	updateFolder: function(ctx, data) {
+		return this.postWithHeader(ctx, UPDATEFOLDER_ENDPOINT, data);
 	},
-	UploadS3Stream: function(ct, data) {
-		return this.postWithHeader(ct, UPLOADS3STREAM_ENDPOINT, data);
+	updateDomain: function(ctx, data) {
+		return this.postWithHeader(ctx, UPDATEDOMAIN_ENDPOINT, data);
 	},
-	pushNotification: function(ct, data) {
-		return this.postWithHeader(ct, PUSHSUB_ENDPOINT, data);
+	sendMail: function(ctx, data) {
+		return this.postWithHeader(ctx, SENDMAIL_ENDPOINT, data);
+	},
+	UploadS3Stream: function(ctx, data) {
+		return this.postWithHeader(ctx, UPLOADS3STREAM_ENDPOINT, data);
+	},
+	pushNotification: function(ctx, data) {
+		return this.postWithHeader(ctx, PUSHSUB_ENDPOINT, data);
 	},
 
 	queue: function() {
 		return queue;
 	},
 
-	grabFilters: function(ct) {
-		return this.getFilters(ct).then(function(res) {
-			ct.st.putFilters(res.data);
+	grabFilters: function(ctx) {
+		return this.getFilters(ctx).then(function(res) {
+			ctx.st.putFilters(res.data);
 		})
 	},
 
@@ -152,27 +140,27 @@ module.exports = {
 		var that = this;
 		var returnData;
 		var listOfDependencies = [
-			Bluebird.method(function(ct) {
-				if (Object.keys(ct.st.account).length === 0 || priority === 1) {
-					return that.getAccount(ct).then(function(res) {
+			Bluebird.method(function(ctx) {
+				if (Objectx.keys(ctx.st.account).length === 0 || priority === 1) {
+					return that.getAccount(ctx).then(function(res) {
 						if (typeof res === 'undefined') return;
 						res.data.displayName = res.data['account'] + '@' + res.data['domain'];
-						ct.st.putAccount(res.data);
+						ctx.st.putAccount(res.data);
 						return res.data;
 					});
 				}
 			}),
-			Bluebird.method(function(ct) {
-				return that.getFolder(ct).then(function(res) {
+			Bluebird.method(function(ctx) {
+				return that.getFolder(ctx).then(function(res) {
 					if (typeof res === 'undefined') return;
-					ct.st.putFolder(res.data);
+					ctx.st.putFolder(res.data);
 					return res.data;
 				});
 			}),
-			Bluebird.method(function(ct) {
-				return that.getMail(ct).then(function(res) {
+			Bluebird.method(function(ctx) {
+				return that.getMail(ctx).then(function(res) {
 					if (typeof res === 'undefined') return;
-					ct.st.putMail(res.data);
+					ctx.st.putMail(res.data);
 					return res.data;
 				});
 			})
@@ -181,7 +169,7 @@ module.exports = {
 		return Bluebird.mapSeries(listOfDependencies, function(data, index) {
 			var eval = index + 1;
 			if (eval > priority) return;
-			return listOfDependencies[index](ct).then(function(res) {
+			return listOfDependencies[index](ctx).then(function(res) {
 				if (priority === eval) {
 					returnData = res;
 				}
