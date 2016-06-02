@@ -213,7 +213,6 @@ module.exports = {
 				hrefs[i].onclick = function(e) {
 					e.preventDefault();
 					var href = e.target.href || e.target.parentElement.href;
-					href = that.replaceMap(href);
 					var href = api.safeLink(href);
 					that.st.alert
 					.okBtn("Yes")
