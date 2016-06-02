@@ -201,7 +201,6 @@ module.exports = {
 			}
 
 			if (this.compose.subject.trim().length === 0) {
-				var that = this;
 				this.st.alert
 				.okBtn("Yes")
 				.cancelBtn("No")
@@ -211,9 +210,9 @@ module.exports = {
 
 					if (resolved.buttonClicked !== 'ok') return;
 
-					that.sendMail();
+					this.sendMail();
 
-				});
+				}.bind(this))
 			}else{
 				this.sendMail();
 			}
@@ -254,14 +253,13 @@ module.exports = {
 			}
 		},
 		handleUpload: function(event) {
-			var file = event.target.files[0],
-				that = this;
+			var file = event.target.files[0];
 
 			if (!!!file) return;
 
-			that.attachDisabled = true;
+			this.attachDisabled = true;
 
-			that.st.loading.go(30);
+			this.st.loading.go(30);
 
 			var	form = new FormData(),
 				filename = file.name,
@@ -270,26 +268,25 @@ module.exports = {
 			form.append('attachment', file);
 			form.append('filename', filename);
 
-			api.UploadS3Stream(that, form)
+			api.UploadS3Stream(this, form)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
 				hash = res.data.checksum;
-				that.compose.attachments.push({
+				this.compose.attachments.push({
 					mutable: true,
 					filename: filename,
-					path: that.st.returnS3URL(hash, encodeURIComponent(filename))
+					path: this.st.returnS3URL(hash, encodeURIComponent(filename))
 				});
-				that.st.alert.success('File uploaded to S3!');
-			})
+				this.st.alert.success('File uploaded to S3!');
+			}.bind(this))
 			.finally(function() {
-				that.st.loading.go(100);
-				that.attachDisabled = false;
+				this.st.loading.go(100);
+				this.attachDisabled = false;
 			})
 		},
 		confirmDelete: function(attachment) {
-			var that = this;
 			if (!!!attachment.mutable) {
-				return that.st.alert.error('Cannot remove inline attachment.');
+				return this.st.alert.error('Cannot remove inline attachment.');
 			}
 			this.st.alert
 			.okBtn("Yes")
@@ -300,23 +297,21 @@ module.exports = {
 
 				if (resolved.buttonClicked !== 'ok') return;
 
-				that.compose.attachments.$remove(attachment);
-				that.st.alert.success('File detached!');
+				this.compose.attachments.$remove(attachment);
+				this.st.alert.success('File detached!');
 
-			});
+			}.bind(this))
 		}
 	},
 	watch: {
 		'st.compose.markdown': function(val, oldVal) {
-			var that = this;
 			marked(val, function(err, content) {
-				that.compose.html = content;
-			});
+				this.compose.html = content;
+			}.bind(this))
 		}
 	},
 	created: function() {
 
-		var that = this;
 
 		this.resetCompose();
 
@@ -324,8 +319,8 @@ module.exports = {
 
 		if (this.st.compose.addTo.length > 0) {
 			this.st.compose.addTo.forEach(function(tag) {
-				that.pushTags('to', tag.account + '@' + tag.domain);
-			})
+				this.pushTags('to', tag.account + '@' + tag.domain);
+			}.bind(this))
 			this.st.compose.addTo = [];
 		}
 
@@ -355,12 +350,11 @@ module.exports = {
 
 	},
 	compiled: function() {
-		var that = this;
 		api.grabDependencies(1, this)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
-			that.st.loading.go(100);
-		})
+			this.st.loading.go(100);
+		}.bind(this))
 
 		if (this.st.accounts.length === 0) {
 			this.$dispatch('getAccounts');

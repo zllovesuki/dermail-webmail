@@ -145,7 +145,6 @@ module.exports = {
 			this.alias.editModal = !this.alias.editModal;
 		},
 		editDomainAlias: function() {
-			var that = this;
 			this.st.loading.go(30);
 			api.updateDomain(this, {
 				action: 'updateAlias',
@@ -159,8 +158,8 @@ module.exports = {
 			})
 			.finally(function() {
 				this.$dispatch('getAccounts', function() {
-					that.st.loading.go(100);
-				});
+					this.st.loading.go(100);
+				}.bind(this))
 			})
 		},
 		resetAliasState: function() {
@@ -179,13 +178,11 @@ module.exports = {
 
 		this.st.loading.go(50);
 
-		var that = this;
-
 		this.st.setTitle('Accounts');
 
 		this.$dispatch('getAccounts', function() {
-			that.st.loading.go(100);
-		});
+			this.st.loading.go(100);
+		}.bind(this))
 
 	}
 }

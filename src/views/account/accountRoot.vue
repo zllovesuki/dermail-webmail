@@ -98,7 +98,6 @@ module.exports = {
 	},
 	events: {
 		'getFoldersInAccount': function(cb) {
-			var that = this;
 			this.st.loading.go(50);
 			api.getFoldersInAccount(this)
 			.then(function(res) {
@@ -109,7 +108,7 @@ module.exports = {
 					childrenKey: 'child'
 				}))
 				this.st.putFoldersFlat(res.data);
-			})
+			}.bind(this))
 			.finally(function() {
 				if (cb) cb();
 			})
@@ -120,7 +119,7 @@ module.exports = {
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
 				this.st.putAccounts(res.data);
-			})
+			}.bind(this))
 			.finally(function() {
 				if (cb) cb();
 			})

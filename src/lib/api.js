@@ -141,33 +141,32 @@ module.exports = {
 	},
 
 	grabDependencies: Promise.method(function(priority, ctx) {
-		var that = this;
 		var returnData;
 		var listOfDependencies = [
 			Promise.method(function(ctx) {
 				if (Object.keys(ctx.st.account).length === 0 || priority === 1) {
-					return that.getAccount(ctx).then(function(res) {
+					return this.getAccount(ctx).then(function(res) {
 						if (typeof res === 'undefined') return;
 						res.data.displayName = res.data['account'] + '@' + res.data['domain'];
 						ctx.st.putAccount(res.data);
 						return res.data;
 					});
 				}
-			}),
+			}.bind(this)),
 			Promise.method(function(ctx) {
-				return that.getFolder(ctx).then(function(res) {
+				return this.getFolder(ctx).then(function(res) {
 					if (typeof res === 'undefined') return;
 					ctx.st.putFolder(res.data);
 					return res.data;
 				});
-			}),
+			}.bind(this)),
 			Promise.method(function(ctx) {
-				return that.getMail(ctx).then(function(res) {
+				return this.getMail(ctx).then(function(res) {
 					if (typeof res === 'undefined') return;
 					ctx.st.putMail(res.data);
 					return res.data;
 				});
-			})
+			}.bind(this))
 		];
 
 		return Promise.map(listOfDependencies, function(data, index) {

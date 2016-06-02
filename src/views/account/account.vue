@@ -48,19 +48,17 @@ module.exports = {
 	},
 	compiled: function() {
 
-		var that = this;
-
 		this.st.loading.go(50);
 
 		this.st.setTitle('Folders');
 
 		api.grabDependencies(1, this)
 		.then(function(data) {
-			that.st.loading.go(70);
-			that.$dispatch('getFoldersInAccount', function() {
-				that.st.loading.go(100);
-			});
-		})
+			this.st.loading.go(70);
+			this.$dispatch('getFoldersInAccount', function() {
+				this.st.loading.go(100);
+			}.bind(this))
+		}.bind(this))
 	}
 }
 </script>

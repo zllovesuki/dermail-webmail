@@ -39,22 +39,20 @@ module.exports = {
 	},
 	compiled: function() {
 
-		var that = this;
-
 		this.st.loading.go(50);
 
 		api.grabDependencies(2, this)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
-			that.st.setTitle(that.st.folder.displayName);
-			if (that.st._folders.length === 0) {
-				that.$dispatch('getFoldersInAccount', function() {
-					that.loadMore();
-				});
+			this.st.setTitle(this.st.folder.displayName);
+			if (this.st._folders.length === 0) {
+				this.$dispatch('getFoldersInAccount', function() {
+					this.loadMore();
+				}.bind(this))
 			}else{
-				that.loadMore();
+				this.loadMore();
 			}
-		})
+		}.bind(this))
 	},
 	events: {
 		'reloadFolder': function(msg) {

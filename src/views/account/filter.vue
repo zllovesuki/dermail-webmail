@@ -127,10 +127,9 @@ module.exports = {
 	methods: {
 		doSearchWithFilter: function() {
 			var count = 0;
-			var that = this;
 			Object.keys(this.pre).forEach(function(key) {
-				if (!!that.pre[key]) count++;
-			})
+				if (!!this.pre[key]) count++;
+			}.bind(this))
 			if (count === 0) {
 				return this.st.alert.error('At least one criteria is required.');
 			}
@@ -188,20 +187,18 @@ module.exports = {
 	},
 	compiled: function() {
 
-		var that = this;
-
 		this.st.setTitle('Filter');
 
 		api.grabDependencies(1, this)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
-			that.$dispatch('getFoldersInAccount', function() {
-				api.grabFilters(that)
+			this.$dispatch('getFoldersInAccount', function() {
+				api.grabFilters(this)
 				.then(function() {
-					that.st.loading.go(100);
-				})
-			});
-		})
+					this.st.loading.go(100);
+				}.bind(this))
+			}.bind(this))
+		}.bind(this))
 
 	}
 }

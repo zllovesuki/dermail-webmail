@@ -73,96 +73,95 @@ module.exports = {
 			this.st.alert.success('Color scheme saved!');
 		},
 		subscribe: function(e) {
-			var that = this;
-			that.disabled = true;
+			this.disabled = true;
 			this.st.loading.go(30);
 			navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
-				that.st.loading.go(50);
+				this.st.loading.go(50);
 				serviceWorkerRegistration.pushManager.subscribe({userVisibleOnly: true})
 				.then(function(subscription) {
 					var payload = JSON.stringify(subscription);
-					that.st.loading.go(70);
-					api.pushNotification(that, {
+					this.st.loading.go(70);
+					api.pushNotification(this, {
 						action: 'subscribe',
 						payload: payload
 					})
 					.then(function() {
-						that.canSubscribe = false;
-						that.canUnsubscribe = true;
-						that.st.alert.success('Subscribed!');
+						this.canSubscribe = false;
+						this.canUnsubscribe = true;
+						this.st.alert.success('Subscribed!');
 					})
 					.finally(function() {
-						that.disabled = false;
-						that.st.loading.go(100);
-					})
-				})
+						this.disabled = false;
+						this.st.loading.go(100);
+					}.bind(this))
+				}.bind(this))
 				.catch(function(e) {
 					console.log(e);
-					that.disabled = false;
-					that.st.alert.error('Error!')
-					that.st.loading.go(100);
-				})
-			})
+					this.disabled = false;
+					this.st.alert.error('Error!')
+					this.st.loading.go(100);
+				}.bind(this))
+			}.bind(this))
 		},
 		unsubscribe: function(e) {
-			var that = this;
-			that.disabled = true;
+			this.disabled = true;
 			this.st.loading.go(30);
 			navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
-				that.st.loading.go(50);
+				this.st.loading.go(50);
 				serviceWorkerRegistration.pushManager.getSubscription()
 				.then(function(subscription) {
-					that.st.loading.go(70);
+					this.st.loading.go(70);
 					if (subscription) {
 						var payload = JSON.stringify(subscription);
-						api.pushNotification(that, {
+						api.pushNotification(this, {
 							action: 'unsubscribe',
 							payload: payload
 						})
 						.then(function() {
 							return subscription.unsubscribe().then(function(successful) {
-								that.canSubscribe = true;
-								that.canUnsubscribe = false;
-								that.st.alert.success('Unsubscribed!');
-							})
-						})
+								this.canSubscribe = true;
+								this.canUnsubscribe = false;
+								this.st.alert.success('Unsubscribed!');
+							}.bind(this))
+						}.bind(this))
 						.finally(function() {
-							that.disabled = false;
-							that.st.loading.go(100);
-						})
+							this.disabled = false;
+							this.st.loading.go(100);
+						}.bind(this))
 					}else{
-						that.disabled = false;
-						that.st.loading.go(100); // Oh well
+						this.disabled = false;
+						this.st.loading.go(100); // Oh well
 					}
-				})
-			})
+				}.bind(this))
+			}.bind(this))
 		},
 		test: function() {
-			var that = this;
 			this.st.loading.go(30);
 			navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
-				that.st.loading.go(50);
+				this.st.loading.go(50);
 				serviceWorkerRegistration.pushManager.getSubscription()
 				.then(function(subscription) {
-					that.st.loading.go(70);
+					this.st.loading.go(70);
 					if (subscription) {
 						var payload = JSON.stringify(subscription);
-						api.pushNotification(that, {
+						api.pushNotification(this, {
 							action: 'test',
 							payload: payload
-						}).then(function() {
-							that.st.alert.success('Test notification sent!');
-							that.st.loading.go(100);
-						}, function(res) {
-							that.st.alert.error('API Error!');
-							that.st.loading.go(100);
 						})
+						.then(function() {
+							this.st.alert.success('Test notification sent!');
+							this.st.loading.go(100);
+						}.bind(this))
+						.catch(function(res) {
+							this.st.alert.error('API Error!');
+							this.st.loading.go(100);
+						}.bind(this))
 					}else{
-						that.st.alert.error('Not subscribed.');
-						that.st.loading.go(100); // Oh well
+						this.st.alert.error('Not subscribed.');
+						this.st.loading.go(100); // Oh well
 					}
-				})
-			})
+				}.bind(this))
+			}.bind(this))
 		}
 	},
 	beforeCompile: function() {
@@ -170,24 +169,23 @@ module.exports = {
 	},
 	ready: function() {
 		this.st.loading.go(100);
-		var that = this;
 		if ('serviceWorker' in navigator) {
 			var sw = navigator.serviceWorker.register('/sw.js');
 			sw.then(function(registration) {
 				registration.pushManager.getSubscription()
 				.then(function(subscription) {
 					if (!subscription) {
-						that.canSubscribe = true;
+						this.canSubscribe = true;
 					}else{
-						that.canUnsubscribe = true;
+						this.canUnsubscribe = true;
 					}
-				})
+				}.bind(this))
 				return;
-			})
+			}.bind(this))
 			.catch(function(error) {
-				that.disabled = true;
-				that.st.alert.error(error);
-			});
+				this.disabled = true;
+				this.st.alert.error(error);
+			}.bind(this))
 		}
 	}
 }

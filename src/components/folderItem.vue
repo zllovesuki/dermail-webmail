@@ -178,9 +178,6 @@ module.exports = {
 			this.modal.action = 'addFolder';
 		},
 		doTruncateFolder: function(e) {
-
-			var that = this;
-
 			this.st.alert
 			.okBtn("Yes")
 			.cancelBtn("No")
@@ -190,19 +187,16 @@ module.exports = {
 
 				if (resolved.buttonClicked !== 'ok') return;
 
-				api.updateFolder(that, that.modal)
+				api.updateFolder(this, this.modal)
 				.then(function(res) {
 					if (typeof res === 'undefined') return;
-					that.st.alert.success('Action "truncateFolder" queued.');
-					that.truncateModal = false;
-					that.houseKeeping();
-				})
-			});
+					this.st.alert.success('Action "truncateFolder" queued.');
+					this.truncateModal = false;
+					this.houseKeeping();
+				}.bind(this))
+			}.bind(this))
 		},
 		doDeleteFolder: function(e) {
-
-			var that = this;
-
 			this.st.alert
 			.okBtn("Yes")
 			.cancelBtn("No")
@@ -212,14 +206,14 @@ module.exports = {
 
 				if (resolved.buttonClicked !== 'ok') return;
 
-				api.updateFolder(that, that.modal)
+				api.updateFolder(this, this.modal)
 				.then(function(res) {
 					if (typeof res === 'undefined') return;
-					that.st.alert.success('Folder deleted.');
-					that.deleteModal = false;
-					that.houseKeeping();
-				})
-			});
+					this.st.alert.success('Folder deleted.');
+					this.deleteModal = false;
+					this.houseKeeping();
+				}.bind(this))
+			}.bind(this))
 		},
 		doEditFolder: function(e) {
 			api.updateFolder(this, this.modal)
@@ -241,10 +235,9 @@ module.exports = {
 			})
 		},
 		houseKeeping: function() {
-			var that = this;
 			this.$dispatch('getFoldersInAccount', function() {
-				that.st.loading.go(100);
-			});
+				this.st.loading.go(100);
+			}.bind(this))
 		}
 	}
 }

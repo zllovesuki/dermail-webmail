@@ -149,10 +149,9 @@ module.exports = {
 			return inThis.replace(new RegExp(replaceThis.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|<>\-\&])/g,"\\$&"),"g"), withThis);
 		}, // https://github.com/leecrossley/replaceall/blob/master/replaceall.js
 		replaceMap: function(src) {
-			var that = this;
 			this.encodingMap.forEach(function(single) {
-				src = that.replaceall(single.from, single.to, src);
-			});
+				src = this.replaceall(single.from, single.to, src);
+			}.bind(this));
 			return src;
 		},
 		HTMLInNewWindow: function(e) {
@@ -170,11 +169,10 @@ module.exports = {
 			return style;
 		},
 		safeImage: function(html) {
-			var that = this;
 			return new Promise(function(resolve) {
 
 				if (html.indexOf('http://fonts.googleapis.com') !== -1) {
-					html = that.replaceall('http://fonts.googleapis.com', 'https://fonts.googleapis.com', html);
+					html = this.replaceall('http://fonts.googleapis.com', 'https://fonts.googleapis.com', html);
 				}
 
 				var imgTags = html.match(/<img\s[^>]*?src\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/gi);
@@ -182,50 +180,48 @@ module.exports = {
 					imgTags.forEach(function(img) {
 						var src = img.match(/<img\s[^>]*?src\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/i)[1];
 						if (src.substring(0, 3) === 'cid') {
-							html = that.replaceall(img, that.replaceall(src, api.inlineImage(src), img), html);
+							html = this.replaceall(img, this.replaceall(src, api.inlineImage(src), img), html);
 						}else{
 							var before = src;
-							var after = that.replaceMap(before);
-							html = that.replaceall(img, that.replaceall(before, api.safeImage(after), img), html);
+							var after = this.replaceMap(before);
+							html = this.replaceall(img, this.replaceall(before, api.safeImage(after), img), html);
 						}
-					})
+					}.bind(this))
 				}
 				var bgTags = html.match(/background\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/gi);
 				if (bgTags) {
 					bgTags.forEach(function(img) {
 						var src = img.match(/background\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/i)[1];
 						var before = src;
-						var after = that.replaceMap(before);
-						html = that.replaceall(img, that.replaceall(before, api.safeImage(after), img), html);
-					})
+						var after = this.replaceMap(before);
+						html = this.replaceall(img, this.replaceall(before, api.safeImage(after), img), html);
+					}.bind(this))
 				}
 				var cssURL = html.match(/(?:\(['|"]?)(.*?)(?:['|"]?\))/gi);
 				if (cssURL) {
 					cssURL.forEach(function(img) {
 						var src = img.match(/(?:\(['|"]?)(.*?)(?:['|"]?\))/i)[1];
-						html = that.replaceall('url(' + src, 'url(' + api.safeImage(src), html);
-						html = that.replaceall('url(\'' + src + '\'', 'url(' + api.safeImage(src), html);
-						html = that.replaceall('url("' + src + '"', 'url(' + api.safeImage(src), html);
-					})
+						html = this.replaceall('url(' + src, 'url(' + api.safeImage(src), html);
+						html = this.replaceall('url(\'' + src + '\'', 'url(' + api.safeImage(src), html);
+						html = this.replaceall('url("' + src + '"', 'url(' + api.safeImage(src), html);
+					}.bind(this))
 				}
 
 				return resolve(html);
-			})
+			}.bind(this))
 		},
 		safeLink: function(element) {
-			var that = this;
 			var a = element.getElementsByTagName('a');
 			var area = element.getElementsByTagName('area'); // DSW emails fix
 			var hrefs = [];
 			this.appendAll(hrefs, a);
 			this.appendAll(hrefs, area);
-			var that = this;
 			for (var i = 0; i < hrefs.length; i++) {
 				hrefs[i].onclick = function(e) {
 					e.preventDefault();
 					var href = e.target.href || e.target.parentElement.href;
 					var href = api.safeLink(href);
-					that.st.alert
+					this.st.alert
 					.okBtn("Yes")
 					.cancelBtn("No")
 					.confirm('Are you sure to leave?')
@@ -236,7 +232,7 @@ module.exports = {
 
 						return window.open(href);
 					});
-				}
+				}.bind(this)
 			}
 		},
 		appendAll: function(dest, src) {
@@ -251,15 +247,14 @@ module.exports = {
 			if (this.containsStrangeTags) {
 				var frame = document.getElementById('iframe-body');
 				var iframe = frame.contentWindow.document;
-				var that = this;
 				iframe.head.appendChild(this.createNormalized());
 				this.safeImage(this.st.mail.html).then(function(html) {
 					iframe.body.innerHTML = html;
 					setTimeout(function() {
 						frame.style.height = (iframe.body.scrollHeight) + 'px';
 					}, 500);
-					that.safeLink(iframe);
-				})
+					this.safeLink(iframe);
+				}.bind(this))
 			}else{
 				this.$nextTick(function() {
 					var body = document.getElementById('html-body');
@@ -336,28 +331,27 @@ module.exports = {
 			return this.$route.router.go({ name: 'compose', params: { accountId: this.$route.params.accountId } })
 		},
 		downloadMail: function() {
-			var that = this;
 			this.st.loading.go(70);
 			api.grabDependencies(3, this)
 			.then(function(data) {
 				if (typeof data === 'undefined') return;
-				that.writeFrame();
-				that.st.loading.go(100);
-				that.ready = true;
+				this.writeFrame();
+				this.st.loading.go(100);
+				this.ready = true;
 
 				if (typeof data.isRead == 'undefined' || data.isRead === false) {
-					api.updateMail(that, {
-						accountId: that.$route.params.accountId,
-						messageId: that.$route.params.messageId,
+					api.updateMail(this, {
+						accountId: this.$route.params.accountId,
+						messageId: this.$route.params.messageId,
 						action: 'read'
 					})
 					.then(function(res) {
-						that.st.mail.isRead = true;
+						this.st.mail.isRead = true;
 						var element = document.getElementsByClassName('mail-marker')[0];
 						if (element) element.innerHTML = '> Unread';
 					});
 				}
-			})
+			}.bind(this))
 		}
 	},
 	watch: {
@@ -372,16 +366,14 @@ module.exports = {
 	},
 	compiled: function() {
 
-		var that = this;
-
 		this.st.setTitle('Mail');
 
 		this.st.loading.go(50);
 
 		if (this.st._folders.length === 0) {
 			this.$dispatch('getFoldersInAccount', function() {
-				that.downloadMail();
-			});
+				this.downloadMail();
+			}.bind(this))
 		}else{
 			this.downloadMail();
 		}
