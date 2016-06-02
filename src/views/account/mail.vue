@@ -108,6 +108,10 @@ module.exports = {
 				{
 					from: '&#58;',
 					to: ':'
+				},
+				{
+					from: '&#x2F;',
+					to: '/'
 				}
 			]
 		}
@@ -140,10 +144,15 @@ module.exports = {
 		}
 	},
 	methods: {
+		replaceall: function(replaceThis, withThis, inThis) {
+			withThis = withThis.replace(/\$/g,"$$$$");
+			return inThis.replace(new RegExp(replaceThis.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|<>\-\&])/g,"\\$&"),"g"), withThis);
+		}, // https://github.com/leecrossley/replaceall/blob/master/replaceall.js
 		replaceMap: function(src) {
+			var that = this;
 			this.encodingMap.forEach(function(single) {
-				src = src.replace(new RegExp('[' + single.from + ']', 'g'), single.to);
-			})
+				src = that.replaceall(single.from, single.to, src);
+			});
 			return src;
 		},
 		HTMLInNewWindow: function(e) {
@@ -165,7 +174,7 @@ module.exports = {
 			return new Promise(function(resolve) {
 
 				if (html.indexOf('http://fonts.googleapis.com') !== -1) {
-					html = html.replace('http://fonts.googleapis.com', 'https://fonts.googleapis.com');
+					html = that.replaceall('http://fonts.googleapis.com', 'https://fonts.googleapis.com', html);
 				}
 
 				var imgTags = html.match(/<img\s[^>]*?src\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/gi);
@@ -173,10 +182,11 @@ module.exports = {
 					imgTags.forEach(function(img) {
 						var src = img.match(/<img\s[^>]*?src\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/i)[1];
 						if (src.substring(0, 3) === 'cid') {
-							html = html.replace(img, img.replace(src, api.inlineImage(src)));
+							html = that.replaceall(img, that.replaceall(src, api.inlineImage(src), img), html);
 						}else{
-							src = that.replaceMap(src);
-							html = html.replace(img, img.replace(src, api.safeImage(src)));
+							var before = src;
+							var after = that.replaceMap(before);
+							html = that.replaceall(img, that.replaceall(before, api.safeImage(after), img), html);
 						}
 					})
 				}
@@ -184,17 +194,18 @@ module.exports = {
 				if (bgTags) {
 					bgTags.forEach(function(img) {
 						var src = img.match(/background\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/i)[1];
-						src = that.replaceMap(src);
-						html = html.replace(img, img.replace(src, api.safeImage(src)));
+						var before = src;
+						var after = that.replaceMap(before);
+						html = that.replaceall(img, that.replaceall(before, api.safeImage(after), img), html);
 					})
 				}
 				var cssURL = html.match(/(?:\(['|"]?)(.*?)(?:['|"]?\))/gi);
 				if (cssURL) {
 					cssURL.forEach(function(img) {
 						var src = img.match(/(?:\(['|"]?)(.*?)(?:['|"]?\))/i)[1];
-						html = html.replace('url(' + src, 'url(' + api.safeImage(src));
-						html = html.replace('url(\'' + src + '\'', 'url(' + api.safeImage(src));
-						html = html.replace('url("' + src + '"', 'url(' + api.safeImage(src));
+						html = that.replaceall('url(' + src, 'url(' + api.safeImage(src), html);
+						html = that.replaceall('url(\'' + src + '\'', 'url(' + api.safeImage(src), html);
+						html = that.replaceall('url("' + src + '"', 'url(' + api.safeImage(src), html);
 					})
 				}
 
