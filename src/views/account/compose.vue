@@ -96,6 +96,11 @@
 							</button>
 						</form>
 					</div>
+					<div class="right">
+						<button class="h6 ml1 bold btn btn-primary bg-red" type="button" @click="microsoftSucks">
+							Attentions
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -301,6 +306,13 @@ module.exports = {
 				this.st.alert.success('File detached!');
 
 			}.bind(this))
+		},
+		microsoftSucks: function(e) {
+			this.st.alert.alert("Microsoft's emails services (Live.com, Outlook, etc)" +
+			" are known to give postmaster headaches (see <a href='" +
+			"http://serverfault.com/questions/323747/hotmail-sender-id-always-fails-with-temperror-regardless-of-spf' " +
+			"target='_blank'>here</a>). If you suspect that your are experiencing delivery problems, " +
+			"please contact Microsoft to resolve the issue.");
 		}
 	},
 	watch: {
