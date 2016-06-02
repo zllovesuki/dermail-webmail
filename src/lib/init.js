@@ -33,10 +33,10 @@ module.exports = function(api, st, router) {
 				if (res && res.data && res.data.message === 'Token invalid.') {
 					st.removeToken();
 					st.alert.error('Token invalid, please login again.');
+					transition.redirect({name: 'login'});
 				}else{
 					st.alert.error('Service not available, please try again later.');
 				}
-				transition.redirect({name: 'login'});
 				st.loading.go(100);
 			})
 		}else if (transition.to.name !== 'login') {

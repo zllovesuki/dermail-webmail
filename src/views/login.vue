@@ -89,7 +89,6 @@ module.exports = {
 				};
 			})
 			.finally(function() {
-				this.st.loading.go(100);
 				this.enableSubmitButton();
 			})
 		},
