@@ -103,7 +103,13 @@ module.exports = {
 			st: st,
 			helpModal: false,
 			normalized: 'html{font-family:sans-serif}body{margin:0}article,aside,details,figcaption,figure,footer,header,hgroup,main,menu,nav,section,summary{display:block}audio,canvas,progress,video{display:inline-block;vertical-align:baseline}audio:not([controls]){display:none;height:0}[hidden],template{display:none}a{background-color:transparent}a:active,a:hover{outline:0}abbr[title]{border-bottom:1px dotted}b,strong{font-weight:700}dfn{font-style:italic}h1{font-size:2em;margin:.67em 0}mark{background:#ff0;color:#000}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sup{top:-.5em}sub{bottom:-.25em}img{border:0}svg:not(:root){overflow:hidden}figure{margin:1em 40px}hr{box-sizing:content-box;height:0}pre{overflow:auto}code,kbd,pre,samp{font-family:monospace,monospace;font-size:1em}button,input,optgroup,select,textarea{color:inherit;font:inherit;margin:0}button{overflow:visible}button,select{text-transform:none}button,html input[type="button"],/* 1 */input[type="reset"],input[type="submit"]{cursor:pointer}button[disabled],html input[disabled]{cursor:default}button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}input{line-height:normal}input[type="checkbox"],input[type="radio"]{box-sizing:border-box;padding:0}input[type="number"]::-webkit-inner-spin-button,input[type="number"]::-webkit-outer-spin-button{height:auto}input[type="search"]{box-sizing:content-box}fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}legend{border:0;padding:0}textarea{overflow:auto}optgroup{font-weight:700}table{border-collapse:collapse;border-spacing:0}td,th{padding:0}',
-			ready: false
+			ready: false,
+			encodingMap: [
+				{
+					from: '&#58;',
+					to: ':'
+				}
+			]
 		}
 	},
 	computed: {
@@ -134,6 +140,12 @@ module.exports = {
 		}
 	},
 	methods: {
+		replaceMap: function(src) {
+			this.encodingMap.forEach(function(single) {
+				src = src.replace(new RegExp('[' + single.from + ']', 'g'), single.to);
+			})
+			return src;
+		},
 		HTMLInNewWindow: function(e) {
 			var w = window.open();
 			w.document.body.innerHTML = this.st.mail.html;
@@ -149,6 +161,7 @@ module.exports = {
 			return style;
 		},
 		safeImage: function(html) {
+			var that = this;
 			return new Promise(function(resolve) {
 
 				if (html.indexOf('http://fonts.googleapis.com') !== -1) {
@@ -162,6 +175,7 @@ module.exports = {
 						if (src.substring(0, 3) === 'cid') {
 							html = html.replace(img, img.replace(src, api.inlineImage(src)));
 						}else{
+							src = that.replaceMap(src);
 							html = html.replace(img, img.replace(src, api.safeImage(src)));
 						}
 					})
@@ -170,6 +184,7 @@ module.exports = {
 				if (bgTags) {
 					bgTags.forEach(function(img) {
 						var src = img.match(/background\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/i)[1];
+						src = that.replaceMap(src);
 						html = html.replace(img, img.replace(src, api.safeImage(src)));
 					})
 				}
@@ -187,6 +202,7 @@ module.exports = {
 			})
 		},
 		safeLink: function(element) {
+			var that = this;
 			var a = element.getElementsByTagName('a');
 			var area = element.getElementsByTagName('area'); // DSW emails fix
 			var hrefs = [];
@@ -197,6 +213,7 @@ module.exports = {
 				hrefs[i].onclick = function(e) {
 					e.preventDefault();
 					var href = e.target.href || e.target.parentElement.href;
+					href = that.replaceMap(href);
 					var href = api.safeLink(href);
 					that.st.alert
 					.okBtn("Yes")
