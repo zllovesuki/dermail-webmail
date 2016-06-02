@@ -82,7 +82,7 @@
 					<textarea class="block field col-12 mb1" style="resize: none; line-height: 1em; min-height: 6em;" v-model="aliasList"></textarea>
 					<hr />
 					<span class="block mb1">Make sure that you <i>didn't</i> remove an alias by accident.</span>
-					<button type="submit" class="btn btn-primary">Modify</button>
+					<button type="submit" class="btn btn-primary" :disabled="alias.modifyButtonDisabled">Modify</button>
 					<button type="button" class="btn btn-primary black bg-gray ml1" @click="toggleViewAndModify">Go back</button>
 				</form>
 			</span>
@@ -99,6 +99,7 @@ module.exports = {
 		return {
 			st: st,
 			alias: {
+				modifyButtonDisabled: false,
 				selectDomainModal: false,
 				selectedDomain: null,
 				editModal: false,
@@ -146,6 +147,7 @@ module.exports = {
 		},
 		editDomainAlias: function() {
 			this.st.loading.go(30);
+			this.alias.modifyButtonDisabled = true;
 			api.updateDomain(this, {
 				action: 'updateAlias',
 				domainId: this.alias.selectedDomain,
@@ -160,10 +162,12 @@ module.exports = {
 				this.$dispatch('getAccounts', function() {
 					this.st.loading.go(100);
 				}.bind(this))
+				this.alias.modifyButtonDisabled = false;
 			})
 		},
 		resetAliasState: function() {
 			this.alias = {
+				modifyButtonDisabled: false,
 				selectDomainModal: false,
 				selectedDomain: null,
 				editModal: false,
