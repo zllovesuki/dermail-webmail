@@ -49,7 +49,7 @@
 			</div>
 			<div class="m0 p1 border-top">
 				<div class="clearfix" v-if="ready">
-					<div class="left">
+					<div class="left" v-if="st.hideInMoveOptions.indexOf(st.folder.displayName.toLowerCase()) === -1">
 						<a class="muted h6 btn {{ st.color }}" @click="reply">
 							Reply
 						</a>
