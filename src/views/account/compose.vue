@@ -92,7 +92,7 @@
 					<div class="left">
 						<form v-on:submit.prevent="sanityCheck">
 							<button class="h6 ml1 bold btn btn-primary" type="submit" :disabled.sync="submitButtonDisabled">
-								{{ reply ? 'Reply' : 'Send' }}
+								{{ type }}
 							</button>
 						</form>
 					</div>
@@ -116,9 +116,9 @@ module.exports = {
 	data: function() {
 		return {
 			st: st,
-			reply: false,
 			compose: {
 				accountId: '',
+				type: 'new',
 				showMore: false,
 				subject: '',
 				toBox: '',
@@ -128,6 +128,7 @@ module.exports = {
 					cc: [],
 					bcc: []
 				},
+				inReplyTo: null,
 				attachments: [],
 				references: []
 			},
@@ -138,6 +139,16 @@ module.exports = {
 	computed: {
 		accountForceToArray: function() {
 			return [this.st.account];
+		},
+		type: function() {
+			switch (this.compose.type) {
+				case 'reply':
+				return 'Reply';
+				break;
+				default:
+				return 'Send';
+				break;
+			}
 		}
 	},
 	methods: {
@@ -212,11 +223,6 @@ module.exports = {
 			this.submitButtonDisabled = true;
 			this.compose.accountId = this.$route.params.accountId;
 
-			if (this.st.compose.addHTML !== null) {
-				this.compose.addHTML = this.st.compose.addHTML;
-				this.st.compose.addHTML = null;
-			}
-
 			api.sendMail(this, this.compose)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
@@ -231,6 +237,7 @@ module.exports = {
 			this.st.compose.markdown = '';
 			this.compose = {
 				accountId: '',
+				type: 'new',
 				showMore: false,
 				subject: '',
 				toBox: '',
@@ -240,6 +247,7 @@ module.exports = {
 					cc: [],
 					bcc: []
 				},
+				inReplyTo: null,
 				attachments: [],
 				references: []
 			}
@@ -314,7 +322,7 @@ module.exports = {
 		this.st.setTitle('Compose');
 
 		if (this.st.compose.addTo.length > 0) {
-			this.reply = true;
+			this.compose.type = 'reply';
 			this.st.compose.addTo.forEach(function(tag) {
 				that.pushTags('to', tag.account + '@' + tag.domain);
 			})
@@ -329,16 +337,12 @@ module.exports = {
 		}
 
 		if (this.st.compose.addAttachments.length > 0) {
-			this.st.compose.addAttachments.forEach(function(attachment) {
-				that.compose.attachments.push(attachment);
-			})
+			this.compose.attachments = this.st.compose.addAttachments;
 			this.st.compose.addAttachments = [];
 		}
 
 		if (this.st.compose.references.length > 0) {
-			this.st.compose.references.forEach(function(attachment) {
-				that.compose.references.push(attachment);
-			})
+			this.compose.references = this.st.compose.references;
 			this.st.compose.references = [];
 		}
 

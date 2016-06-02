@@ -55,7 +55,6 @@ module.exports = {
 			type: '',
 			subject: null
 		},
-		addHTML: null,
 		addTo: [],
 		addAttachments: []
 	},

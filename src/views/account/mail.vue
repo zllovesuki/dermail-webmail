@@ -259,22 +259,15 @@ module.exports = {
 			while (dedup.toLowerCase().trimLeft().indexOf('re:') === 0) {
 				dedup = dedup.slice(3)
 			}
+			if (typeof this.st.mail._messageId === 'undefined') this.st.mail._messageId = this.st.mail.messageId;
 			this.st.compose.inReplyTo = this.st.mail._messageId;
 			if (typeof this.st.mail.references === 'object') {
 				this.st.compose.references = this.st.mail.references;
 			}
-			this.st.compose.references.push(this.st.compose.inReplyTo);
 			this.st.compose.addSubject = {
 				type: 'Re: ',
 				subject: dedup
 			};
-			var name = obj.friendlyName;
-			var email = obj.account + '@' + obj.domain;
-			this.st.compose.addHTML = '<div class="dermail_extra"><br>' +
-									'<div class="dermail_quote">On ' + this.$moment(this.st.mail.date).format("ddd, MMM D, YYYY [at] hh:mm a") +
-									', ' + name + ' &lt;<a href="mailto:' + email + '" target="_blank">' + email +
-									'</a>&gt; wrote: <br><blockquote class="dermail_quote" style="margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">' +
-									this.st.mail.html + '</blockquote></div></div>';
 			if (this.st.mail.attachments.length > 0) {
 				// Check if we have inline images, then we need to append them to reply
 				for (var i = 0; i < this.st.mail.attachments.length; i++) {
