@@ -48,6 +48,7 @@ module.exports = {
 	],
 
 	compose: {
+		type: 'new',
 		inReplyTo: null,
 		references: [],
 		markdown: '',

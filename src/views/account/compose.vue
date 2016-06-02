@@ -322,7 +322,6 @@ module.exports = {
 		this.st.setTitle('Compose');
 
 		if (this.st.compose.addTo.length > 0) {
-			this.compose.type = 'reply';
 			this.st.compose.addTo.forEach(function(tag) {
 				that.pushTags('to', tag.account + '@' + tag.domain);
 			})
@@ -350,6 +349,9 @@ module.exports = {
 			this.compose.inReplyTo = this.st.compose.inReplyTo;
 			this.st.compose.inReplyTo = null;
 		}
+
+		this.compose.type = this.st.compose.type;
+		this.st.compose.type = 'new';
 
 	},
 	compiled: function() {

@@ -53,7 +53,7 @@
 						<a class="muted h6 btn {{ st.color }}" @click="reply">
 							Reply
 						</a>
-						<a class="muted h6 btn {{ st.color }}">
+						<a class="muted h6 btn {{ st.color }}" @click="forward">
 							Forward
 						</a>
 					</div>
@@ -268,6 +268,7 @@ module.exports = {
 				type: 'Re: ',
 				subject: dedup
 			};
+			this.st.compose.type = 'reply';
 			if (this.st.mail.attachments.length > 0) {
 				// Check if we have inline images, then we need to append them to reply
 				for (var i = 0; i < this.st.mail.attachments.length; i++) {
@@ -279,6 +280,30 @@ module.exports = {
 							path: api.inlineImage('cid:' + this.st.mail.attachments[i].contentId)
 						});
 					}
+				}
+			}
+			return this.$route.router.go({ name: 'compose', params: { accountId: this.$route.params.accountId } })
+		},
+		forward: function() {
+			if (typeof this.st.mail._messageId === 'undefined') this.st.mail._messageId = this.st.mail.messageId;
+			this.st.compose.inReplyTo = this.st.mail._messageId;
+			if (typeof this.st.mail.references === 'object') {
+				this.st.compose.references = this.st.mail.references;
+			}
+			this.st.compose.addSubject = {
+				type: 'Fwd: ',
+				subject: this.st.mail.subject
+			};
+			this.st.compose.type = 'forward';
+			if (this.st.mail.attachments.length > 0) {
+				// Check if we have inline images, then we need to append them to reply
+				for (var i = 0; i < this.st.mail.attachments.length; i++) {
+					this.st.compose.addAttachments.push({
+						mutable: false,
+						filename: this.st.mail.attachments[i].generatedFileName,
+						cid: this.st.mail.attachments[i].contentId,
+						path: api.inlineImage('cid:' + this.st.mail.attachments[i].contentId)
+					});
 				}
 			}
 			return this.$route.router.go({ name: 'compose', params: { accountId: this.$route.params.accountId } })
