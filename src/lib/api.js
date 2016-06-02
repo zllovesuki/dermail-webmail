@@ -140,11 +140,11 @@ module.exports = {
 		})
 	},
 
-	grabDependencies: Bluebird.method(function(priority, ctx) {
+	grabDependencies: Promise.method(function(priority, ctx) {
 		var that = this;
 		var returnData;
 		var listOfDependencies = [
-			Bluebird.method(function(ctx) {
+			Promise.method(function(ctx) {
 				if (Object.keys(ctx.st.account).length === 0 || priority === 1) {
 					return that.getAccount(ctx).then(function(res) {
 						if (typeof res === 'undefined') return;
@@ -154,14 +154,14 @@ module.exports = {
 					});
 				}
 			}),
-			Bluebird.method(function(ctx) {
+			Promise.method(function(ctx) {
 				return that.getFolder(ctx).then(function(res) {
 					if (typeof res === 'undefined') return;
 					ctx.st.putFolder(res.data);
 					return res.data;
 				});
 			}),
-			Bluebird.method(function(ctx) {
+			Promise.method(function(ctx) {
 				return that.getMail(ctx).then(function(res) {
 					if (typeof res === 'undefined') return;
 					ctx.st.putMail(res.data);
@@ -170,7 +170,7 @@ module.exports = {
 			})
 		];
 
-		return Bluebird.map(listOfDependencies, function(data, index) {
+		return Promise.map(listOfDependencies, function(data, index) {
 			var eval = index + 1;
 			if (eval > priority) return;
 			return listOfDependencies[index](ctx).then(function(res) {

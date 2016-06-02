@@ -149,7 +149,7 @@ module.exports = {
 			return style;
 		},
 		safeImage: function(html) {
-			return new Bluebird(function(resolve) {
+			return new Promise(function(resolve) {
 
 				if (html.indexOf('http://fonts.googleapis.com') !== -1) {
 					html = html.replace('http://fonts.googleapis.com', 'https://fonts.googleapis.com');
