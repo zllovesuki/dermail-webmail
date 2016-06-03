@@ -239,7 +239,6 @@ module.exports = {
 		},
 		resetCompose: function() {
 			this.st.compose.markdown = '';
-			this.st.compose.type = 'new';
 			this.compose = {
 				accountId: '',
 				type: 'new',
@@ -324,7 +323,6 @@ module.exports = {
 	},
 	created: function() {
 
-
 		this.resetCompose();
 
 		this.st.setTitle('Compose');
@@ -359,6 +357,7 @@ module.exports = {
 		}
 
 		this.compose.type = this.st.compose.type;
+		this.st.compose.type = 'new';
 
 	},
 	compiled: function() {
