@@ -150,6 +150,9 @@ module.exports = {
 				case 'reply':
 				return 'Reply';
 				break;
+				case 'forward':
+				return 'Forward';
+				break;
 				default:
 				return 'Send';
 				break;
