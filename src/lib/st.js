@@ -3,6 +3,8 @@ var alertify = require('alertify.js'),
 
 module.exports = {
 
+	storage: null,
+
 	colors: ['aqua', 'blue', 'black', 'navy', 'teal', 'green', 'olive', 'lime', 'orange', 'red', 'fuchsia', 'purple', 'maroon'],
 
 	authenticated: false,

@@ -94,9 +94,13 @@
 							<button class="h6 ml1 bold btn btn-primary" type="submit" :disabled.sync="submitButtonDisabled">
 								{{ type }}
 							</button>
+							<span class="btn h6 muted not-clickable">{{ autoSaveText }}</span>
 						</form>
 					</div>
 					<div class="right">
+						<button class="h6 ml1 bold btn btn-primary bg-red muted" type="button" @click="loadAutoSave">
+							Load Auto Save
+						</button>
 						<button class="h6 ml1 bold btn btn-primary bg-red" type="button" @click="microsoftSucks">
 							Attentions
 						</button>
@@ -121,6 +125,8 @@ module.exports = {
 	data: function() {
 		return {
 			st: st,
+			autoSaveText: null,
+			blockAutoSave: true,
 			compose: {
 				accountId: '',
 				type: 'new',
@@ -233,6 +239,7 @@ module.exports = {
 			api.sendMail(this, this.compose)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
+				this.clearAutoSave();
 				this.$route.router.go({ name: 'account', params: { accountId: this.$route.params.accountId } });
 			})
 			.finally(function() {
@@ -315,12 +322,45 @@ module.exports = {
 			"http://serverfault.com/questions/323747/hotmail-sender-id-always-fails-with-temperror-regardless-of-spf' " +
 			"target='_blank'>here</a>). If you suspect that your are experiencing delivery problems, " +
 			"please contact Microsoft to resolve the issue.");
+		},
+		clearAutoSave: function() {
+			return this.st.storage.removeItem('compose-' + this.$route.params.accountId).then(function() {
+				return this.st.storage.removeItem('md-' + this.$route.params.accountId)
+			}.bind(this))
+		},
+		loadAutoSave: function() {
+			this.blockAutoSave = true;
+			return this.st.storage.getItem('md-' + this.$route.params.accountId)
+			.then(function(markdown) {
+				if (markdown === null) return;
+				this.st.compose.markdown = markdown;
+			}.bind(this))
+			.then(function() {
+				return this.st.storage.getItem('compose-' + this.$route.params.accountId)
+			}.bind(this))
+			.then(function(compose) {
+				if (compose === null) return;
+				this.autoSaveText = 'Loaded from auto save';
+				this.compose = compose;
+			}.bind(this))
+			.then(function() {
+				this.blockAutoSave = false;
+			}.bind(this))
 		}
 	},
 	watch: {
 		'st.compose.markdown': function(val, oldVal) {
 			marked(val, function(err, content) {
 				this.compose.html = content;
+			}.bind(this))
+			if (this.blockAutoSave) return;
+			this.autoSaveText = 'Saving...';
+			this.st.storage.setItem('md-' + this.$route.params.accountId, this.st.compose.markdown)
+			.then(function() {
+				return this.st.storage.setItem('compose-'+ this.$route.params.accountId, this.compose)
+			}.bind(this))
+			.then(function() {
+				this.autoSaveText = 'Last saved on ' + this.$moment(new Date()).format('hh:mm:ss a');
 			}.bind(this))
 		}
 	},
@@ -373,6 +413,11 @@ module.exports = {
 		if (this.st.accounts.length === 0) {
 			this.$dispatch('getAccounts');
 		}
+	},
+	ready: function() {
+		this.$nextTick(function() {
+			this.blockAutoSave = false;
+		})
 	}
 }
 </script>

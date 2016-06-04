@@ -10,6 +10,16 @@ module.exports = function(api, st, router) {
 
 	st.color = color; // set color scheme
 
+	st.storage = require('localforage');
+
+	st.storage.config({
+		driver: st.storage.INDEXEDDB,
+		name: 'dermail',
+		version: 1.0,
+		storeName: 'keyvaluepairs',
+		description: 'Storage in the browser'
+	});
+
 	router.beforeEach(function (transition) {
 		if (st.isAuthenticated()) {
 			return transition.next();
