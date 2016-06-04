@@ -98,7 +98,7 @@
 						</form>
 					</div>
 					<div class="right">
-						<button class="h6 ml1 bold btn btn-primary bg-red muted" type="button" @click="loadAutoSave">
+						<button class="h6 ml1 bold btn btn-primary bg-red muted" type="button" @click="loadAutoSave" v-if="loadAutoSaveEnabled">
 							Load Auto Save
 						</button>
 						<button class="h6 ml1 bold btn btn-primary bg-red" type="button" @click="microsoftSucks">
@@ -144,7 +144,8 @@ module.exports = {
 				references: []
 			},
 			submitButtonDisabled: false,
-			attachDisabled: false
+			attachDisabled: false,
+			loadAutoSaveEnabled: false
 		}
 	},
 	computed: {
@@ -401,6 +402,12 @@ module.exports = {
 
 		this.compose.type = this.st.compose.type;
 		this.st.compose.type = 'new';
+
+		this.st.storage.getItem('compose-' + this.$route.params.accountId)
+		.then(function(compose) {
+			if (compose === null) return;
+			this.loadAutoSaveEnabled = true;
+		}.bind(this))
 
 	},
 	compiled: function() {
