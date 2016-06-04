@@ -12,7 +12,7 @@
 				<div class="clearfix">
 					<span class="btn black h6 not-clickable inline">To: </span>
 					<template v-for="to in compose.recipients.to">
-						<a class="muted h6 ml1 bold btn {{ st.color }}" @click="removeRecipient" data-where="to" data-recipient="{{ to.address }}">
+						<a class="muted h6 mxn1 bold btn {{ st.color }}" @click="removeRecipient" data-where="to" data-recipient="{{ to.address }}">
 							{{ to.name + ' <' + to.address + '>' }}
 						</a>
 					</template>
@@ -31,7 +31,7 @@
 					<span class="btn black h6 not-clickable inline">Cc: </span>
 					<template v-for="cc in compose.recipients.cc">
 						<a
-							class="muted h6 ml1 bold btn {{ st.color }}" @click="removeRecipient" data-where="cc" data-recipient="{{ cc.address }}" >
+							class="muted h6 mxn1 bold btn {{ st.color }}" @click="removeRecipient" data-where="cc" data-recipient="{{ cc.address }}" >
 							{{ cc.name + ' <' + cc.address + '>' }}
 						</a>
 					</template>
@@ -43,7 +43,7 @@
 					<span class="btn black h6 not-clickable inline">Bcc: </span>
 					<template v-for="bcc in compose.recipients.bcc">
 						<a
-							class="muted h6 ml1 bold btn {{ st.color }}" @click="removeRecipient" data-where="bcc" data-recipient="{{ bcc.address }}">
+							class="muted h6 mxn1 bold btn {{ st.color }}" @click="removeRecipient" data-where="bcc" data-recipient="{{ bcc.address }}">
 							{{ bcc.name + ' <' + bcc.address + '>' }}
 						</a>
 					</template>
