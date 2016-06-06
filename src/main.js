@@ -25,6 +25,10 @@ router.map({
 				name: 'accounts',
 				component: require('./views/account/accounts.vue')
 			},
+			'/security': {
+				name: 'security',
+				component: require('./views/account/security.vue')
+			},
 			'/:accountId': {
 				name: 'account',
 				component: require('./views/account/account.vue'),
