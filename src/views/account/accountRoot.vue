@@ -3,6 +3,11 @@
 		<div class="ml1 mt1 mb1">
 			<span class="btn button-narrow mxn2 muted" v-link="{ name: 'accounts' }">#</span>
 			<chevron-right></chevron-right>
+			<span v-if="isInSecurity">
+				<span class="btn button-narrow mxn1" v-link="{ name: 'security' }">
+					Security
+				</span>
+			</span>
 			<span v-if="$route.params.accountId">
 				<span class="btn button-narrow mxn1" v-link="{ name: 'account', params: { accountId: $route.params.accountId } }">
 					{{ st.account.displayName }}
@@ -58,6 +63,9 @@ module.exports = {
 		},
 		isInFolder: function() {
 			return this.$route.name === 'folder'
+		},
+		isInSecurity: function() {
+			return this.$route.name === 'security'
 		}
 	},
 	methods: {

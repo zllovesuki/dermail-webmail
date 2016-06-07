@@ -4,6 +4,7 @@ var API_ROOT = config.apiEndpoint;
 var API_ENDPOINT = API_ROOT + VERSION;
 var LOGIN_ENDPOINT = API_ENDPOINT + '/login'
 var PING_ENDPOINT = API_ENDPOINT + '/read/ping'
+var GETSECURITY_ENDPOINT = API_ENDPOINT + '/read/security'
 var S3_ENDPOINT = API_ENDPOINT + '/read/s3'
 var GETACCOUNTS_ENDPOINT = API_ENDPOINT + '/read/getAccounts'
 var GETACCOUNT_ENDPOINT = API_ENDPOINT + '/read/getAccount'
@@ -73,6 +74,9 @@ module.exports = {
 		return ctx.$http.get(S3_ENDPOINT, {}, {
 			headers: ctx.st.getHeader()
 		})
+	},
+	getSecurity: function(ctx) {
+		return this.getWithHeader(ctx, GETSECURITY_ENDPOINT);
 	},
 	getAccounts: function(ctx) {
 		return this.getWithHeader(ctx, GETACCOUNTS_ENDPOINT);
