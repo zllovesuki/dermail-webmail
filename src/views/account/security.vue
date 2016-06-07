@@ -89,7 +89,7 @@
 				</div>
 				<hr />
 				<span class="mt1 btn green btn-outline h5" @click="verifyDKIM">Verify DKIM</span>
-				<span class="ml1 mt1 btn red btn-outline h5">Disable DKIM</span>
+				<span class="ml1 mt1 btn red btn-outline h5" @click="confirmDisableDKIM">Disable DKIM</span>
 			</span>
 		</modal>
 	</div>
@@ -153,6 +153,7 @@ module.exports = {
 				if (typeof res === 'undefined') return;
 				this.enableDKIMModal = false;
 				this.setupDKIMModal = true;
+				this.st.alert.success('keyPair generated.');
 			})
 			.finally(function() {
 				this.st.loading.go(100);
@@ -169,10 +170,37 @@ module.exports = {
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
 				this.setupDKIMModal = false;
+				this.st.alert.success('DKIM is setup correctly.');
 			})
 			.finally(function() {
 				this.st.loading.go(100);
 			})
+		},
+		confirmDisableDKIM: function() {
+			this.st.alert
+			.okBtn("Yes")
+			.cancelBtn("No")
+			.confirm('<span class="block h5">Are you sure that you want to disable DKIM for this domain? The keypair will be REMOVED, and your outbound emails will NOT be signed.</span>')
+			.then(function(resolved) {
+				resolved.event.preventDefault();
+
+				if (resolved.buttonClicked !== 'ok') return;
+
+				api.updateDomain(this, {
+					action: 'deleteKeyPair',
+					domainId: this.domainId
+				})
+				.then(function(res) {
+					if (typeof res === 'undefined') return;
+					this.setupDKIMModal = false;
+					this.st.alert.success('keyPair deleted.');
+				})
+				.finally(function() {
+					this.st.loading.go(100);
+					this.fetchSecurity();
+				})
+
+			}.bind(this))
 		}
 	},
 	ready: function() {
