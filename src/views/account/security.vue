@@ -14,10 +14,10 @@
 				</div>
 				<div class="m0 p2 border-top">
 					<div class="clearfix">
-						<button type="submit" class="h6 btn btn-outline {{ st.color }} ml1 mb1" @click="spfSetupModal = true">
+						<button type="button" class="h6 btn btn-outline {{ st.color }} ml1 mb1" @click="spfSetupModal = true">
 							How to setup?
 						</button>
-						<button type="submit" class="h6 btn btn-outline {{ st.color }} ml1 mb1" @click="spfCIDModal = true">
+						<button type="button" class="h6 btn btn-outline {{ st.color }} ml1 mb1" @click="spfCIDModal = true">
 							Can I disable it?
 						</button>
 					</div>
@@ -52,6 +52,31 @@
 								</tr>
 							</template>
 						</table>
+					</div>
+				</div>
+			</div>
+			<div class="overflow-hidden bg-white rounded mb2">
+				<div class="m0 p1">
+					<div class="clearfix">
+						<span class="btn black h5">Domain-based Message Authentication, Reporting and Conformance (DMARC): </span>
+					</div>
+					<div class="clearfix">
+						<span class="ml1 btn black h6 muted not-clickable">
+							DMARC is a proposed standard that allows email senders and receivers to cooperate in sharing information about the email they send to each other. This information helps senders improve the mail authentication infrastructure so that all their mail can be authenticated. It also gives the legitimate owner of an Internet domain a way to request that illegitimate messages – spoofed spam, phishing – be put directly in the spam folder or rejected outright.
+						</span>
+					</div>
+				</div>
+				<div class="m0 p2 border-top">
+					<div class="clearfix">
+						<button type="button" class="h6 btn btn-outline red ml1 mb1" @click="dmarcAttentionModal = true">
+							Attentions
+						</button>
+						<button type="button" class="h6 btn btn-outline {{ st.color }} ml1 mb1" @click="dmarcSetupModal = true">
+							How to setup?
+						</button>
+						<button type="button" class="h6 btn btn-outline {{ st.color }} ml1 mb1" @click="dmarcCIDModal = true">
+							Can I disable it?
+						</button>
 					</div>
 				</div>
 			</div>
@@ -92,6 +117,25 @@
 				<span class="ml1 mt1 btn red btn-outline h5" @click="confirmDisableDKIM">Disable DKIM</span>
 			</span>
 		</modal>
+		<modal :show.sync="dmarcAttentionModal">
+			<h4 slot="header">IT WILL BREAK YOUR EMAIL</h4>
+			<span slot="body">
+				<span class="block mb1 h5">Before you add a DMARC record, please make sure that your SPF and DKIM are setup correctly, because DMARC will instruct the recipient to strictly check for SPF and DKIM. If <i>either</i> of them fails to pass the validation, your emails <b>will be</b> rejected by the recipient.</span>
+			</span>
+		</modal>
+		<modal :show.sync="dmarcSetupModal">
+			<h4 slot="header">Adding DMARC Record</h4>
+			<span slot="body">
+				<span class="block mb1 h5">Please add the following TXT record to the main domain (aliases is not yet supported):</span>
+				<span class="block mb1"><i>placeholder</i></span>
+			</span>
+		</modal>
+		<modal :show.sync="dmarcCIDModal">
+			<h4 slot="header">Disable DMARC Record</h4>
+			<span slot="body">
+				<span class="block mb1 h5">You <i>can</i> remove your DMARC record from your DNS, but the recipient will accept (forged) emails without DKIM Signature.</span>
+			</span>
+		</modal>
 	</div>
 </template>
 
@@ -109,6 +153,9 @@ module.exports = {
 			spfCIDModal: false,
 			enableDKIMModal: false,
 			setupDKIMModal: false,
+			dmarcAttentionModal: false,
+			dmarcSetupModal: false,
+			dmarcCIDModal: false,
 			disableGenerateButton: false,
 			securityCtx: []
 		}
