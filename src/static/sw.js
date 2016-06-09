@@ -9,37 +9,68 @@ function getEndpoint() {
 		});
 }
 
-self.addEventListener("push", function(event){
+function countNotificationsAndNotify(payload) {
+	console.log('called a')
+	var tag = payload.accountId || 'notification';
+	return self.registration.getNotifications({ tag: tag })
+	.then(function(notifications) {
+		if (notifications && notifications.length > 0) {
+			var notificationCount = 1;
+			for (var i = 0; i < notifications.length; i++) {
+				var existingNotification = notifications[i];
+				if (existingNotification.data && existingNotification.data.notificationCount) {
+					notificationCount += existingNotification.data.notificationCount;
+				} else {
+					notificationCount++;
+				}
+				existingNotification.close();
+			}
+			delete payload.folder;
+			if (typeof payload._account === 'undefined') payload._account = payload.header.substring(payload.header.indexOf(':') + 1);
+			payload.header = 'New Mails';
+			payload.body = 'You have ' + notificationCount + ' new emails in' + payload._account;
+			payload.notificationCount = notificationCount;
+		}
+		return notify(payload, tag);
+	});
+}
 
-	if (event.data) {
-		var payload = event.data.json();
-		event.waitUntil(
-			self.registration.showNotification(payload.header, {
-				body: payload.body,
-				data: payload,
-				icon: '/public/mail_256x256.png',
-				vibrate: [300, 100, 300]
-			})
-		)
-	}else{
-		event.waitUntil(
-			getEndpoint()
+function notify(payload, tag) {
+	console.log('called b')
+	return self.registration.showNotification(payload.header, {
+		body: payload.body,
+		data: payload,
+		icon: '/public/mail_256x256.png',
+		tag: tag,
+		vibrate: [300, 100, 300]
+	})
+}
+
+function getData(event) {
+	console.log('getData')
+	return new Promise(function(resolve, reject) {
+		if (event.data) {
+			var payload = event.data.json();
+			return resolve(payload);
+		}else{
+			return getEndpoint()
 			.then(function(endpoint) {
 				return fetch('__APIENDPOINT__/read/getPayload?endpoint=' + endpoint, {mode: 'cors'});
 			})
 			.then(function(response) {
 				return response.json();
-			}).then(function(payload) {
-				return self.registration.showNotification(payload.header, {
-					body: payload.body,
-					data: payload,
-					icon: '/public/mail_256x256.png',
-					vibrate: [300, 100, 300]
-				})
 			})
-		)
-	}
+			.then(function(payload) {
+				return resolve(payload);
+			})
+			.catch(reject);
+		}
+	})
+}
 
+self.addEventListener("push", function(event){
+	console.log(0, event);
+	event.waitUntil(getData(event).then(countNotificationsAndNotify))
 });
 
 self.addEventListener('notificationclick', function(event) {
