@@ -58,6 +58,9 @@
 						</a>
 					</div>
 					<div class="right mr1">
+						<a class="h6 mxn1 btn black" @click="showRaw">
+							Raw
+						</a>
 						<spam :folder-name="st.folder.displayName" :message-id="st.mail.messageId" :folder-id="st.mail.folderId" v-if="st.hideSpamButton.indexOf(st.folder.displayName.toLowerCase()) === -1"></spam>
 					</div>
 				</div>
@@ -351,6 +354,9 @@ module.exports = {
 					});
 				}
 			}.bind(this))
+		},
+		showRaw: function() {
+			window.open(api.safeRaw(this.$route.params));
 		}
 	},
 	watch: {

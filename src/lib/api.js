@@ -194,5 +194,8 @@ module.exports = {
 	},
 	safeLink: function(src) {
 		return API_ENDPOINT + '/safe/href/?s=' + encodeURIComponent(src);
+	},
+	safeRaw: function(params) {
+		return API_ENDPOINT + '/safe/raw/' + params.accountId + '/' + params.messageId;
 	}
 }
