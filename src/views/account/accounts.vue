@@ -53,7 +53,6 @@
 				</div>
 				<div class="m0 p2 border-top">
 					<div class="clearfix">
-						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ st.color }}" v-link="{ name: 'security' }">Security</a>
 						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ st.color }}" @click="alias.selectDomainModal = true">Manage alias</a>
 						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ st.color }}" >Add an account</a>
 						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ st.color }}" >Add a domain</a>

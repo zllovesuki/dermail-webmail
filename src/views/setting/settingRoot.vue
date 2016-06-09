@@ -1,53 +1,26 @@
 <template>
 	<div>
 		<div class="ml1 mt1 mb1">
-			<span class="btn button-narrow mxn2 muted" v-link="{ name: 'accounts' }">#</span>
+			<span class="btn button-narrow mxn2 muted" v-link="{ name: 'settingIndex' }">S</span>
 			<chevron-right></chevron-right>
+			<span v-if="isInSPFDKIMDMARC">
+				<span class="btn button-narrow mxn1" v-link="{ name: 'settingSPFDKIMDMARC' }">
+					SPF, DKIM, and DMARC
+				</span>
+			</span>
+			<span v-if="isInPushNotification">
+				<span class="btn button-narrow mxn1" v-link="{ name: 'settingPushNotification' }">
+					Push Notification
+				</span>
+			</span>
+			<span v-if="isInColor">
+				<span class="btn button-narrow mxn1" v-link="{ name: 'settingColor' }">
+					Color
+				</span>
+			</span>
 		</div>
 		<div class="mt2 mb1">
-			<div class="overflow-hidden bg-white rounded mb2">
-				<div class="m0 p1">
-					<div class="clearfix">
-						<span class="btn black h5">Push Notifications: </span>
-					</div>
-					<div class="clearfix">
-						<span class="ml1 btn black h6 muted not-clickable">By utilizing Google Cloud Messaging, Dermail will send push notification to your device when new mails arrive. (Chrome 42+)</span>
-					</div>
-				</div>
-				<div class="m0 p2 border-top">
-					<div class="clearfix">
-						<button type="submit" class="h6 btn btn-outline {{ st.color }} ml1 mb1" v-if="canSubscribe" :disabled="disabled" @click="subscribe">
-							Subscribe
-						</button>
-						<button type="submit" class="h6 btn btn-outline {{ st.color }} ml1 mb1" v-if="canUnsubscribe" :disabled="disabled" @click="unsubscribe">
-							Unsubscribe
-						</button>
-						<button type="submit" class="h6 btn btn-outline {{ st.color }} ml1 mb1" v-if="canUnsubscribe" :disabled="disabled" @click="test">
-							Send a test notification
-						</button>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="mt2 mb2">
-			<div class="overflow-hidden bg-white rounded mb2">
-				<div class="m0 p1">
-					<div class="clearfix">
-						<span class="btn black h5">Color Scheme: </span>
-					</div>
-					<div class="clearfix">
-						<span class="ml1 btn black h6 muted not-clickable">You can change the color scheme of the interface.</span>
-					</div>
-				</div>
-				<div class="m0 p2 border-top">
-					<div class="clearfix">
-						<select class="block col-3 mb2 field" v-model="st.color">
-							<option v-for="color in st.colors" value="{{ color }}">{{ color }}</option>
-						</select>
-						<button class="h6 btn btn-outline {{ st.color }} ml1 mb1" @click="saveColor">Save</button>
-					</div>
-				</div>
-			</div>
+			<router-view transition="fade"></router-view>
 		</div>
 	</div>
 </template>
@@ -60,133 +33,19 @@ var api = require('../../lib/api.js');
 module.exports = {
 	data: function() {
 		return {
-			st: st,
-			canSubscribe: false,
-			canUnsubscribe: false,
-			disabled: false
+			st: st
 		}
 	},
-	methods: {
-		saveColor: function() {
-			//this.st.setBarColor(this.st.color);
-			localStorage.setItem('color', this.st.color);
-			this.st.alert.success('Color scheme saved!');
+	computed: {
+		isInPushNotification: function() {
+			return this.$route.name === 'settingPushNotification'
 		},
-		subscribe: function(e) {
-			this.disabled = true;
-			this.st.loading.go(30);
-			navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
-				this.st.loading.go(50);
-				serviceWorkerRegistration.pushManager.subscribe({userVisibleOnly: true})
-				.then(function(subscription) {
-					var payload = JSON.stringify(subscription);
-					this.st.loading.go(70);
-					api.pushNotification(this, {
-						action: 'subscribe',
-						payload: payload
-					})
-					.then(function() {
-						this.canSubscribe = false;
-						this.canUnsubscribe = true;
-						this.st.alert.success('Subscribed!');
-					})
-					.finally(function() {
-						this.disabled = false;
-						this.st.loading.go(100);
-					}.bind(this))
-				}.bind(this))
-				.catch(function(e) {
-					console.log(e);
-					this.disabled = false;
-					this.st.alert.error('Error!')
-					this.st.loading.go(100);
-				}.bind(this))
-			}.bind(this))
+		isInColor: function() {
+			return this.$route.name === 'settingColor'
 		},
-		unsubscribe: function(e) {
-			this.disabled = true;
-			this.st.loading.go(30);
-			navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
-				this.st.loading.go(50);
-				serviceWorkerRegistration.pushManager.getSubscription()
-				.then(function(subscription) {
-					this.st.loading.go(70);
-					if (subscription) {
-						var payload = JSON.stringify(subscription);
-						api.pushNotification(this, {
-							action: 'unsubscribe',
-							payload: payload
-						})
-						.then(function() {
-							return subscription.unsubscribe().then(function(successful) {
-								this.canSubscribe = true;
-								this.canUnsubscribe = false;
-								this.st.alert.success('Unsubscribed!');
-							}.bind(this))
-						}.bind(this))
-						.finally(function() {
-							this.disabled = false;
-							this.st.loading.go(100);
-						}.bind(this))
-					}else{
-						this.disabled = false;
-						this.st.loading.go(100); // Oh well
-					}
-				}.bind(this))
-			}.bind(this))
-		},
-		test: function() {
-			this.st.loading.go(30);
-			navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
-				this.st.loading.go(50);
-				serviceWorkerRegistration.pushManager.getSubscription()
-				.then(function(subscription) {
-					this.st.loading.go(70);
-					if (subscription) {
-						var payload = JSON.stringify(subscription);
-						api.pushNotification(this, {
-							action: 'test',
-							payload: payload
-						})
-						.then(function() {
-							this.st.alert.success('Test notification sent!');
-							this.st.loading.go(100);
-						}.bind(this))
-						.catch(function(res) {
-							this.st.alert.error('API Error!');
-							this.st.loading.go(100);
-						}.bind(this))
-					}else{
-						this.st.alert.error('Not subscribed.');
-						this.st.loading.go(100); // Oh well
-					}
-				}.bind(this))
-			}.bind(this))
+		isInSPFDKIMDMARC: function() {
+			return this.$route.name === 'settingSPFDKIMDMARC'
 		}
 	},
-	beforeCompile: function() {
-		this.st.setTitle('Settings');
-	},
-	ready: function() {
-		this.st.loading.go(100);
-		if ('serviceWorker' in navigator) {
-			var sw = navigator.serviceWorker.register('/sw.js');
-			sw.then(function(registration) {
-				registration.pushManager.getSubscription()
-				.then(function(subscription) {
-					if (!subscription) {
-						this.canSubscribe = true;
-					}else{
-						this.canUnsubscribe = true;
-					}
-				}.bind(this))
-				return;
-			}.bind(this))
-			.catch(function(error) {
-				this.disabled = true;
-				this.st.alert.error(error);
-			}.bind(this))
-		}
-	}
 }
 </script>

@@ -1,83 +1,81 @@
 <template>
 	<div>
-		<div class="mt2 mb1">
-			<div class="overflow-hidden bg-white rounded mb2">
-				<div class="m0 p1">
-					<div class="clearfix">
-						<span class="btn black h5">Sender Policy Framework (SPF): </span>
-					</div>
-					<div class="clearfix">
-						<span class="ml1 btn black h6 muted not-clickable">
-							The purpose of an SPF record is to prevent spammers from sending messages with forged From addresses at your domain. Recipients can refer to the SPF record to determine whether a message purporting to be from your domain comes from an authorized mail server.
-						</span>
-					</div>
+		<div class="overflow-hidden bg-white rounded mb2">
+			<div class="m0 p1">
+				<div class="clearfix">
+					<span class="btn black h5">Sender Policy Framework (SPF): </span>
 				</div>
-				<div class="m0 p2 border-top">
-					<div class="clearfix">
-						<button type="button" class="h6 btn btn-outline {{ st.color }} ml1 mb1" @click="spfSetupModal = true">
-							How to setup?
-						</button>
-						<button type="button" class="h6 btn btn-outline {{ st.color }} ml1 mb1" @click="spfCIDModal = true">
-							Can I disable it?
-						</button>
-					</div>
+				<div class="clearfix">
+					<span class="ml1 btn black h6 muted not-clickable">
+						The purpose of an SPF record is to prevent spammers from sending messages with forged From addresses at your domain. Recipients can refer to the SPF record to determine whether a message purporting to be from your domain comes from an authorized mail server.
+					</span>
 				</div>
 			</div>
-			<div class="overflow-hidden bg-white rounded mb2">
-				<div class="m0 p1">
-					<div class="clearfix">
-						<span class="btn black h5">DomainKeys Identified Mail (DKIM): </span>
-					</div>
-					<div class="clearfix">
-						<span class="ml1 btn black h6 muted not-clickable">
-							DomainKeys Identified Mail (DKIM) defines a domain-level authentication framework for email using public-key cryptography and key server technology to permit verification of the source and contents of messages by either Mail Transfer Agents (MTAs) or Mail User Agents (MUAs). The ultimate goal of this framework is to permit a signing domain to assert responsibility for a message, thus protecting message signer identity and the integrity of the messages they convey while retaining the functionality of Internet email as it is known today. Protection of email identity may assist in the global control of "spam" and "phishing".
-						</span>
-					</div>
-				</div>
-				<div class="m0 p1 border-top">
-					<div class="clearfix">
-						<span class="btn black h5">Domain Status: </span>
-					</div>
-					<div class="clearfix">
-						<table class="h6 col col-12">
-							<template v-for="domain in securityCtx.dkim">
-								<tr>
-									<td class="col col-6">
-										<span class="btn not-clickable left">{{ domain.domain }}</span>
-									</td>
-									<td class="col col-6">
-										<button v-if="domain.dkim === false" type="button" class="right bold btn btn-outline {{ st.color }}" :disabled="!domain.isAdmin" @click="popupEnableDKIM(domain.domainId)">Disabled</span>
-										<button v-if="typeof domain.dkim === 'object'" type="button" class="right bold btn btn-outline {{ st.color }}" :disabled="!domain.isAdmin"  @click="popupSetupDKIM(domain.domainId)">Enabled</span>
-									</td>
-								</tr>
-							</template>
-						</table>
-					</div>
+			<div class="m0 p2 border-top">
+				<div class="clearfix">
+					<button type="button" class="h6 btn btn-outline {{ st.color }} ml1 mb1" @click="spfSetupModal = true">
+						How to setup?
+					</button>
+					<button type="button" class="h6 btn btn-outline {{ st.color }} ml1 mb1" @click="spfCIDModal = true">
+						Can I disable it?
+					</button>
 				</div>
 			</div>
-			<div class="overflow-hidden bg-white rounded mb2">
-				<div class="m0 p1">
-					<div class="clearfix">
-						<span class="btn black h5">Domain-based Message Authentication, Reporting and Conformance (DMARC): </span>
-					</div>
-					<div class="clearfix">
-						<span class="ml1 btn black h6 muted not-clickable">
-							DMARC is a proposed standard that allows email senders and receivers to cooperate in sharing information about the email they send to each other. This information helps senders improve the mail authentication infrastructure so that all their mail can be authenticated. It also gives the legitimate owner of an Internet domain a way to request that illegitimate messages – spoofed spam, phishing – be put directly in the spam folder or rejected outright.
-						</span>
-					</div>
+		</div>
+		<div class="overflow-hidden bg-white rounded mb2">
+			<div class="m0 p1">
+				<div class="clearfix">
+					<span class="btn black h5">DomainKeys Identified Mail (DKIM): </span>
 				</div>
-				<div class="m0 p2 border-top">
-					<div class="clearfix">
-						<button type="button" class="h6 btn btn-outline red ml1 mb1" @click="dmarcAttentionModal = true">
-							Attentions
-						</button>
-						<button type="button" class="h6 btn btn-outline {{ st.color }} ml1 mb1" @click="dmarcSetupModal = true">
-							How to setup?
-						</button>
-						<button type="button" class="h6 btn btn-outline {{ st.color }} ml1 mb1" @click="dmarcCIDModal = true">
-							Can I disable it?
-						</button>
-					</div>
+				<div class="clearfix">
+					<span class="ml1 btn black h6 muted not-clickable">
+						DomainKeys Identified Mail (DKIM) defines a domain-level authentication framework for email using public-key cryptography and key server technology to permit verification of the source and contents of messages by either Mail Transfer Agents (MTAs) or Mail User Agents (MUAs). The ultimate goal of this framework is to permit a signing domain to assert responsibility for a message, thus protecting message signer identity and the integrity of the messages they convey while retaining the functionality of Internet email as it is known today. Protection of email identity may assist in the global control of "spam" and "phishing".
+					</span>
+				</div>
+			</div>
+			<div class="m0 p1 border-top">
+				<div class="clearfix">
+					<span class="btn black h5">Domain Status: </span>
+				</div>
+				<div class="clearfix">
+					<table class="h6 col col-12">
+						<template v-for="domain in securityCtx.dkim">
+							<tr>
+								<td class="col col-6">
+									<span class="btn not-clickable left">{{ domain.domain }}</span>
+								</td>
+								<td class="col col-6">
+									<button v-if="domain.dkim === false" type="button" class="right bold btn btn-outline {{ st.color }}" :disabled="!domain.isAdmin" @click="popupEnableDKIM(domain.domainId)">Disabled</span>
+									<button v-if="typeof domain.dkim === 'object'" type="button" class="right bold btn btn-outline {{ st.color }}" :disabled="!domain.isAdmin"  @click="popupSetupDKIM(domain.domainId)">Enabled</span>
+								</td>
+							</tr>
+						</template>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div class="overflow-hidden bg-white rounded mb2">
+			<div class="m0 p1">
+				<div class="clearfix">
+					<span class="btn black h5">Domain-based Message Authentication, Reporting and Conformance (DMARC): </span>
+				</div>
+				<div class="clearfix">
+					<span class="ml1 btn black h6 muted not-clickable">
+						DMARC is a proposed standard that allows email senders and receivers to cooperate in sharing information about the email they send to each other. This information helps senders improve the mail authentication infrastructure so that all their mail can be authenticated. It also gives the legitimate owner of an Internet domain a way to request that illegitimate messages – spoofed spam, phishing – be put directly in the spam folder or rejected outright.
+					</span>
+				</div>
+			</div>
+			<div class="m0 p2 border-top">
+				<div class="clearfix">
+					<button type="button" class="h6 btn btn-outline red ml1 mb1" @click="dmarcAttentionModal = true">
+						Attentions
+					</button>
+					<button type="button" class="h6 btn btn-outline {{ st.color }} ml1 mb1" @click="dmarcSetupModal = true">
+						How to setup?
+					</button>
+					<button type="button" class="h6 btn btn-outline {{ st.color }} ml1 mb1" @click="dmarcCIDModal = true">
+						Can I disable it?
+					</button>
 				</div>
 			</div>
 		</div>
@@ -251,11 +249,8 @@ module.exports = {
 		}
 	},
 	ready: function() {
-
 		this.st.setTitle('Security');
-
 		this.fetchSecurity();
-
 	}
 }
 </script>

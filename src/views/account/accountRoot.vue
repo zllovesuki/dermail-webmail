@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div class="ml1 mt1 mb1">
-			<span class="btn button-narrow mxn2 muted" v-link="{ name: 'accounts' }">#</span>
+			<span class="btn button-narrow mxn2 muted" v-link="{ name: 'accounts' }">A</span>
 			<chevron-right></chevron-right>
 			<span v-if="isInSecurity">
 				<span class="btn button-narrow mxn1" v-link="{ name: 'security' }">
@@ -116,17 +116,6 @@ module.exports = {
 					childrenKey: 'child'
 				}))
 				this.st.putFoldersFlat(res.data);
-			}.bind(this))
-			.finally(function() {
-				if (cb) cb();
-			})
-		},
-		'getAccounts': function(cb) {
-			this.st.loading.go(50);
-			api.getAccounts(this)
-			.then(function(res) {
-				if (typeof res === 'undefined') return;
-				this.st.putAccounts(res.data);
 			}.bind(this))
 			.finally(function() {
 				if (cb) cb();
