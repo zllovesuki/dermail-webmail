@@ -124,8 +124,19 @@
 		<modal :show.sync="dmarcSetupModal">
 			<h4 slot="header">Adding DMARC Record</h4>
 			<span slot="body">
-				<span class="block mb1 h5">Please add the following TXT record to the main domain (aliases is not yet supported):</span>
-				<span class="block mb1"><i>placeholder</i></span>
+				<span class="block mb1 h5">Add a <b>TXT</b> record for:</span>
+				<div class="p1 bg-darken-1 mb1" style="overflow: scroll">
+					_dmarc.{YOUR DOMAIN}
+				</div>
+				<span class="block mb1 h5">For example:</span>
+				<div class="p1 bg-darken-1 mb1" style="overflow: scroll">
+					_dmarc.{{ this.securityCtx.dkim[0].domain }}
+				</div>
+				<span class="block mb1 h5">With content:</span>
+				<div class="p1 bg-darken-1 mb2" style="overflow: scroll">
+					v=DMARC1;p=quarantine
+				</div>
+				<hr />
 			</span>
 		</modal>
 		<modal :show.sync="dmarcCIDModal">
