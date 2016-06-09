@@ -10,7 +10,6 @@ function getEndpoint() {
 }
 
 function countNotificationsAndNotify(payload) {
-	console.log('called a')
 	var tag = payload.accountId || 'notification';
 	return self.registration.getNotifications({ tag: tag })
 	.then(function(notifications) {
@@ -36,7 +35,6 @@ function countNotificationsAndNotify(payload) {
 }
 
 function notify(payload, tag) {
-	console.log('called b')
 	return self.registration.showNotification(payload.header, {
 		body: payload.body,
 		data: payload,
@@ -47,7 +45,6 @@ function notify(payload, tag) {
 }
 
 function getData(event) {
-	console.log('getData')
 	return new Promise(function(resolve, reject) {
 		if (event.data) {
 			var payload = event.data.json();
@@ -69,7 +66,6 @@ function getData(event) {
 }
 
 self.addEventListener("push", function(event){
-	console.log(0, event);
 	event.waitUntil(getData(event).then(countNotificationsAndNotify))
 });
 
