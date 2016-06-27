@@ -10,7 +10,8 @@ Vue.use(require('vue-moment'))
 
 var App = Vue.extend(require('./app.vue'))
 var router = new VueRouter({
-	history: true
+	history: true,
+	saveScrollPosition: true
 })
 
 router.map({

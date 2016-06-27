@@ -26,6 +26,8 @@ module.exports = {
 	loading: new Nanobar(),
 	blockLoadingOnce: true,
 
+	lastFolderId: null,
+
 	hideInMoveOptions: [
 		'spam',
 		'trash'
