@@ -11,7 +11,7 @@
 					<input type="text" class="field block col-12 mb1 search-box" v-model="search.string" debounce="500">
 					<ul class="list-reset block y-scrollable">
 						<li class="overflow-hidden" v-for="result in search.results">
-							<a @click="search.modal = false" v-link="{ name: 'mail', params: { accountId: this.$route.params.accountId, folderId: result.folder.folderId, messageId: result.messageId }}" class="btn">
+							<a target="_blank" v-link="{ name: 'mail', params: { accountId: this.$route.params.accountId, folderId: result.folder.folderId, messageId: result.messageId }}" class="btn">
 								{{result.folder.displayName}} - {{ result.subject }}
 							</a>
 						</li>
