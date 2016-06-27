@@ -41,6 +41,7 @@ module.exports = {
 	watch: {
 		'search.string': function(val, oldVal) {
 			if (val.length < 1) return;
+			this.st.loading.go(30);
 			api.searchMailsInAccount(this, {
 				accountId: this.$route.params.accountId,
 				searchString: val
@@ -48,6 +49,9 @@ module.exports = {
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
 				this.search.results = res.data;
+			})
+			.finally(function() {
+				this.st.loading.go(100);
 			})
 		}
 	},
