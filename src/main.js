@@ -25,10 +25,6 @@ router.map({
 				name: 'accounts',
 				component: require('./views/account/accounts.vue')
 			},
-			'/security': {
-				name: 'security',
-				component: require('./views/account/security.vue')
-			},
 			'/:accountId': {
 				name: 'account',
 				component: require('./views/account/account.vue'),
@@ -52,8 +48,25 @@ router.map({
 		}
 	},
 	'/settings': {
-		name: 'settings',
-		component: require('./views/setting/settingRoot.vue')
+		component: require('./views/setting/settingRoot.vue'),
+		subRoutes: {
+			'/': {
+				name: 'settingIndex',
+				component: require('./views/setting/index.vue')
+			},
+			'/pushNotification': {
+				name: 'settingPushNotification',
+				component: require('./views/setting/pushNotification.vue')
+			},
+			'/color': {
+				name: 'settingColor',
+				component: require('./views/setting/color.vue')
+			},
+			'/SPFDKIMDMARC': {
+				name: 'settingSPFDKIMDMARC',
+				component: require('./views/setting/SPFDKIMDMARC.vue')
+			}
+		}
 	},
 	'*': {
 		component: require('./views/404.vue')

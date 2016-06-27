@@ -11,7 +11,7 @@
 
 			<div class="mn1 center" v-if="st.authenticated">
 				<a class="btn button-narrow" v-link="{ name: 'accounts'}">Accounts</a>
-				<a class="btn button-narrow" v-link="{ name: 'settings'}">Settings</a>
+				<a class="btn button-narrow" v-link="{ name: 'settingIndex'}">Settings</a>
 				<a class="btn button-narrow" @click="doLogout">Logout</a>
 			</div>
 
@@ -44,6 +44,19 @@ module.exports = {
 			this.st.removeToken();
 			this.st.alert.success('Logout successfully!');
 			this.$route.router.go({name: 'login'});
+		}
+	},
+	events: {
+		'getAccounts': function(cb) {
+			this.st.loading.go(50);
+			api.getAccounts(this)
+			.then(function(res) {
+				if (typeof res === 'undefined') return;
+				this.st.putAccounts(res.data);
+			}.bind(this))
+			.finally(function() {
+				if (cb) cb();
+			})
 		}
 	}
 }

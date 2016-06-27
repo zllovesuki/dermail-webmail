@@ -59,7 +59,9 @@
 						</a>
 					</div>
 					<div class="right mr1">
-						<spamc :message-id="st.mail.messageId"></spamc>
+						<a class="h6 mxn1 btn black" @click="showRaw">
+							Raw
+						</a>
 						<spam :folder-name="st.folder.displayName" :message-id="st.mail.messageId" :folder-id="st.mail.folderId" v-if="st.hideSpamButton.indexOf(st.folder.displayName.toLowerCase()) === -1"></spam>
 					</div>
 				</div>
@@ -362,17 +364,8 @@ module.exports = {
 				}
 			}.bind(this))
 		},
-		popupExtraRecipients: function() {
-			var msg = '';
-			var name = e.target.attributes['data-name'].value;
-			var email = e.target.attributes['data-email'].value
-			if (name.length > 1) {
-				msg += '<span class="muted h5">' + name + '</span>';
-			}
-			if (email.length > 1) {
-				msg += ' <span class="bold h5" style="word-wrap: break-word;">&lt;' + email + '></span>';
-			}
-			this.st.alert.alert(msg);
+		showRaw: function() {
+			window.open(api.safeRaw(this.$route.params));
 		}
 	},
 	watch: {

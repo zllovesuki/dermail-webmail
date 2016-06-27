@@ -1,5 +1,11 @@
 ## Changelog
 
+06/07/2016: 2.x -> 3.0.0
+1. (API) Dermail now supports per (main) domain DKIM signing outbound and verifying inbound.
+2. (API) By default, Dermail checks for incoming emails for SPF. If SPF is not either "pass", "neutral", or "softfail", the emails will be moved to SPAM folder
+3. (API) By default, Dermail checks for incoming emails for DKIM. If *any* DKIM signature fails the verification (not "pass" or "tempfail"), the emails will be moved to SPAM folder
+4. Webmail now has a "Security" page for setting up SPF and DKIM. DMARC is planned.
+
 05/06/2016 -> 2.7.x -> 2.8.0
 1. Supports update alias. More functionalities on the way.
 
