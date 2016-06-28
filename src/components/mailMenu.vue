@@ -66,8 +66,6 @@ module.exports = {
 
 				e.target.innerHTML = '> ' + (newRead === 'read' ? 'Unread' : 'Read');
 				this.context.isRead = (newRead === 'read' ? true : false);
-
-				if (typeof this.$parent.flipMenuAndBody == 'function') this.$parent.flipMenuAndBody();
 			})
 		},
 		showMoveFolder: function(e) {
