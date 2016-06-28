@@ -42,7 +42,7 @@ module.exports = {
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
 				var star = (newStar === 'star' ? '&#9733;' : '&#9734;')
-				e.target.innerHTML = star;
+				this.$dispatch('setStarInMailArray', messageId, this.isStar);
 				this.st.alert.success(star + ' : 👍');
 			})
 		}

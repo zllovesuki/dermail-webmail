@@ -358,8 +358,7 @@ module.exports = {
 					})
 					.then(function(res) {
 						this.st.mail.isRead = true;
-						var element = document.getElementsByClassName('mail-marker')[0];
-						if (element) element.innerHTML = '> Unread';
+						this.$dispatch('setReadInMailArray', this.$route.params.messageId, this.st.mail.isRead);
 					});
 				}
 			}.bind(this))

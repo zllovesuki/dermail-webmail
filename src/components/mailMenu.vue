@@ -1,6 +1,6 @@
 <template>
 	<span>
-		<a class="muted h6 mxn1 btn {{ st.color }} mail-marker" @click="flipReadAndChangeBody" v-if="st.hideReadUnread.indexOf(st.folder.displayName.toLowerCase()) === -1">
+		<a class="muted h6 mxn1 btn {{ st.color }}" @click="flipReadAndChangeBody" v-if="st.hideReadUnread.indexOf(st.folder.displayName.toLowerCase()) === -1">
 			{{ context.isRead === true ? '> Unread': '> Read' }}
 		</a>
 		<a class="muted h6 mxn1 btn {{ st.color }}" @click="showMoveFolder" v-if="st.hideMoveToFolder.indexOf(st.folder.displayName.toLowerCase()) === -1">
@@ -62,10 +62,10 @@ module.exports = {
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
 
-				this.st.alert.success((newRead !== 'read' ? 'Unread' : 'Read') + ' : 👍');
-
-				e.target.innerHTML = '> ' + (newRead === 'read' ? 'Unread' : 'Read');
 				this.context.isRead = (newRead === 'read' ? true : false);
+				this.$dispatch('setReadInMailArray', messageId, this.context.isRead);
+
+				this.st.alert.success((newRead !== 'read' ? 'Unread' : 'Read') + ' : 👍');
 			})
 		},
 		showMoveFolder: function(e) {

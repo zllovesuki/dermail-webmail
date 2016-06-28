@@ -120,6 +120,22 @@ module.exports = {
 			.finally(function() {
 				if (cb) cb();
 			})
+		},
+		'setStarInMailArray': function(messageId, star, cb) {
+			var mail = this.st.mails.filter(function(mail) {
+				return mail.messageId === messageId;
+			})
+			if (mail.length === 1) {
+				mail[0].isStar = star;
+			}
+		},
+		'setReadInMailArray': function(messageId, read, cb) {
+			var mail = this.st.mails.filter(function(mail) {
+				return mail.messageId === messageId;
+			})
+			if (mail.length === 1) {
+				mail[0].isRead = read;
+			}
 		}
 	}
 }
