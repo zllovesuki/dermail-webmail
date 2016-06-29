@@ -1,6 +1,6 @@
 <template>
 	<span>
-		<div class="m0 p0 border-bottom">
+		<div class="m0 p0" v-bind:class="{ 'border-top': index > 0 }">
 			<div class="clearfix">
 				<div class="left black">
 					<a v-link="{ name: 'folder', params: { accountId: folder.accountId, folderId: folder.folderId } }" class="btn h5">
@@ -101,7 +101,11 @@ var api = require('../lib/api.js');
 
 module.exports = {
 	props: {
-		folder: Object
+		folder: Object,
+		index: {
+			type: Number,
+			default: 1
+		}
 	},
 	data: function () {
 		return {
