@@ -178,6 +178,7 @@ module.exports = {
 	},
 	created: function() {
 		this.st.account = {};
+		this.st.lastFolderId = null;
 	},
 	compiled: function() {
 
