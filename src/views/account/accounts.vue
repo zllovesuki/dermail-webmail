@@ -5,7 +5,7 @@
 				<div class="clearfix">
 					<div class="left black">
 						<span class="btn h4 muted not-clickable">
-							account@domain
+							account@domain <span class="h6">&nbsp;&#9834;</span>
 						</span>
 					</div>
 					<div class="right">
@@ -29,7 +29,7 @@
 					<div class="clearfix">
 						<div class="left black">
 							<a v-link="{ name: 'account', params: { accountId: account.accountId } }" class="btn block h5">
-								{{ account.account }} <span class="muted black">@{{ account.domain }}</span>
+								{{ account.account }} <span class="muted black">@{{ account.domain }}</span> <span class="muted {{st.color}}" v-if="account.notify">&nbsp;&#9834;</span>
 							</a>
 						</div>
 						<div class="right">
