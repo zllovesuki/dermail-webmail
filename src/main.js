@@ -33,6 +33,10 @@ router.map({
 				name: 'filter',
 				component: require('./views/account/filter.vue'),
 			},
+			'/:accountId/address': {
+				name: 'address',
+				component: require('./views/account/address.vue'),
+			},
 			'/:accountId/compose': {
 				name: 'compose',
 				component: require('./views/account/compose.vue'),
