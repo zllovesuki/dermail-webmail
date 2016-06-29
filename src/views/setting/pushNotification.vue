@@ -23,6 +23,52 @@
 				</div>
 			</div>
 		</div>
+		<div class="overflow-hidden bg-white rounded mb2">
+			<div class="m0 p1">
+				<div class="clearfix">
+					<span class="btn black h5">Per account setting: </span>
+				</div>
+				<div class="clearfix">
+					<span class="ml1 btn black h6 muted not-clickable">
+						You can disable notifications for a particular account (e.g. account only for promotion).
+					</span>
+				</div>
+			</div>
+			<div class="m0 p2 border-top">
+				<div class="clearfix">
+					<span class="btn black h5">Account Status: </span>
+				</div>
+				<div class="clearfix">
+					<table class="h6 col col-12">
+						<template v-for="account in st.accounts">
+							<tr>
+								<td class="col col-6">
+									<span class="btn not-clickable left">{{ account.account }}@{{ account.domain }}</span>
+								</td>
+								<td class="col col-6">
+									<button v-if="account.notify === false" type="button" class="right bold btn btn-outline {{ st.color }}" @click="popupEnableNotify(account.accountId)">Disabled</span>
+									<button v-if="account.notify === true" type="button" class="right bold btn btn-outline {{ st.color }}" @click="popupDisableNotify(account.accountId)">Enabled</span>
+								</td>
+							</tr>
+						</template>
+					</table>
+				</div>
+			</div>
+		</div>
+		<modal :show.sync="enableNotifyModal">
+			<h4 slot="header">Enabling Notification</h4>
+			<span slot="body">
+				<span class="block mb2 h5">Currently Dermail will <b>not</b> notify new mails for this account.</span>
+				<button type="button" class="btn btn-primary h5" :disabled="disableNotifyButton" @click="enableNotify">Enable</button>
+			</span>
+		</modal>
+		<modal :show.sync="disableNotifyModal">
+			<h4 slot="header">Disabling Notification</h4>
+			<span slot="body">
+				<span class="block mb2 h5">You can disable new mails for this account.</span>
+				<button type="button" class="btn btn-primary h5" :disabled="disableNotifyButton" @click="disableNotify">Disable</button>
+			</span>
+		</modal>
 	</div>
 </template>
 
@@ -37,7 +83,11 @@ module.exports = {
 			st: st,
 			canSubscribe: false,
 			canUnsubscribe: false,
-			disabled: false
+			disabled: false,
+			enableNotifyModal: false,
+			disableNotifyModal: false,
+			disableNotifyButton: false,
+			accountId: null
 		}
 	},
 	methods: {
@@ -131,13 +181,68 @@ module.exports = {
 					}
 				}.bind(this))
 			}.bind(this))
+		},
+		fetchAccounts: function() {
+			this.$dispatch('getAccounts', function() {
+				this.st.loading.go(100);
+			}.bind(this))
+		},
+		popupEnableNotify: function(accountId) {
+			this.accountId = accountId;
+			this.enableNotifyModal = true;
+		},
+		popupDisableNotify: function(accountId) {
+			this.accountId = accountId;
+			this.disableNotifyModal = true;
+		},
+		enableNotify: function() {
+
+		},
+		disableNotify: function() {
+			this.st.loading.go(30);
+			this.disableNotifyButton = true;
+			var payload = JSON.stringify({
+				accountId: this.accountId
+			}); // compatibility
+			api.pushNotification(this, {
+				action: 'disableNotify',
+				payload: payload
+			})
+			.then(function(res) {
+				if (typeof res === 'undefined') return;
+				this.disableNotifyModal = false;
+				this.st.alert.success('Notification disabled.');
+			})
+			.finally(function() {
+				this.disableNotifyButton = false;
+				this.fetchAccounts();
+			})
+		},
+		enableNotify: function() {
+			this.st.loading.go(30);
+			this.disableNotifyButton = true;
+			var payload = JSON.stringify({
+				accountId: this.accountId
+			}); // compatibility
+			api.pushNotification(this, {
+				action: 'enableNotify',
+				payload: payload
+			})
+			.then(function(res) {
+				if (typeof res === 'undefined') return;
+				this.enableNotifyModal = false;
+				this.st.alert.success('Notification enabled.');
+			})
+			.finally(function() {
+				this.disableNotifyButton = false;
+				this.fetchAccounts();
+			})
 		}
 	},
 	beforeCompile: function() {
 		this.st.setTitle('Push Notifications');
 	},
 	ready: function() {
-		this.st.loading.go(100);
 		if ('serviceWorker' in navigator) {
 			var sw = navigator.serviceWorker.register('/sw.js');
 			sw.then(function(registration) {
@@ -156,6 +261,7 @@ module.exports = {
 				this.st.alert.error(error);
 			}.bind(this))
 		}
+		this.fetchAccounts();
 	}
 }
 </script>

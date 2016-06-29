@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div class="overflow-hidden bg-white rounded mb2" v-if="st.mails.length === 0 || noMailsLeft">
+		<div class="overflow-hidden bg-white rounded mb2" v-if="st.mails.length === 0 || st.noMailsLeft">
 			<div class="m0 p2">
 				<span class="p2 bold h5 m0 black">
 					No mails in this folder
@@ -8,7 +8,7 @@
 			</div>
 		</div>
 		<mail-item v-for="mail in st.mails" :mail.sync="mail"></mail-item>
-		<p class="center" v-if="st.mails.length > 0 && !noMailsLeft">
+		<p class="center" v-if="st.mails.length > 0 && !st.noMailsLeft">
 			<button class="h5 btn btn-outline {{ st.color }}" @click="loadMore" :disabled="disableLoadMore">
 				Load {{ slice.perPage }} More
 			</button>
@@ -25,17 +25,25 @@ module.exports = {
 		return {
 			st: st,
 			folderModal: false,
-			noMailsLeft: false,
 			disableLoadMore: false,
 			slice: {
 				perPage: 10,
 				date: null,
 				starOnly: st.starOnly
-			}
+			},
+			_tmpMails: [],
+			_tmpModified: false
 		}
 	},
 	created: function() {
-		this.st.mails = [];
+		var currentFolderId = this.$route.params.folderId;
+		if (currentFolderId !== this.st.lastFolderId) {
+			this.st.mails = [];
+		}else{
+			this._tmpMails = this.st.mails;
+			this._tmpModified = true;
+			this.st.mails = [];
+		}
 	},
 	compiled: function() {
 
@@ -52,6 +60,7 @@ module.exports = {
 			}else{
 				this.loadMore();
 			}
+			this.st.lastFolderId = this.$route.params.folderId;
 		}.bind(this))
 	},
 	events: {
@@ -75,20 +84,27 @@ module.exports = {
 		},
 		loadMore: function() {
 			this.st.loading.go(70);
-			this.More();
-			api.getMailsInFolder(this, {
-				slice: this.slice
-			})
-			.then(function(res) {
-				if (typeof res === 'undefined') return;
-				this.st.mails = this.st.mails.concat(res.data);
-				if (this.st.mails.length < this.slice.perPage || res.data.length < this.slice.perPage) {
-					this.disableLoadMore = true;
-				}
-			})
-			.finally(function() {
+			if (this._tmpModified) {
+				this.st.mails = this._tmpMails;
+				this._tmpMails = [];
+				this._tmpModified = false;
 				this.st.loading.go(100);
-			});
+			}else{
+				this.More();
+				api.getMailsInFolder(this, {
+					slice: this.slice
+				})
+				.then(function(res) {
+					if (typeof res === 'undefined') return;
+					this.st.mails = this.st.mails.concat(res.data);
+					if (this.st.mails.length < this.slice.perPage || res.data.length < this.slice.perPage) {
+						this.disableLoadMore = true;
+					}
+				})
+				.finally(function() {
+					this.st.loading.go(100);
+				});
+			}
 		}
 	}
 }

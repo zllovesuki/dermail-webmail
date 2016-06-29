@@ -6,13 +6,27 @@
 					<span class="btn black h5">General: </span>
 				</div>
 				<div class="clearfix">
-					<span class="ml1 btn black h6 muted not-clickable">General functionalities such as color scheme and push notifications.</span>
+					<span class="ml1 btn black h6 muted not-clickable">General functionalities such as color scheme.</span>
+				</div>
+			</div>
+			<div class="m0 p2 border-top">
+				<div class="clearfix">
+					<a class="muted h6 ml1 mb1 bold btn btn-outline {{ st.color }}" v-link="{ name: 'settingColor' }">Color Scheme</a>
+				</div>
+			</div>
+		</div>
+		<div class="overflow-hidden bg-white rounded mb2">
+			<div class="m0 p1">
+				<div class="clearfix">
+					<span class="btn black h5">Push Notifications: </span>
+				</div>
+				<div class="clearfix">
+					<span class="ml1 btn black h6 muted not-clickable">Settings for push notifications.</span>
 				</div>
 			</div>
 			<div class="m0 p2 border-top">
 				<div class="clearfix">
 					<a class="muted h6 ml1 mb1 bold btn btn-outline {{ st.color }}" v-link="{ name: 'settingPushNotification' }">Push Notification</a>
-					<a class="muted h6 ml1 mb1 bold btn btn-outline {{ st.color }}" v-link="{ name: 'settingColor' }">Color Scheme</a>
 				</div>
 			</div>
 		</div>

@@ -50,7 +50,7 @@ module.exports = {
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
 				this.st.alert.success('I hate SPAM!');
-				this.houseKeeping(currentFolder);
+				this.$dispatch('houseKeeping', currentFolder, this.messageId, true);
 			})
 		},
 		notSPAM: function() {
@@ -63,23 +63,8 @@ module.exports = {
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
 				this.st.alert.success('Got it.');
-				this.houseKeeping(res.data);
+				this.$dispatch('houseKeeping', res.data, this.messageId, true);
 			})
-		},
-		houseKeeping: function(folderId) {
-			var messageId = this.messageId
-			var message = document.getElementsByClassName('mail-' + messageId)[0];
-
-			if (typeof message !== 'undefined') { // We are in folder view
-				this.st.mails = this.st.mails.filter(function(e) {
-					return e.messageId !== messageId; // remove by value
-				})
-				if (this.st.mails.length === 0) { // We just removed the last one!
-					this.$parent.noMailsLeft = true;
-				}
-			}else{ // We are in mail view
-				this.$route.router.go({ name: 'folder', params: { accountId: this.$route.params.accountId, folderId: folderId } })
-			}
 		}
 	}
 }

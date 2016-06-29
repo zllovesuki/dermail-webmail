@@ -1,6 +1,6 @@
 <template>
 	<span>
-		<a class="muted h6 mxn1 btn {{ st.color }} mail-marker" @click="flipReadAndChangeBody" v-if="st.hideReadUnread.indexOf(st.folder.displayName.toLowerCase()) === -1">
+		<a class="muted h6 mxn1 btn {{ st.color }}" @click="flipReadAndChangeBody" v-if="st.hideReadUnread.indexOf(st.folder.displayName.toLowerCase()) === -1">
 			{{ context.isRead === true ? '> Unread': '> Read' }}
 		</a>
 		<a class="muted h6 mxn1 btn {{ st.color }}" @click="showMoveFolder" v-if="st.hideMoveToFolder.indexOf(st.folder.displayName.toLowerCase()) === -1">
@@ -62,12 +62,10 @@ module.exports = {
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
 
-				this.st.alert.success((newRead !== 'read' ? 'Unread' : 'Read') + ' : 👍');
-
-				e.target.innerHTML = '> ' + (newRead === 'read' ? 'Unread' : 'Read');
 				this.context.isRead = (newRead === 'read' ? true : false);
+				this.$dispatch('setReadInMailArray', messageId, this.context.isRead);
 
-				if (typeof this.$parent.flipMenuAndBody == 'function') this.$parent.flipMenuAndBody();
+				this.st.alert.success((newRead !== 'read' ? 'Unread' : 'Read') + ' : 👍');
 			})
 		},
 		showMoveFolder: function(e) {
@@ -83,7 +81,7 @@ module.exports = {
 				.then(function(res) {
 					if (typeof res === 'undefined') return;
 					this.st.alert.success('Moved to a folder.');
-					this.houseKeeping(this.modal.folderId);
+					this.$dispatch('houseKeeping', this.modal.folderId, this.modal.messageId);
 				})
 			}
 			this.folderModal = false;
@@ -97,24 +95,10 @@ module.exports = {
 				if (typeof res === 'undefined') return;
 				this.st.alert.success('Moved to Trash.');
 				this.modal.folderId = res.data; // see line 96 in showMoveFolder()
-				this.houseKeeping(res.data);
+				this.$dispatch('houseKeeping', res.data, this.modal.messageId);
 			})
 		},
-		houseKeeping: function(folderId) {
-			var messageId = this.modal.messageId
-			var message = document.getElementsByClassName('mail-' + messageId)[0];
 
-			if (typeof message !== 'undefined') { // We are in folder view
-				this.st.mails = this.st.mails.filter(function(e) {
-					return e.messageId !== messageId; // remove by value
-				})
-				if (this.st.mails.length === 0) { // We just removed the last one!
-					this.$parent.noMailsLeft = true;
-				}
-			}else{ // We are in mail view
-				this.$route.router.go({ name: 'mail', params: { accountId: this.st.mail.accountId, folderId: folderId, messageId: this.st.mail.messageId } })
-			}
-		}
 	}
 }
 </script>
