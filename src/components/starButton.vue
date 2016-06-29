@@ -33,7 +33,6 @@ module.exports = {
 			var messageId = this.messageId;
 			var currentStar = this.isStar;
 			var newStar = (currentStar ? 'unstar' : 'star');
-			this.isStar = (newStar === 'star' ? true : false);
 			api.updateMail(this, {
 				accountId: this.$route.params.accountId,
 				messageId: messageId,
@@ -41,7 +40,8 @@ module.exports = {
 			})
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
-				var star = (newStar === 'star' ? '&#9733;' : '&#9734;')
+				this.isStar = (newStar === 'star' ? true : false);
+				var star = (this.isStar ? '&#9733;' : '&#9734;')
 				this.$dispatch('setStarInMailArray', messageId, this.isStar);
 				this.st.alert.success(star + ' : 👍');
 			})

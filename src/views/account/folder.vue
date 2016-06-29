@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div class="overflow-hidden bg-white rounded mb2" v-if="st.mails.length === 0 || noMailsLeft">
+		<div class="overflow-hidden bg-white rounded mb2" v-if="st.mails.length === 0 || st.noMailsLeft">
 			<div class="m0 p2">
 				<span class="p2 bold h5 m0 black">
 					No mails in this folder
@@ -8,7 +8,7 @@
 			</div>
 		</div>
 		<mail-item v-for="mail in st.mails" :mail.sync="mail"></mail-item>
-		<p class="center" v-if="st.mails.length > 0 && !noMailsLeft">
+		<p class="center" v-if="st.mails.length > 0 && !st.noMailsLeft">
 			<button class="h5 btn btn-outline {{ st.color }}" @click="loadMore" :disabled="disableLoadMore">
 				Load {{ slice.perPage }} More
 			</button>
@@ -25,7 +25,6 @@ module.exports = {
 		return {
 			st: st,
 			folderModal: false,
-			noMailsLeft: false,
 			disableLoadMore: false,
 			slice: {
 				perPage: 10,

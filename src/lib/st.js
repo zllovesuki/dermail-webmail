@@ -27,6 +27,7 @@ module.exports = {
 	blockLoadingOnce: true,
 
 	lastFolderId: null,
+	noMailsLeft: false,
 
 	hideInMoveOptions: [
 		'spam',

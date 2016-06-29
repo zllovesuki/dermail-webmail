@@ -136,6 +136,25 @@ module.exports = {
 			if (mail.length === 1) {
 				mail[0].isRead = read;
 			}
+		},
+		'houseKeeping': function(folderId, messageId, redirectToFolder) {
+			var message = document.getElementsByClassName('mail-' + messageId)[0];
+			var redirectToFolder = !!redirectToFolder;
+
+			this.st.mails = this.st.mails.filter(function(e) {
+				return e.messageId !== messageId; // remove by value
+			})
+
+			if (typeof message !== 'undefined') { // We are in folder view
+				if (this.st.mails.length === 0) { // We just removed the last one!
+					this.st.noMailsLeft = true;
+				}
+			}else{ // We are in mail view
+				if (redirectToFolder)
+					this.$route.router.go({ name: 'folder', params: { accountId: this.$route.params.accountId, folderId: folderId } })
+				else
+					this.$route.router.go({ name: 'mail', params: { accountId: this.st.mail.accountId, folderId: folderId, messageId: this.st.mail.messageId } })
+			}
 		}
 	}
 }
