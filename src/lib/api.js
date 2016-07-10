@@ -40,7 +40,10 @@ module.exports = {
 			headers: ctx.st.getHeader()
 		}: {};
 		data = data || {};
-		return ctx.$http[action](endpoint, data, header)
+		var handle;
+		if (action === 'get') handle = ctx.$http[action](endpoint, header)
+		else handle = ctx.$http[action](endpoint, data, header)
+		return handle
 		.then(function(res) {
 			return res;
 		})
@@ -66,12 +69,12 @@ module.exports = {
 	},
 
 	ping: function(ctx) {
-		return ctx.$http.get(PING_ENDPOINT, {}, {
+		return ctx.$http.get(PING_ENDPOINT, {
 			headers: ctx.st.getHeader()
 		})
 	},
 	s3: function(ctx) {
-		return ctx.$http.get(S3_ENDPOINT, {}, {
+		return ctx.$http.get(S3_ENDPOINT, {
 			headers: ctx.st.getHeader()
 		})
 	},
