@@ -71,8 +71,9 @@ module.exports = {
 			api.login(this, this.credentials)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
-				if (res.data.hasOwnProperty('token')) {
-					this.st.setToken(res.data.token);
+				var data = res.json();
+				if (data.hasOwnProperty('token')) {
+					this.st.setToken(data.token);
 					this.st.setAuthenticated(true);
 					api.queue().connect(this, api);
 

@@ -93,9 +93,10 @@ module.exports = {
 			api.updateMail(this, this.modal)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
+				var data = res.text();
 				this.st.alert.success('Moved to Trash.');
-				this.modal.folderId = res.data; // see line 96 in showMoveFolder()
-				this.$dispatch('houseKeeping', res.data, this.modal.messageId);
+				this.modal.folderId = data; // see line 96 in showMoveFolder()
+				this.$dispatch('houseKeeping', data, this.modal.messageId);
 			})
 		},
 

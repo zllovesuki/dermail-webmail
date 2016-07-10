@@ -110,12 +110,13 @@ module.exports = {
 			api.getFoldersInAccount(this)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
-				this.st.putFoldersTree(this.listToTree(res.data, {
+				var data = res.json();
+				this.st.putFoldersTree(this.listToTree(data, {
 					idKey: 'folderId',
 					parentKey: 'parent',
 					childrenKey: 'child'
 				}))
-				this.st.putFoldersFlat(res.data);
+				this.st.putFoldersFlat(data);
 			}.bind(this))
 			.finally(function() {
 				if (cb) cb();

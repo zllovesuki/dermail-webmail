@@ -48,8 +48,9 @@ module.exports = {
 			return res;
 		})
 		.catch(function(res) {
-			if (res.data.hasOwnProperty('message')) {
-				ctx.st.alert.error(res.data.message);
+			var data = res.json();
+			if (data.hasOwnProperty('message')) {
+				ctx.st.alert.error(data.message);
 			}else{
 				ctx.st.alert.error(res.statusText);
 			}
@@ -143,7 +144,8 @@ module.exports = {
 
 	grabFilters: function(ctx) {
 		return this.getFilters(ctx).then(function(res) {
-			ctx.st.putFilters(res.data);
+			var data = res.json();
+			ctx.st.putFilters(data);
 		})
 	},
 
@@ -154,24 +156,27 @@ module.exports = {
 				if (Object.keys(ctx.st.account).length === 0 || priority === 1) {
 					return this.getAccount(ctx).then(function(res) {
 						if (typeof res === 'undefined') return;
-						res.data.displayName = res.data['account'] + '@' + res.data['domain'];
-						ctx.st.putAccount(res.data);
-						return res.data;
+						var data = res.json();
+						data.displayName = data['account'] + '@' + data['domain'];
+						ctx.st.putAccount(data);
+						return data;
 					});
 				}
 			}.bind(this)),
 			Promise.method(function(ctx) {
 				return this.getFolder(ctx).then(function(res) {
 					if (typeof res === 'undefined') return;
-					ctx.st.putFolder(res.data);
-					return res.data;
+					var data = res.json();
+					ctx.st.putFolder(data);
+					return data;
 				});
 			}.bind(this)),
 			Promise.method(function(ctx) {
 				return this.getMail(ctx).then(function(res) {
 					if (typeof res === 'undefined') return;
-					ctx.st.putMail(res.data);
-					return res.data;
+					var data = res.json();
+					ctx.st.putMail(data);
+					return data;
 				});
 			}.bind(this))
 		];

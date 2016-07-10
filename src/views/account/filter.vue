@@ -140,7 +140,8 @@ module.exports = {
 			})
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
-				this.searchResults = res.data;
+				var data = res.json();
+				this.searchResults = data;
 				this.addModal = false;
 				this.resultModal = true;
 			})

@@ -62,8 +62,9 @@ module.exports = {
 			api.updateMail(this, data)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
+				var data = res.text();
 				this.st.alert.success('Got it.');
-				this.$dispatch('houseKeeping', res.data, this.messageId, true);
+				this.$dispatch('houseKeeping', data, this.messageId, true);
 			})
 		}
 	}

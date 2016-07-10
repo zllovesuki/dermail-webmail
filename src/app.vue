@@ -52,7 +52,8 @@ module.exports = {
 			api.getAccounts(this)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
-				this.st.putAccounts(res.data);
+				var data = res.json();
+				this.st.putAccounts(data);
 			}.bind(this))
 			.finally(function() {
 				if (cb) cb();

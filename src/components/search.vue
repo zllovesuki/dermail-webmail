@@ -48,7 +48,8 @@ module.exports = {
 			})
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
-				this.search.results = res.data;
+				var data = res.json();
+				this.search.results = data;
 			})
 			.finally(function() {
 				this.st.loading.go(100);

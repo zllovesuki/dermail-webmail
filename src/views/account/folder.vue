@@ -96,8 +96,9 @@ module.exports = {
 				})
 				.then(function(res) {
 					if (typeof res === 'undefined') return;
-					this.st.mails = this.st.mails.concat(res.data);
-					if (this.st.mails.length < this.slice.perPage || res.data.length < this.slice.perPage) {
+					var data = res.json();
+					this.st.mails = this.st.mails.concat(data);
+					if (this.st.mails.length < this.slice.perPage || data.length < this.slice.perPage) {
 						this.disableLoadMore = true;
 					}
 				})

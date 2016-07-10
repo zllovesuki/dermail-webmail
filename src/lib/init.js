@@ -40,7 +40,11 @@ module.exports = function(api, st, router) {
 				transition.next();
 			})
 			.catch(function(res) {
-				if (res && res.data && res.data.message === 'Token invalid.') {
+				var data = {};
+				if (res && res.data) {
+					data = res.json();
+				}
+				if (data.message === 'Token invalid.') {
 					st.removeToken();
 					st.alert.error('Token invalid, please login again.');
 					transition.redirect({name: 'login'});

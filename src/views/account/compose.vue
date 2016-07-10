@@ -175,9 +175,10 @@ module.exports = {
 				})
 				.then(function(res) {
 					if (typeof res === 'undefined') return;
-					if (res.data.hasOwnProperty('friendlyName')) {
+					var data = res.json();
+					if (data.hasOwnProperty('friendlyName')) {
 						var address = {};
-						address.name = res.data.friendlyName;
+						address.name = data.friendlyName;
 						address.address = tag.toLowerCase().trim()
 						this.compose.recipients[where].push(address);
 						this.compose.recipients[where] = this.compose.recipients[where].filter(function(elem, index, self) {
@@ -286,7 +287,8 @@ module.exports = {
 			api.UploadS3Stream(this, form)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
-				hash = res.data.checksum;
+				var data = res.json();
+				hash = data.checksum;
 				this.compose.attachments.push({
 					mutable: true,
 					filename: filename,
