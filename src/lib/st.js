@@ -1,7 +1,7 @@
 var alertify = require('alertify.js'),
 	Nanobar = require('nanobar');
 
-module.exports = {
+var self = module.exports = {
 
 	storage: null,
 
@@ -70,41 +70,41 @@ module.exports = {
 	s3: {},
 
 	setS3: function(s3) {
-		this.s3 = s3;
+		self.s3 = s3;
 	},
 
 	putMail: function(mail) {
-		this.mail = mail;
+		self.mail = mail;
 	},
 	putMails: function(mails) {
-		this.mails = mails;
+		self.mails = mails;
 	},
 	putAccounts: function(accounts) {
-		this.accounts = accounts;
+		self.accounts = accounts;
 	},
 	putAccount: function(account) {
-		this.account = account;
+		self.account = account;
 	},
 	putFolder: function(folder) {
-		this.folder = folder;
+		self.folder = folder;
 	},
 	putFoldersTree: function(folders) {
-		this.folders = folders;
+		self.folders = folders;
 	},
 	putFoldersFlat: function(folders) {
-		this._folders = folders;
+		self._folders = folders;
 	},
 
 	putFilters: function(filters) {
-		this.filters = filters;
+		self.filters = filters;
 	},
 
 	setTitle: function(title) {
-		this.title = title;
+		self.title = title;
 	},
 	getHeader: function() {
 		return {
-			'Authorization': 'JWT ' + this.getToken()
+			'Authorization': 'JWT ' + self.getToken()
 		}
 	},
 	getToken: function() {
@@ -118,10 +118,10 @@ module.exports = {
 	},
 
 	isAuthenticated: function() {
-		return this.authenticated;
+		return self.authenticated;
 	},
 	setAuthenticated: function(state) {
-		this.authenticated = state;
+		self.authenticated = state;
 	},
 
 	/*getStyleRuleValue: function(style, selector, sheet) {
@@ -140,7 +140,7 @@ module.exports = {
 	},
 
 	setBarColor: function(color) {
-		var colorCode = this.getStyleRuleValue('color', '.' + color);
+		var colorCode = self.getStyleRuleValue('color', '.' + color);
 		var metas = document.getElementsByTagName('meta');
 
 		for (var i=0; i < metas.length; i++) {
@@ -157,6 +157,6 @@ module.exports = {
 	},*/
 
 	returnS3URL: function(checksum, fileName) {
-		return 'https://' + this.s3.bucket + '.' + this.s3.endpoint + '/' + checksum + '/' + fileName;
+		return 'https://' + self.s3.bucket + '.' + self.s3.endpoint + '/' + checksum + '/' + fileName;
 	}
 }
