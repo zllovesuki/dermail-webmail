@@ -83,10 +83,11 @@ module.exports = {
 					})
 					.catch(function(err) {
 						this.st.alert.error('Unable to fetch S3 information, attachment functionalities may be impacted.');
-					});
-
-					this.st.alert.success('Welcome back!');
-					this.$route.router.go({ name: 'accounts' })
+					})
+					.finally(function() {
+						this.st.alert.success('Welcome back!');
+						this.$route.router.go({ name: 'accounts' })
+					})
 				};
 			})
 			.finally(function() {

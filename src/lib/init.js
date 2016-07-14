@@ -37,7 +37,9 @@ module.exports = function(api, st, router) {
 				.catch(function(res) {
 					st.alert.error('Unable to fetch S3 information, attachment functionalities may be impacted.');
 				})
-				transition.next();
+				.finally(function() {
+					transition.next();
+				})
 			})
 			.catch(function(res) {
 				var data = {};
