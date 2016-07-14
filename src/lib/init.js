@@ -49,7 +49,9 @@ module.exports = function(api, st, router) {
 				if (data.message === 'Token invalid.') {
 					st.removeToken();
 					st.alert.error('Token invalid, please login again.');
-					transition.redirect({name: 'login'});
+					this.$nextTick(function() {
+						transition.redirect({name: 'login'});
+					})
 				}else{
 					st.alert.error('Service not available, please try again later.');
 				}
