@@ -31,7 +31,7 @@ module.exports = function(api, st, router) {
 				// Message queue
 				api.queue().connect(router.app, api);
 				api.s3(router.app)
-				.then(function(s3) {
+				.then(function(res) {
 					var data = {};
 					if (res && res.data) {
 						data = res.json();
