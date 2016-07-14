@@ -184,7 +184,11 @@ module.exports = {
 			api.getSecurity(this)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
-				this.securityCtx = res.data;
+				var data = {};
+				if (res && res.data) {
+					data = res.json();
+				}
+				this.securityCtx = data;
 			})
 			.finally(function() {
 				this.st.loading.go(100);
