@@ -78,8 +78,12 @@ module.exports = {
 					api.queue().connect(this, api);
 
 					api.s3(this)
-					.then(function(s3) {
-						this.st.setS3(s3.data);
+					.then(function(res) {
+						var data = {};
+						if (res && res.data) {
+							data = res.json();
+						}
+						this.st.setS3(data);
 					})
 					.catch(function(err) {
 						this.st.alert.error('Unable to fetch S3 information, attachment functionalities may be impacted.');
