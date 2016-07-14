@@ -32,7 +32,11 @@ module.exports = function(api, st, router) {
 				api.queue().connect(router.app, api);
 				api.s3(router.app)
 				.then(function(s3) {
-					st.setS3(s3.data);
+					var data = {};
+					if (res && res.data) {
+						data = res.json();
+					}
+					st.setS3(data);
 				})
 				.catch(function(res) {
 					st.alert.error('Unable to fetch S3 information, attachment functionalities may be impacted.');
