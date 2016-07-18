@@ -38,7 +38,7 @@
 			<h4 slot="header">Truncate a Folder</h4>
 			<span slot="body">
 				<form v-on:submit.prevent="doTruncateFolder" class="h5">
-					<label for="displayName">Are you sure to truncate the folder <span class="bold">{{ modal.displayName }}</span>?</label>
+					<label for="displayName">Are you sure to truncate the folder <span class="bold">{{ folder.displayName }}</span>?</label>
 					<hr />
 					<span class="block mb2">All mails under this folder will be <span class="bold">deleted</span>.</span>
 					<button type="submit" class="block btn btn-outline red">Truncate</button>
@@ -49,7 +49,7 @@
 			<h4 slot="header">Delete a Folder</h4>
 			<span slot="body">
 				<form v-on:submit.prevent="doDeleteFolder" class="h5">
-					<label for="displayName">Are you sure to delete folder <span class="bold">{{ modal.displayName }}</span>?</label>
+					<label for="displayName">Are you sure to delete folder <span class="bold">{{ folder.displayName }}</span>?</label>
 					<hr />
 					<span class="block mb1">All mails under this folder will be moved to "Trash".</span>
 					<span class="block mb2">If this folder is a parent folder, you need to delete the children folders first.</span>
@@ -62,13 +62,13 @@
 			<span slot="body">
 				<form v-on:submit.prevent="doEditFolder" class="h5">
 					<label for="displayName">Display Name: </label>
-					<input type="text" class="field block col-12 mb1" v-model="modal.displayName">
+					<input type="text" class="field block col-12 mb1" v-model="folder.displayName">
 					<label for="Description">Description: </label>
-					<input type="text" class="field block col-12 mb1" v-model="modal.description">
+					<input type="text" class="field block col-12 mb1" v-model="folder.description">
 					<label for="parentFolder">Nested Under:</label>
-					<select class="block col-12 mb2 field" v-model="modal.parent">
+					<select class="block col-12 mb2 field" v-model="folder.parent">
 						<option value="/root">(Root)</option>
-						<option v-for="f in st._folders" v-if="f.displayName != 'Trash' && f.folderId != modal.folderId" value="{{ f.folderId }}">{{ f.displayName }}</option>
+						<option v-for="f in st._folders" v-if="f.displayName != 'Trash' && f.folderId != folder.folderId" value="{{ f.folderId }}">{{ f.displayName }}</option>
 					</select>
 					<button type="submit" class="btn btn-primary">Edit</button>
 				</form>
@@ -146,38 +146,28 @@ module.exports = {
 			menuBlock.className = menuClass;
 			descBlock.className = descClass;
 		},
-		setModal: function(setToEmpty) {
-			var empty = setToEmpty || false;
-			this.modal.folderId = empty ? '' : this.folder.folderId;
-			this.modal.displayName = empty ? '' : this.folder.displayName;
-			this.modal.description = empty ? '' : this.folder.description;
+		setModal: function() {
+			this.modal.folderId = '';
+			this.modal.displayName = '';
+			this.modal.description = '';
 			this.modal.parent = this.folder.parent || '/root';
 		},
 		showTruncateFolder: function(e) {
 			this.truncateModal = true;
-
-			this.setModal();
-
-			this.modal.action = 'truncateFolder';
+			this.folder.action = 'truncateFolder';
 		},
 		showDeleteFolder: function(e) {
 			this.deleteModal = true;
-
-			this.setModal();
-
-			this.modal.action = 'deleteFolder';
+			this.folder.action = 'deleteFolder';
 		},
 		showEditFolder: function(e) {
 			this.editModal = true;
-
-			this.setModal();
-
-			this.modal.action = 'updateFolder';
+			this.folder.action = 'updateFolder';
 		},
 		showAddFolder: function(e) {
 			this.addModal = true;
 
-			this.setModal(true);
+			this.setModal();
 
 			this.modal.action = 'addFolder';
 		},
@@ -191,7 +181,7 @@ module.exports = {
 
 				if (resolved.buttonClicked !== 'ok') return;
 
-				api.updateFolder(this, this.modal)
+				api.updateFolder(this, this.folder)
 				.then(function(res) {
 					if (typeof res === 'undefined') return;
 					this.st.alert.success('Action "truncateFolder" queued.');
@@ -210,7 +200,7 @@ module.exports = {
 
 				if (resolved.buttonClicked !== 'ok') return;
 
-				api.updateFolder(this, this.modal)
+				api.updateFolder(this, this.folder)
 				.then(function(res) {
 					if (typeof res === 'undefined') return;
 					this.st.alert.success('Folder deleted.');
@@ -220,7 +210,7 @@ module.exports = {
 			}.bind(this))
 		},
 		doEditFolder: function(e) {
-			api.updateFolder(this, this.modal)
+			api.updateFolder(this, this.folder)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
 				this.st.alert.success('Folder updated.');
