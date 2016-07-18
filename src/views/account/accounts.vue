@@ -19,7 +19,7 @@
 				<div class="clearfix">
 					<div class="left black">
 						<span class="btn h5 not-clickable">
-							Loading account list...
+							No accounts found.
 						</span>
 					</div>
 				</div>
