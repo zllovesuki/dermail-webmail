@@ -46,6 +46,7 @@ module.exports = {
 		this.st.folder = {};
 		this.st.folders = [];
 		this.st._folders = [];
+		this.st.addresses = [];
 	},
 	compiled: function() {
 
