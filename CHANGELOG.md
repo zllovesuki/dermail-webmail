@@ -1,5 +1,8 @@
 ## Changelog
 
+07/17/2016: 3.2.0
+1. Address book: edit friendlyName and/or fold the address friendlyName
+
 06/07/2016: 2.x -> 3.0.0
 1. (API) Dermail now supports per (main) domain DKIM signing outbound and verifying inbound.
 2. (API) By default, Dermail checks for incoming emails for SPF. If SPF is not either "pass", "neutral", or "softfail", the emails will be moved to SPAM folder

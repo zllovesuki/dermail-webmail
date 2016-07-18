@@ -36,6 +36,12 @@
 						{{ st.starOnly === true ? '&#9733;': '&#9734;' }}
 					</span>
 				</span>
+				<span v-if="isInAddressBook">
+					<chevron-right></chevron-right>
+					<span class="btn button-narrow mxn1" v-link="{ name: 'addresses', params: { accountId: $route.params.accountId } }">
+						Address Book
+					</span>
+				</span>
 			</span>
 		</div>
 		<div class="mt2 mb1">
@@ -66,6 +72,9 @@ module.exports = {
 		},
 		isInSecurity: function() {
 			return this.$route.name === 'security'
+		},
+		isInAddressBook: function() {
+			return this.$route.name === 'addresses'
 		}
 	},
 	methods: {

@@ -13,6 +13,7 @@ var GETFOLDER_ENDPOINT = API_ENDPOINT + '/read/getFolder'
 var GETMAILSINFOLDER_ENDPOINT = API_ENDPOINT + '/read/getMailsInFolder'
 var GETMAIL_ENDPOINT = API_ENDPOINT + '/read/getMail'
 var GETADDRESS_ENDPOINT = API_ENDPOINT + '/read/getAddress'
+var GETADDDRESSES_ENDPOINT = API_ENDPOINT + '/read/getAddresses'
 var GETFILTERS_ENDPOINT = API_ENDPOINT + '/read/getFilters'
 var SEARCHWITHFILTER_ENDPOINT = API_ENDPOINT + '/read/searchWithFilter'
 var SEARCHMAILSINACCOUNT_ENDPOINT = API_ENDPOINT + '/read/searchMailsInAccount'
@@ -20,6 +21,7 @@ var MODIFYFILTER_ENDPOINT = API_ENDPOINT + '/write/modifyFilter'
 var UPDATEMAIL_ENDPOINT = API_ENDPOINT + '/write/updateMail'
 var UPDATEFOLDER_ENDPOINT = API_ENDPOINT + '/write/updateFolder'
 var UPDATEDOMAIN_ENDPOINT = API_ENDPOINT + '/write/updateDomain'
+var UPDATEADDRESS_ENDPOINT = API_ENDPOINT + '/write/updateAddress'
 var PUSHSUB_ENDPOINT = API_ENDPOINT + '/write/pushSubscriptions'
 var SENDMAIL_ENDPOINT = API_ENDPOINT + '/relay/sendMail'
 var UPLOADS3STREAM_ENDPOINT = API_ENDPOINT + '/upload/s3Stream'
@@ -107,6 +109,9 @@ module.exports = {
 	getAddress: function(ctx, data) {
 		return this.postWithHeader(ctx, GETADDRESS_ENDPOINT, data);
 	},
+	getAddresses: function(ctx, data) {
+		return this.postWithHeader(ctx, GETADDDRESSES_ENDPOINT, data);
+	},
 	getFilters: function(ctx) {
 		return this.postWithHeader(ctx, GETFILTERS_ENDPOINT, ctx.$route.params);
 	},
@@ -127,6 +132,9 @@ module.exports = {
 	},
 	updateDomain: function(ctx, data) {
 		return this.postWithHeader(ctx, UPDATEDOMAIN_ENDPOINT, data);
+	},
+	updateAddress: function(ctx, data) {
+		return this.postWithHeader(ctx, UPDATEADDRESS_ENDPOINT, data);
 	},
 	sendMail: function(ctx, data) {
 		return this.postWithHeader(ctx, SENDMAIL_ENDPOINT, data);

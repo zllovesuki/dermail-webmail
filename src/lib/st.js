@@ -10,6 +10,7 @@ var self = module.exports = {
 	authenticated: false,
 	title: 'Index',
 
+	addresses: [],
 	accounts: [],
 	account: {},
 	_folders: [],
@@ -94,7 +95,9 @@ var self = module.exports = {
 	putFoldersFlat: function(folders) {
 		self._folders = folders;
 	},
-
+	putAddresses: function(addresses) {
+		self.addresses = addresses;
+	},
 	putFilters: function(filters) {
 		self.filters = filters;
 	},
