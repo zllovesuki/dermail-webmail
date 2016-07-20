@@ -181,17 +181,29 @@ module.exports = {
 					html = this.replaceall('http://fonts.googleapis.com', 'https://fonts.googleapis.com', html);
 				}
 
+				var replaceImg = function(img, src) {
+					if (src.substring(0, 3) === 'cid') {
+						html = this.replaceall(img, this.replaceall(src, api.inlineImage(src), img), html);
+					}else{
+						var before = src;
+						var after = this.replaceMap(before);
+						html = this.replaceall(img, this.replaceall(before, api.safeImage(after), img), html);
+					}
+				}.bind(this);
+
 				var imgTags = html.match(/<img\s[^>]*?src\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/gi);
 				if (imgTags) {
 					imgTags.forEach(function(img) {
 						var src = img.match(/<img\s[^>]*?src\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/i)[1];
-						if (src.substring(0, 3) === 'cid') {
-							html = this.replaceall(img, this.replaceall(src, api.inlineImage(src), img), html);
-						}else{
-							var before = src;
-							var after = this.replaceMap(before);
-							html = this.replaceall(img, this.replaceall(before, api.safeImage(after), img), html);
-						}
+						replaceImg(img, src);
+					}.bind(this))
+				}
+				// This will do before I figure out a better regex
+				var noQuoteImgTags = html.match(/<img\s[^>]*?src(?:=)([^'\"]*?)(?:\s)[^>]*?>/gi);
+				if (noQuoteImgTags) {
+					noQuoteImgTags.forEach(function(img) {
+						var src = img.match(/<img\s[^>]*?src(?:=)([^'\"]*?)(?:\s)[^>]*?>/i)[1];
+						replaceImg(img, src);
 					}.bind(this))
 				}
 				var bgTags = html.match(/background\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/gi);
