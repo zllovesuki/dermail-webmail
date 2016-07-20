@@ -80,6 +80,7 @@ module.exports = {
 				api.updateMail(this, this.modal)
 				.then(function(res) {
 					if (typeof res === 'undefined') return;
+					this.st.lastFolderId = null;
 					this.st.alert.success('Moved to a folder.');
 					this.$dispatch('houseKeeping', this.modal.folderId, this.modal.messageId);
 				})
