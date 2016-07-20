@@ -114,6 +114,7 @@ module.exports = {
 			helpModal: false,
 			extraRecipients: false,
 			normalized: 'html{font-family:sans-serif}body{margin:0}article,aside,details,figcaption,figure,footer,header,hgroup,main,menu,nav,section,summary{display:block}audio,canvas,progress,video{display:inline-block;vertical-align:baseline}audio:not([controls]){display:none;height:0}[hidden],template{display:none}a{background-color:transparent}a:active,a:hover{outline:0}abbr[title]{border-bottom:1px dotted}b,strong{font-weight:700}dfn{font-style:italic}h1{font-size:2em;margin:.67em 0}mark{background:#ff0;color:#000}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sup{top:-.5em}sub{bottom:-.25em}img{border:0}svg:not(:root){overflow:hidden}figure{margin:1em 40px}hr{box-sizing:content-box;height:0}pre{overflow:auto}code,kbd,pre,samp{font-family:monospace,monospace;font-size:1em}button,input,optgroup,select,textarea{color:inherit;font:inherit;margin:0}button{overflow:visible}button,select{text-transform:none}button,html input[type="button"],/* 1 */input[type="reset"],input[type="submit"]{cursor:pointer}button[disabled],html input[disabled]{cursor:default}button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}input{line-height:normal}input[type="checkbox"],input[type="radio"]{box-sizing:border-box;padding:0}input[type="number"]::-webkit-inner-spin-button,input[type="number"]::-webkit-outer-spin-button{height:auto}input[type="search"]{box-sizing:content-box}fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}legend{border:0;padding:0}textarea{overflow:auto}optgroup{font-weight:700}table{border-collapse:collapse;border-spacing:0}td,th{padding:0}',
+			iframeFix: 'self!==top&&(max=' + st.zoomFactor + ',myRedraw="both",b=document.getElementsByTagName("body")[0],zW=(b.clientWidth-5)/b.scrollWidth,"both"===myRedraw?(zH=b.clientHeight/b.scrollHeight,zH<zW&&zH<1?z=zH:z=zW):z=zW,z>1+max?z=1+max:z<1-max&&(z=1-max),s="zoom:"+z+"; -moz-transform: scale("+z+"); -moz-transform-origin: 0 0;","function"==typeof b.setAttribute?b.setAttribute("style",s):"object"==typeof b.style.setAttribute&&b.style.setAttribute("cssText",s));',
 			ready: false,
 			encodingMap: [
 				{
@@ -178,6 +179,11 @@ module.exports = {
 				style.appendChild(document.createTextNode(this.normalized));
 			}
 			return style;
+		},
+		createiFrameFix: function() {
+			var script = document.createElement("script");
+			script.innerHTML = this.iframeFix;
+			return script;
 		},
 		safeImage: function(html) {
 			return new Promise(function(resolve) {
@@ -259,6 +265,7 @@ module.exports = {
 				var frame = document.getElementById('iframe-body');
 				var iframe = frame.contentWindow.document;
 				iframe.head.appendChild(this.createNormalized());
+				iframe.head.appendChild(this.createiFrameFix());
 				this.safeImage(this.st.mail.html).then(function(html) {
 					iframe.body.innerHTML = html;
 					setTimeout(function() {

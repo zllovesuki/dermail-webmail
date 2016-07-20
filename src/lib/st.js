@@ -7,6 +7,8 @@ var self = module.exports = {
 
 	colors: ['aqua', 'blue', 'black', 'navy', 'teal', 'green', 'olive', 'lime', 'orange', 'red', 'fuchsia', 'purple', 'maroon'],
 
+	zoomFactor: 0.5,
+
 	authenticated: false,
 	title: 'Index',
 
