@@ -17,7 +17,7 @@
 					<select class="block col-12 mb2 field" v-model="modal.folderId">
 						<option v-for="f in st._folders" v-if="st.hideInMoveOptions.indexOf(f.displayName.toLowerCase()) === -1" value="{{ f.folderId }}">{{ f.displayName }}</option>
 					</select>
-					<button class="btn btn-primary">Move</button>
+					<button :disabled="buttonDisabled" class="btn btn-primary">Move</button>
 				</form>
 			</span>
 		</modal>
@@ -38,6 +38,7 @@ module.exports = {
 	data: function() {
 		return {
 			st: st,
+			buttonDisabled: false,
 			folderModal: false,
 			modal: {
 				accountId: this.context.accountId,
@@ -77,12 +78,14 @@ module.exports = {
 		doMoveToFolder: function(e) {
 
 			if (this.modal.oldFolder != this.modal.folderId) { // Not in this folder anymore
+				this.buttonDisabled = true;
 				api.updateMail(this, this.modal)
 				.then(function(res) {
 					if (typeof res === 'undefined') return;
 					this.st.lastFolderId = null;
 					this.st.alert.success('Moved to a folder.');
 					this.$dispatch('houseKeeping', this.modal.folderId, this.modal.messageId);
+					this.buttonDisabled = false;
 				})
 			}
 			this.folderModal = false;
