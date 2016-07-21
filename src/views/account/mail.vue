@@ -175,58 +175,55 @@ module.exports = {
 			return script;
 		},
 		safeImage: function(html) {
-			return new Promise(function(resolve) {
+			if (html.indexOf('http://fonts.googleapis.com') !== -1) {
+				html = this.replaceall('http://fonts.googleapis.com', 'https://fonts.googleapis.com', html);
+			}
 
-				if (html.indexOf('http://fonts.googleapis.com') !== -1) {
-					html = this.replaceall('http://fonts.googleapis.com', 'https://fonts.googleapis.com', html);
+			var replaceImg = function(img, src) {
+				if (src.substring(0, 3) === 'cid') {
+					html = this.replaceall(img, this.replaceall(src, api.inlineImage(src), img), html);
+				}else{
+					var before = src;
+					var after = this.replaceMap(before);
+					html = this.replaceall(img, this.replaceall(before, api.safeImage(after), img), html);
 				}
+			}.bind(this);
 
-				var replaceImg = function(img, src) {
-					if (src.substring(0, 3) === 'cid') {
-						html = this.replaceall(img, this.replaceall(src, api.inlineImage(src), img), html);
-					}else{
-						var before = src;
-						var after = this.replaceMap(before);
-						html = this.replaceall(img, this.replaceall(before, api.safeImage(after), img), html);
-					}
-				}.bind(this);
+			var imgTags = html.match(/<img\s[^>]*?src\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/gi);
+			if (imgTags) {
+				imgTags.forEach(function(img) {
+					var src = img.match(/<img\s[^>]*?src\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/i)[1];
+					replaceImg(img, src);
+				}.bind(this))
+			}
+			// This will do before I figure out a better regex
+			var noQuoteImgTags = html.match(/<img\s[^>]*?src(?:=)([^'\"]*?)(?:\s)[^>]*?>/gi);
+			if (noQuoteImgTags) {
+				noQuoteImgTags.forEach(function(img) {
+					var src = img.match(/<img\s[^>]*?src(?:=)([^'\"]*?)(?:\s)[^>]*?>/i)[1];
+					replaceImg(img, src);
+				}.bind(this))
+			}
+			var bgTags = html.match(/background\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/gi);
+			if (bgTags) {
+				bgTags.forEach(function(img) {
+					var src = img.match(/background\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/i)[1];
+					var before = src;
+					var after = this.replaceMap(before);
+					html = this.replaceall(img, this.replaceall(before, api.safeImage(after), img), html);
+				}.bind(this))
+			}
+			var cssURL = html.match(/(?:\(['|"]?)(.*?)(?:['|"]?\))/gi);
+			if (cssURL) {
+				cssURL.forEach(function(img) {
+					var src = img.match(/(?:\(['|"]?)(.*?)(?:['|"]?\))/i)[1];
+					html = this.replaceall('url(' + src, 'url(' + api.safeImage(src), html);
+					html = this.replaceall('url(\'' + src + '\'', 'url(' + api.safeImage(src), html);
+					html = this.replaceall('url("' + src + '"', 'url(' + api.safeImage(src), html);
+				}.bind(this))
+			}
 
-				var imgTags = html.match(/<img\s[^>]*?src\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/gi);
-				if (imgTags) {
-					imgTags.forEach(function(img) {
-						var src = img.match(/<img\s[^>]*?src\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/i)[1];
-						replaceImg(img, src);
-					}.bind(this))
-				}
-				// This will do before I figure out a better regex
-				var noQuoteImgTags = html.match(/<img\s[^>]*?src(?:=)([^'\"]*?)(?:\s)[^>]*?>/gi);
-				if (noQuoteImgTags) {
-					noQuoteImgTags.forEach(function(img) {
-						var src = img.match(/<img\s[^>]*?src(?:=)([^'\"]*?)(?:\s)[^>]*?>/i)[1];
-						replaceImg(img, src);
-					}.bind(this))
-				}
-				var bgTags = html.match(/background\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/gi);
-				if (bgTags) {
-					bgTags.forEach(function(img) {
-						var src = img.match(/background\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/i)[1];
-						var before = src;
-						var after = this.replaceMap(before);
-						html = this.replaceall(img, this.replaceall(before, api.safeImage(after), img), html);
-					}.bind(this))
-				}
-				var cssURL = html.match(/(?:\(['|"]?)(.*?)(?:['|"]?\))/gi);
-				if (cssURL) {
-					cssURL.forEach(function(img) {
-						var src = img.match(/(?:\(['|"]?)(.*?)(?:['|"]?\))/i)[1];
-						html = this.replaceall('url(' + src, 'url(' + api.safeImage(src), html);
-						html = this.replaceall('url(\'' + src + '\'', 'url(' + api.safeImage(src), html);
-						html = this.replaceall('url("' + src + '"', 'url(' + api.safeImage(src), html);
-					}.bind(this))
-				}
-
-				return resolve(html);
-			}.bind(this))
+			return html;
 		},
 		safeLink: function(element) {
 			var a = element.getElementsByTagName('a');
@@ -266,13 +263,11 @@ module.exports = {
 				var frame = document.getElementById('iframe-body');
 				var iframe = frame.contentWindow.document;
 				iframe.head.appendChild(this.createiFrameFix());
-				this.safeImage(this.st.mail.html).then(function(html) {
-					iframe.body.innerHTML = html;
-					setTimeout(function() {
-						frame.style.height = (iframe.body.scrollHeight) + 'px';
-					}, 500);
-					this.safeLink(iframe);
-				}.bind(this))
+				iframe.body.innerHTML = this.safeImage(this.st.mail.html);
+				setTimeout(function() {
+					frame.style.height = (iframe.body.scrollHeight) + 'px';
+				}, 500);
+				this.safeLink(iframe);
 			}else{
 				this.$nextTick(function() {
 					var body = document.getElementById('html-body');
