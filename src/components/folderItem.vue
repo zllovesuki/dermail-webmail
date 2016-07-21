@@ -41,7 +41,7 @@
 					<label for="displayName">Are you sure to truncate the folder <span class="bold">{{ folder.displayName }}</span>?</label>
 					<hr />
 					<span class="block mb2">All mails under this folder will be <span class="bold">deleted</span>.</span>
-					<button type="submit" class="block btn btn-outline red">Truncate</button>
+					<button :disabled="buttonDisabled" type="submit" class="block btn btn-outline red">Truncate</button>
 				</form>
 			</span>
 		</modal>
@@ -53,7 +53,7 @@
 					<hr />
 					<span class="block mb1">All mails under this folder will be moved to "Trash".</span>
 					<span class="block mb2">If this folder is a parent folder, you need to delete the children folders first.</span>
-					<button type="submit" class="block btn btn-outline red">Delete</button>
+					<button :disabled="buttonDisabled" type="submit" class="block btn btn-outline red">Delete</button>
 				</form>
 			</span>
 		</modal>
@@ -70,7 +70,7 @@
 						<option value="/root">(Root)</option>
 						<option v-for="f in st._folders" v-if="f.displayName != 'Trash' && f.folderId != folder.folderId" value="{{ f.folderId }}">{{ f.displayName }}</option>
 					</select>
-					<button type="submit" class="btn btn-primary">Edit</button>
+					<button :disabled="buttonDisabled" type="submit" class="btn btn-primary">Edit</button>
 				</form>
 			</span>
 		</modal>
@@ -87,7 +87,7 @@
 						<option value="/root">(Root)</option>
 						<option v-for="f in st._folders" v-if="f.displayName != 'Trash'" value="{{ f.folderId }}">{{ f.displayName }}</option>
 					</select>
-					<button type="submit" class="btn btn-primary">Add</button>
+					<button :disabled="buttonDisabled" type="submit" class="btn btn-primary">Add</button>
 				</form>
 			</span>
 		</modal>
@@ -110,6 +110,7 @@ module.exports = {
 	data: function () {
 		return {
 			st: st,
+			buttonDisabled: false,
 			truncateModal: false,
 			deleteModal: false,
 			editModal: false,
@@ -181,6 +182,8 @@ module.exports = {
 
 				if (resolved.buttonClicked !== 'ok') return;
 
+				this.buttonDisabled = true;
+
 				api.updateFolder(this, this.folder)
 				.then(function(res) {
 					if (typeof res === 'undefined') return;
@@ -200,6 +203,8 @@ module.exports = {
 
 				if (resolved.buttonClicked !== 'ok') return;
 
+				this.buttonDisabled = true;
+
 				api.updateFolder(this, this.folder)
 				.then(function(res) {
 					if (typeof res === 'undefined') return;
@@ -210,6 +215,7 @@ module.exports = {
 			}.bind(this))
 		},
 		doEditFolder: function(e) {
+			this.buttonDisabled = true;
 			api.updateFolder(this, this.folder)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
@@ -219,7 +225,7 @@ module.exports = {
 			})
 		},
 		doAddFolder: function(e) {
-
+			this.buttonDisabled = true;
 			api.updateFolder(this, this.modal)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
@@ -231,6 +237,7 @@ module.exports = {
 		houseKeeping: function() {
 			this.$dispatch('getFoldersInAccount', function() {
 				this.st.loading.go(100);
+				this.buttonDisabled = false;
 			}.bind(this))
 		}
 	}
