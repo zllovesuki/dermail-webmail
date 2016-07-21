@@ -55,11 +55,13 @@ module.exports = {
 		this.st.setTitle('Folders');
 
 		api.grabDependencies(1, this)
-		.then(function(data) {
+		.then(function(res) {
+			if (typeof res === 'undefined') return;
 			this.st.loading.go(70);
-			this.$dispatch('getFoldersInAccount', function() {
-				this.st.loading.go(100);
-			}.bind(this))
+			this.$dispatch('getFoldersInAccount');
+		}.bind(this))
+		.finally(function() {
+			this.st.loading.go(100);
 		}.bind(this))
 	}
 }
