@@ -51,7 +51,7 @@
 					<input type="text" class="field block col-12 mb1" v-model="pre.contain">
 					<label for="exclude">Does not have: <i>(and)</i></label>
 					<input type="text" class="field block col-12 mb1" v-model="pre.exclude">
-					<button type="submit" class="block btn btn-primary">Search</button>
+					<button :disabled="buttonDisabled" type="submit" class="block btn btn-primary">Search</button>
 				</form>
 			</span>
 		</modal>
@@ -85,7 +85,7 @@
 					<label for="existing" class="block col-12 mb2">Apply to existing emails: </label>
 					<label for="folder" class="block col-12 mb2">Move to folder:  <input type="checkbox" v-model="existing.folder"></label>
 					<label for="read" class="block col-12 mb2">Mark Read:  <input type="checkbox" v-model="existing.markRead"></label>
-					<button type="submit" class="mt2 inline-block btn btn-primary">Create</button>
+					<button :disabled="buttonDisabled" type="submit" class="mt2 inline-block btn btn-primary">Create</button>
 					<button type="button" @click="goBackToResults" class="mt2 inline-block btn btn-primary black bg-gray h5">Go Back</button>
 				</form>
 			</span>
@@ -102,6 +102,7 @@ module.exports = {
 	data: function() {
 		return {
 			st: st,
+			buttonDisabled: false,
 			addModal: false,
 			resultModal: false,
 			actionModal: false,
@@ -133,6 +134,7 @@ module.exports = {
 			if (count === 0) {
 				return this.st.alert.error('At least one criteria is required.');
 			}
+			this.buttonDisabled = true;
 			this.st.loading.go(30);
 			api.searchWithFilter(this, {
 				accountId: this.$route.params.accountId,
@@ -147,6 +149,7 @@ module.exports = {
 			})
 			.finally(function() {
 				this.st.loading.go(100);
+				this.buttonDisabled = false;
 			})
 		},
 		goBackToCriteria: function() {
@@ -163,6 +166,7 @@ module.exports = {
 		},
 		doCreateFilter: function() {
 			this.st.loading.go(30);
+			this.buttonDisabled = true;
 			api.modifyFilter(this, {
 				accountId: this.$route.params.accountId,
 				op: 'add',
@@ -180,6 +184,7 @@ module.exports = {
 				.then(function() {
 					this.st.loading.go(100);
 				})
+				this.buttonDisabled = false;
 			})
 		}
 	},
