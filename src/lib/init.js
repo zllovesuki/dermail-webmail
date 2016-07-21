@@ -24,13 +24,13 @@ module.exports = function(api, st, router) {
 		if (st.isAuthenticated()) {
 			return transition.next();
 		}else if (st.getToken()) {
-			api.ping(router.app)
+			return api.ping(router.app)
 			.then(function(res) {
 				// We are fine
 				st.setAuthenticated(true);
 				// Message queue
 				api.queue().connect(router.app, api);
-				api.s3(router.app)
+				return api.s3(router.app)
 				.then(function(res) {
 					var data = {};
 					if (res && res.data) {
