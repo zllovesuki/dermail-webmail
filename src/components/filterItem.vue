@@ -39,22 +39,21 @@
 
 <script>
 
-var st = require('../lib/st.js');
-var api = require('../lib/api.js');
+var getters = require('../lib/vuex/getters.js')
+var actions = require('../lib/vuex/actions.js')
 
 module.exports = {
+	vuex: {
+		getters: getters,
+		actions: actions
+	},
 	props: {
 		filter: Object,
 		deleteModal: false
 	},
-	data: function() {
-		return {
-			st: st
-		}
-	},
 	methods: {
 		doDeleteFilter: function() {
-			api.modifyFilter(this, {
+			this.modifyFilter({
 				accountId: this.$route.params.accountId,
 				filterId: this.filter.filterId,
 				op: 'delete'
@@ -62,11 +61,11 @@ module.exports = {
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
 				this.deleteModal = false;
-				this.st.alert.success('Filter deleted.');
-				api.grabFilters(this);
+				this.alert().success('Filter deleted.');
+				return this.getFilters();
 			})
 			.finally(function() {
-				this.st.loading.go(100);
+				this.loading().go(100);
 			})
 		},
 		showDeleteFilter: function(e) {

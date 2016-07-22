@@ -35,6 +35,22 @@ module.exports = {
 	setLastFolderId: function(state, id) {
 		state.lastFolderId = id;
 	},
+	setReadInMailArray: function(state, messageId, read) {
+		var mail = state.mails.filter(function(mail) {
+			return mail.messageId === messageId;
+		})
+		if (mail.length === 1) {
+			mail[0].isRead = read;
+		}
+	},
+	removeMailInMailArray: function(state, messageId) {
+		state.mails = state.mails.filter(function(e) {
+			return e.messageId !== messageId; // remove by value
+		})
+	},
+	noMailsLeft: function(state, noMailsLeft) {
+		state.noMailsLeft = noMailsLeft;
+	},
 	putMail: function(state, mail) {
 		state.mail = mail;
 	},
@@ -85,6 +101,9 @@ module.exports = {
 	},
 	removeMails: function(state) {
 		state.mails = [];
+	},
+	removeFilters: function(state) {
+		state.filters = [];
 	},
 
 	updateComposeType: function(state, data) {

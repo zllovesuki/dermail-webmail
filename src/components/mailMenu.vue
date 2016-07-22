@@ -15,7 +15,7 @@
 				<form v-on:submit.prevent="doMoveToFolder" class="h5">
 					<label for="folder">Move to:</label>
 					<select class="block col-12 mb2 field" v-model="modal.folderId">
-						<option v-for="f in _folders" v-if="hideInMoveOptions.indexOf(f.displayName.toLowerCase()) === -1" value="{{ f.folderId }}">{{ f.displayName }}</option>
+						<option v-for="f in flatFolders" v-if="hideInMoveOptions.indexOf(f.displayName.toLowerCase()) === -1" value="{{ f.folderId }}">{{ f.displayName }}</option>
 					</select>
 					<button :disabled="buttonDisabled" class="btn btn-primary">Move</button>
 				</form>
@@ -59,7 +59,7 @@ module.exports = {
 			var currentRead = this.context.isRead;
 			var newRead = (currentRead ? 'unread' : 'read');
 
-			api.updateMail(this, {
+			this.updateMail({
 				accountId: accountId,
 				messageId: messageId,
 				action: newRead
@@ -68,7 +68,7 @@ module.exports = {
 				if (typeof res === 'undefined') return;
 
 				this.context.isRead = (newRead === 'read' ? true : false);
-				this.$dispatch('setReadInMailArray', messageId, this.context.isRead);
+				this.setReadInMailArray(messageId, this.context.isRead);
 
 				this.alert().success((newRead !== 'read' ? 'Unread' : 'Read') + ' : 👍');
 			})
@@ -83,12 +83,12 @@ module.exports = {
 
 			if (this.modal.oldFolder != this.modal.folderId) { // Not in this folder anymore
 				this.buttonDisabled = true;
-				api.updateMail(this, this.modal)
+				this.updateMail(this.modal)
 				.then(function(res) {
 					if (typeof res === 'undefined') return;
 					this.resetLastFolderId();
 					this.alert().success('Moved to a folder.');
-					this.$dispatch('houseKeeping', this.modal.folderId, this.modal.messageId);
+					this.mailHouseKeeping(this.modal.folderId, this.modal.messageId);
 					this.buttonDisabled = false;
 				})
 			}
@@ -98,13 +98,13 @@ module.exports = {
 
 			this.modal.action = 'trash';
 
-			api.updateMail(this, this.modal)
+			this.updateMail(this.modal)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
 				var data = res.text();
 				this.alert().success('Moved to Trash.');
 				this.modal.folderId = data; // see line 96 in showMoveFolder()
-				this.$dispatch('houseKeeping', data, this.modal.messageId);
+				this.mailHouseKeeping(data, this.modal.messageId);
 			})
 		},
 

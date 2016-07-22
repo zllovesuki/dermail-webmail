@@ -296,6 +296,15 @@ var self = module.exports = {
 			return data;
 		})
 	},
+	getFilters: function(_, data) {
+		return postWithHeader(this.$http, _.state, GETFILTERS_ENDPOINT, _.state.route.params)
+		.then(function(res) {
+			if (typeof res === 'undefined') return;
+			var data = res.json();
+			this.putFilters(data);
+			return data;
+		})
+	},
 
 	pushNotification: function(_, data) {
 		return postWithHeader(this.$http, _.state, PUSHSUB_ENDPOINT, data);
@@ -304,12 +313,22 @@ var self = module.exports = {
 	searchMailsInAccount: function(_, data) {
 		return postWithHeader(this.$http, _.state, SEARCHMAILSINACCOUNT_ENDPOINT, data);
 	},
+	searchWithFilter: function(_, data) {
+		return postWithHeader(this.$http, _.state, SEARCHWITHFILTER_ENDPOINT, data);
+	},
+
+	updateMail: function(_, data) {
+		return postWithHeader(this.$http, _.state, UPDATEMAIL_ENDPOINT, data);
+	},
 
 	putMails: function(_, mails) {
 		_.dispatch('putMails', mails);
 	},
 	putAddresses: function(_, data) {
 		_.dispatch('putAddresses', data);
+	},
+	putFilters: function(_, data) {
+		_.dispatch('putFilters', data);
 	},
 
 	updateComposeType: function(_, data) {
@@ -355,6 +374,10 @@ var self = module.exports = {
 		return postWithHeader(this.$http, _.state, UPDATEFOLDER_ENDPOINT, data);
 	},
 
+	modifyFilter: function(_, data) {
+		return postWithHeader(this.$http, _.state, MODIFYFILTER_ENDPOINT, data);
+	},
+
 	setTitle: function(_, title) {
 		_.dispatch('setTitle', title)
 	},
@@ -363,6 +386,31 @@ var self = module.exports = {
 	},
 	setLastFolderId: function(_) {
 		_.dispatch('setLastFolderId', _.state.route.params.folderId)
+	},
+
+	setReadInMailArray: function(_, messageId, read) {
+		_.dispatch('setReadInMailArray', messageId, read);
+	},
+	removeMailInMailArray: function(_, messageId) {
+		_.dispatch('removeMailInMailArray', messageId);
+	},
+
+	mailHouseKeeping: function(_, folderId, messageId, redirectToFolder) {
+		var message = document.getElementsByClassName('mail-' + messageId)[0];
+		var redirectToFolder = !!redirectToFolder;
+
+		this.removeMailInMailArray(messageId);
+
+		if (typeof message !== 'undefined') { // We are in folder view
+			if (_.state.mails.length === 0) { // We just removed the last one!
+				_.dispatch('noMailsLeft', true);
+			}
+		}else{ // We are in mail view
+			if (redirectToFolder)
+				_.router.go({ name: 'folder', params: { accountId: _.state.route.params.accountId, folderId: folderId } })
+			else
+				_.router.go({ name: 'mail', params: { accountId: _.state.mail.accountId, folderId: folderId, messageId: _.state.mail.messageId } })
+		}
 	},
 
 	removeToken: function(_) {
@@ -388,5 +436,8 @@ var self = module.exports = {
 	},
 	removeMails: function(_) {
 		_.dispatch('removeMails');
+	},
+	removeFilters: function(_) {
+		_.dispatch('removeFilters');
 	}
 }

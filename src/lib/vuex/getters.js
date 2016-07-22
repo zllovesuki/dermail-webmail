@@ -70,5 +70,8 @@ module.exports = {
 	},
 	compose: function(state) {
 		return state.compose
+	},
+	filters: function(state) {
+		return state.filters
 	}
 }

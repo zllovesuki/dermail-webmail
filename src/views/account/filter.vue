@@ -10,7 +10,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="m0 p0" v-if="st.filters.length === 0">
+			<div class="m0 p0" v-if="filters.length === 0">
 				<div class="clearfix">
 					<div class="left black">
 						<span class="btn muted h5 not-clickable">
@@ -19,7 +19,7 @@
 					</div>
 				</div>
 			</div>
-			<template v-for="filter in st.filters">
+			<template v-for="filter in filters">
 				<filter-item :filter="filter"></filter-item>
 			</template>
 		</div>
@@ -32,7 +32,7 @@
 				</div>
 				<div class="m0 p2 border-top">
 					<div class="clearfix">
-						<a class="muted h6 ml1 bold btn btn-outline {{ st.color }}" @click="addModal = true">Search with Filter</a>
+						<a class="muted h6 ml1 bold btn btn-outline {{ color }}" @click="addModal = true">Search with Filter</a>
 					</div>
 				</div>
 			</div>
@@ -77,7 +77,7 @@
 					<label for="folder">Move to folder: </label>
 					<select class="block col-12 mb2 field" v-model="post.folder">
 						<option value="default">(Default: Inbox)</option>
-						<option v-for="f in st._folders" value="{{ f.folderId }}" v-if="f.displayName !== 'Inbox' && f.displayName !== 'Sent' ">{{ f.displayName }}</option>
+						<option v-for="f in flatFolders" value="{{ f.folderId }}" v-if="f.displayName !== 'Inbox' && f.displayName !== 'Sent' ">{{ f.displayName }}</option>
 					</select>
 					<label for="notify" class="block col-12 mb2">Do no notify:  <input type="checkbox" v-model="post.doNotNotify"></label>
 					<label for="read" class="block col-12 mb2">Mark read:  <input type="checkbox" v-model="post.markRead"></label>
@@ -95,13 +95,16 @@
 
 <script>
 
-var st = require('../../lib/st.js');
-var api = require('../../lib/api.js');
+var getters = require('../../lib/vuex/getters.js')
+var actions = require('../../lib/vuex/actions.js')
 
 module.exports = {
+	vuex: {
+		getters: getters,
+		actions: actions
+	},
 	data: function() {
 		return {
-			st: st,
 			buttonDisabled: false,
 			addModal: false,
 			resultModal: false,
@@ -132,11 +135,11 @@ module.exports = {
 				if (!!this.pre[key]) count++;
 			}.bind(this))
 			if (count === 0) {
-				return this.st.alert.error('At least one criteria is required.');
+				return this.alert().error('At least one criteria is required.');
 			}
 			this.buttonDisabled = true;
-			this.st.loading.go(30);
-			api.searchWithFilter(this, {
+			this.loading().go(30);
+			this.searchWithFilter({
 				accountId: this.$route.params.accountId,
 				criteria: this.pre
 			})
@@ -148,7 +151,7 @@ module.exports = {
 				this.resultModal = true;
 			})
 			.finally(function() {
-				this.st.loading.go(100);
+				this.loading().go(100);
 				this.buttonDisabled = false;
 			})
 		},
@@ -165,9 +168,9 @@ module.exports = {
 			this.actionModal = true;
 		},
 		doCreateFilter: function() {
-			this.st.loading.go(30);
+			this.loading().go(30);
 			this.buttonDisabled = true;
-			api.modifyFilter(this, {
+			this.modifyFilter({
 				accountId: this.$route.params.accountId,
 				op: 'add',
 				criteria: this.pre,
@@ -177,32 +180,33 @@ module.exports = {
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
 				this.actionModal = false;
-				this.st.alert.success('Filter created.');
+				this.alert().success('Filter created.');
 			})
 			.finally(function() {
-				api.grabFilters(this)
+				return this.getFilters()
 				.then(function() {
-					this.st.loading.go(100);
+					this.loading().go(100);
 				})
 				this.buttonDisabled = false;
 			})
 		}
 	},
 	created: function() {
-		this.st.filters = [];
+		this.removeFilters();
 	},
 	compiled: function() {
 
-		this.st.setTitle('Filter');
+		this.setTitle('Filter');
 
-		api.grabDependencies(1, this)
+		this.grabDependencies(1)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
-			this.$dispatch('getFoldersInAccount', function() {
-				api.grabFilters(this)
-				.then(function() {
-					this.st.loading.go(100);
-				}.bind(this))
+			return this.getFoldersInAccount()
+			.then(function() {
+				return this.getFilters()
+			})
+			.then(function() {
+				this.loading().go(100);
 			}.bind(this))
 		}.bind(this))
 
