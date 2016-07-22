@@ -193,7 +193,8 @@ module.exports = {
 			if (imgTags) {
 				imgTags.forEach(function(img) {
 					var src = img.match(/<img\s[^>]*?src\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/i)[1];
-					replaceImg(img, src);
+					// 'http'.length > 3
+					if (src.length > 3) replaceImg(img, src);
 				}.bind(this))
 			}
 			// This will do before I figure out a better regex
@@ -201,16 +202,16 @@ module.exports = {
 			if (noQuoteImgTags) {
 				noQuoteImgTags.forEach(function(img) {
 					var src = img.match(/<img\s[^>]*?src(?:=)([^'\"]*?)(?:\s)[^>]*?>/i)[1];
-					replaceImg(img, src);
+					// 'http'.length > 3
+					if (src.length > 3) replaceImg(img, src);
 				}.bind(this))
 			}
 			var bgTags = html.match(/background\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/gi);
 			if (bgTags) {
 				bgTags.forEach(function(img) {
 					var src = img.match(/background\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/i)[1];
-					var before = src;
-					var after = this.replaceMap(before);
-					html = this.replaceall(img, this.replaceall(before, api.safeImage(after), img), html);
+					// 'http'.length > 3
+					if (src.length > 3) replaceImg(img, src);
 				}.bind(this))
 			}
 			var cssURL = html.match(/(?:\(['|"]?)(.*?)(?:['|"]?\))/gi);
