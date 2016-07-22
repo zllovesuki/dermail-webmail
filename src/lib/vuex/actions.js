@@ -26,76 +26,7 @@ var PUSHSUB_ENDPOINT = API_ENDPOINT + '/write/pushSubscriptions'
 var SENDMAIL_ENDPOINT = API_ENDPOINT + '/relay/sendMail'
 var UPLOADS3STREAM_ENDPOINT = API_ENDPOINT + '/upload/s3Stream'
 
-var listToTree = function(data, options) {
-	options = options || {};
-	var ID_KEY = options.idKey || 'id';
-	var PARENT_KEY = options.parentKey || 'parent';
-	var CHILDREN_KEY = options.childrenKey || 'children';
-
-	var tree = [],
-		childrenOf = {};
-	var item, id, parentId;
-
-	for (var i = 0, length = data.length; i < length; i++) {
-		item = data[i];
-		id = item[ID_KEY];
-		parentId = item[PARENT_KEY] || 0;
-		// every item may have children
-		childrenOf[id] = childrenOf[id] || [];
-		// init its children
-		item[CHILDREN_KEY] = childrenOf[id];
-		if (parentId != 0) {
-			// init its parent's children object
-			childrenOf[parentId] = childrenOf[parentId] || [];
-			// push it into its parent's children object
-			childrenOf[parentId].push(item);
-		} else {
-			tree.push(item);
-		}
-	};
-
-	return tree;
-}
-
-var getHeader = function(state) {
-	return {
-		headers: {
-			'Authorization': 'JWT ' + state.token
-		}
-	}
-}
-
-var _http = function($http, state, action, endpoint, header, data) {
-	header = !!header ? getHeader(state): {};
-	data = data || {};
-	var handle;
-	if (action === 'get') handle = $http[action](endpoint, header)
-	else handle = $http[action](endpoint, data, header)
-	return handle
-	.then(function(res) {
-		return res;
-	})
-	.catch(function(res) {
-		var data = res.json();
-		if (data.hasOwnProperty('message')) {
-			state.alert.error(data.message);
-		}else{
-			state.alert.error(res.statusText);
-		}
-	})
-}
-
-var getWithHeader = function($http, state, endpoint) {
-	return _http($http, state, 'get', endpoint, true)
-}
-
-var postWithHeader = function($http, state, endpoint, data) {
-	return _http($http, state, 'post', endpoint, true, data)
-}
-
-var postWithoutHeader = function($http, state, endpoint, data) {
-	return _http($http, state, 'post', endpoint, false, data)
-}
+var helper = require('./helper')
 
 var self = module.exports = {
 	loading: function(_, percentage) {
@@ -140,10 +71,10 @@ var self = module.exports = {
 	},
 
 	ping: function(_) {
-		return this.$http.get(PING_ENDPOINT, getHeader(_.state))
+		return this.$http.get(PING_ENDPOINT, helper.getHeader(_.state))
 	},
 	getS3: function(_) {
-		return this.$http.get(S3_ENDPOINT, getHeader(_.state))
+		return this.$http.get(S3_ENDPOINT, helper.getHeader(_.state))
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
 			var data = {};
@@ -217,7 +148,7 @@ var self = module.exports = {
 		this.alert().success('Logout successfully!');
 	},
 	getSecurity: function(_) {
-		return getWithHeader(this.$http, _.state, GETSECURITY_ENDPOINT)
+		return helper.getWithHeader(this.$http, _.state, GETSECURITY_ENDPOINT)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
 			var data = {};
@@ -228,7 +159,7 @@ var self = module.exports = {
 		})
 	},
 	getAccount: function(_) {
-		return postWithHeader(this.$http, _.state, GETACCOUNT_ENDPOINT, _.state.route.params)
+		return helper.postWithHeader(this.$http, _.state, GETACCOUNT_ENDPOINT, _.state.route.params)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
 			var data = res.json();
@@ -238,7 +169,7 @@ var self = module.exports = {
 		})
 	},
 	getAccounts: function(_) {
-		return getWithHeader(this.$http, _.state, GETACCOUNTS_ENDPOINT)
+		return helper.getWithHeader(this.$http, _.state, GETACCOUNTS_ENDPOINT)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
 			var data = res.json();
@@ -247,7 +178,7 @@ var self = module.exports = {
 		})
 	},
 	getFolder: function(_) {
-		return postWithHeader(this.$http, _.state, GETFOLDER_ENDPOINT, _.state.route.params)
+		return helper.postWithHeader(this.$http, _.state, GETFOLDER_ENDPOINT, _.state.route.params)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
 			var data = res.json();
@@ -256,11 +187,11 @@ var self = module.exports = {
 		})
 	},
 	getFoldersInAccount: function(_) {
-		return postWithHeader(this.$http, _.state, GETFOLDERS_ENDPOINT, _.state.route.params)
+		return helper.postWithHeader(this.$http, _.state, GETFOLDERS_ENDPOINT, _.state.route.params)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
 			var data = res.json();
-			_.dispatch('putFoldersTree', listToTree(data, {
+			_.dispatch('putFoldersTree', helper.listToTree(data, {
 				idKey: 'folderId',
 				parentKey: 'parent',
 				childrenKey: 'child'
@@ -271,7 +202,7 @@ var self = module.exports = {
 	},
 	getMailsInFolder: function(_, additional) {
 		var data = Object.assign(_.state.route.params, additional)
-		return postWithHeader(this.$http, _.state, GETMAILSINFOLDER_ENDPOINT, data)
+		return helper.postWithHeader(this.$http, _.state, GETMAILSINFOLDER_ENDPOINT, data)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
 			var data = res.json();
@@ -280,7 +211,7 @@ var self = module.exports = {
 		})
 	},
 	getAddress: function(_, data) {
-		return postWithHeader(this.$http, _.state, GETADDRESS_ENDPOINT, data)
+		return helper.postWithHeader(this.$http, _.state, GETADDRESS_ENDPOINT, data)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
 			var data = res.json();
@@ -288,7 +219,7 @@ var self = module.exports = {
 		})
 	},
 	getAddresses: function(_, data) {
-		return postWithHeader(this.$http, _.state, GETADDDRESSES_ENDPOINT, data)
+		return helper.postWithHeader(this.$http, _.state, GETADDDRESSES_ENDPOINT, data)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
 			var data = res.json();
@@ -297,7 +228,7 @@ var self = module.exports = {
 		})
 	},
 	getFilters: function(_, data) {
-		return postWithHeader(this.$http, _.state, GETFILTERS_ENDPOINT, _.state.route.params)
+		return helper.postWithHeader(this.$http, _.state, GETFILTERS_ENDPOINT, _.state.route.params)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
 			var data = res.json();
@@ -307,18 +238,18 @@ var self = module.exports = {
 	},
 
 	pushNotification: function(_, data) {
-		return postWithHeader(this.$http, _.state, PUSHSUB_ENDPOINT, data);
+		return helper.postWithHeader(this.$http, _.state, PUSHSUB_ENDPOINT, data);
 	},
 
 	searchMailsInAccount: function(_, data) {
-		return postWithHeader(this.$http, _.state, SEARCHMAILSINACCOUNT_ENDPOINT, data);
+		return helper.postWithHeader(this.$http, _.state, SEARCHMAILSINACCOUNT_ENDPOINT, data);
 	},
 	searchWithFilter: function(_, data) {
-		return postWithHeader(this.$http, _.state, SEARCHWITHFILTER_ENDPOINT, data);
+		return helper.postWithHeader(this.$http, _.state, SEARCHWITHFILTER_ENDPOINT, data);
 	},
 
 	updateMail: function(_, data) {
-		return postWithHeader(this.$http, _.state, UPDATEMAIL_ENDPOINT, data);
+		return helper.postWithHeader(this.$http, _.state, UPDATEMAIL_ENDPOINT, data);
 	},
 
 	putMails: function(_, mails) {
@@ -354,28 +285,28 @@ var self = module.exports = {
 		_.dispatch('updateComposeInReplyTo', data);
 	},
 	sendMail: function(_, data) {
-		return postWithHeader(this.$http, _.state, SENDMAIL_ENDPOINT, data);
+		return helper.postWithHeader(this.$http, _.state, SENDMAIL_ENDPOINT, data);
 	},
 	uploadS3Stream: function(_, data) {
-		return postWithHeader(this.$http, _.state, UPLOADS3STREAM_ENDPOINT, data);
+		return helper.postWithHeader(this.$http, _.state, UPLOADS3STREAM_ENDPOINT, data);
 	},
 	returnS3URL: function(_, checksum, fileName) {
 		return 'https://' + _.state.s3.bucket + '.' + _.state.s3.endpoint + '/' + checksum + '/' + fileName;
 	},
 
 	updateDomain: function(_, data) {
-		return postWithHeader(this.$http, _.state, UPDATEDOMAIN_ENDPOINT, data);
+		return helper.postWithHeader(this.$http, _.state, UPDATEDOMAIN_ENDPOINT, data);
 	},
 	updateAddress(_, data) {
-		return postWithHeader(this.$http, _.state, UPDATEADDRESS_ENDPOINT, data);
+		return helper.postWithHeader(this.$http, _.state, UPDATEADDRESS_ENDPOINT, data);
 	},
 
 	updateFolder: function(_, data) {
-		return postWithHeader(this.$http, _.state, UPDATEFOLDER_ENDPOINT, data);
+		return helper.postWithHeader(this.$http, _.state, UPDATEFOLDER_ENDPOINT, data);
 	},
 
 	modifyFilter: function(_, data) {
-		return postWithHeader(this.$http, _.state, MODIFYFILTER_ENDPOINT, data);
+		return helper.postWithHeader(this.$http, _.state, MODIFYFILTER_ENDPOINT, data);
 	},
 
 	setTitle: function(_, title) {

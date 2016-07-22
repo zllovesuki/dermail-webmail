@@ -190,7 +190,7 @@ module.exports = {
 		this.setTitle('Accounts');
 
 		this.getAccounts()
-		.then(function() {
+		.finally(function() {
 			this.loading().go(100);
 		}.bind(this))
 
