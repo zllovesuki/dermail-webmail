@@ -13,10 +13,10 @@
 			</div>
 			<div class="m0 p2 border-top">
 				<div class="clearfix">
-					<button type="button" class="h6 btn btn-outline {{ st.color }} ml1 mb1" @click="spfSetupModal = true">
+					<button type="button" class="h6 btn btn-outline {{ color }} ml1 mb1" @click="spfSetupModal = true">
 						How to setup?
 					</button>
-					<button type="button" class="h6 btn btn-outline {{ st.color }} ml1 mb1" @click="spfCIDModal = true">
+					<button type="button" class="h6 btn btn-outline {{ color }} ml1 mb1" @click="spfCIDModal = true">
 						Can I disable it?
 					</button>
 				</div>
@@ -45,8 +45,8 @@
 									<span class="btn not-clickable left">{{ domain.domain }}</span>
 								</td>
 								<td class="col col-6">
-									<button v-if="domain.dkim === false" type="button" class="right bold btn btn-outline {{ st.color }}" :disabled="!domain.isAdmin" @click="popupEnableDKIM(domain.domainId)">Disabled</span>
-									<button v-if="typeof domain.dkim === 'object'" type="button" class="right bold btn btn-outline {{ st.color }}" :disabled="!domain.isAdmin"  @click="popupSetupDKIM(domain.domainId)">Enabled</span>
+									<button v-if="domain.dkim === false" type="button" class="right bold btn btn-outline {{ color }}" :disabled="!domain.isAdmin" @click="popupEnableDKIM(domain.domainId)">Disabled</span>
+									<button v-if="typeof domain.dkim === 'object'" type="button" class="right bold btn btn-outline {{ color }}" :disabled="!domain.isAdmin"  @click="popupSetupDKIM(domain.domainId)">Enabled</span>
 								</td>
 							</tr>
 						</template>
@@ -70,10 +70,10 @@
 					<button type="button" class="h6 btn btn-outline red ml1 mb1" @click="dmarcAttentionModal = true">
 						Attentions
 					</button>
-					<button type="button" class="h6 btn btn-outline {{ st.color }} ml1 mb1" @click="dmarcSetupModal = true">
+					<button type="button" class="h6 btn btn-outline {{ color }} ml1 mb1" @click="dmarcSetupModal = true">
 						How to setup?
 					</button>
-					<button type="button" class="h6 btn btn-outline {{ st.color }} ml1 mb1" @click="dmarcCIDModal = true">
+					<button type="button" class="h6 btn btn-outline {{ color }} ml1 mb1" @click="dmarcCIDModal = true">
 						Can I disable it?
 					</button>
 				</div>
@@ -121,7 +121,7 @@
 				<span class="block mb1 h5">Before you add a DMARC record, please make sure that your SPF and DKIM are setup correctly, because DMARC will instruct the recipient to strictly check for SPF and DKIM. If <i>either</i> of them fails to pass the validation, your emails <b>will be</b> rejected by the recipient.</span>
 			</span>
 		</modal>
-		<modal :show.sync="dmarcSetupModal">
+		<modal :show.sync="dmarcSetupModal" v-if="securityCtx.dkim">
 			<h4 slot="header">Adding DMARC Record</h4>
 			<span slot="body">
 				<span class="block mb1 h5">Add a <b>TXT</b> record for:</span>
@@ -130,7 +130,7 @@
 				</div>
 				<span class="block mb1 h5">For example:</span>
 				<div class="p1 bg-darken-1 mb1" style="overflow: scroll">
-					_dmarc.{{ this.securityCtx.dkim[0].domain }}
+					_dmarc.{{ securityCtx.dkim[0].domain }}
 				</div>
 				<span class="block mb1 h5">With content:</span>
 				<div class="p1 bg-darken-1 mb2" style="overflow: scroll">
@@ -150,13 +150,16 @@
 
 <script>
 
-var st = require('../../lib/st.js');
-var api = require('../../lib/api.js');
+var getters = require('../../lib/vuex/getters.js')
+var actions = require('../../lib/vuex/actions.js')
 
 module.exports = {
+	vuex: {
+		getters: getters,
+		actions: actions
+	},
 	data: function() {
 		return {
-			st: st,
 			domainId: null,
 			spfSetupModal: false,
 			spfCIDModal: false,
@@ -165,8 +168,7 @@ module.exports = {
 			dmarcAttentionModal: false,
 			dmarcSetupModal: false,
 			dmarcCIDModal: false,
-			disableGenerateButton: false,
-			securityCtx: []
+			disableGenerateButton: false
 		}
 	},
 	computed: {
@@ -181,18 +183,10 @@ module.exports = {
 	},
 	methods: {
 		fetchSecurity: function() {
-			api.getSecurity(this)
-			.then(function(res) {
-				if (typeof res === 'undefined') return;
-				var data = {};
-				if (res && res.data) {
-					data = res.json();
-				}
-				this.securityCtx = data;
-			})
+			this.getSecurity()
 			.finally(function() {
-				this.st.loading.go(100);
-			})
+				this.loading().go(100);
+			}.bind(this))
 		},
 		popupEnableDKIM: function(domainId) {
 			this.domainId = domainId;
@@ -203,9 +197,9 @@ module.exports = {
 			this.setupDKIMModal = true;
 		},
 		generateKeyPair: function() {
-			this.st.loading.go(30);
+			this.loading().go(30);
 			this.disableGenerateButton = true;
-			api.updateDomain(this, {
+			this.updateDomain({
 				action: 'generateKeyPair',
 				domainId: this.domainId
 			})
@@ -213,31 +207,31 @@ module.exports = {
 				if (typeof res === 'undefined') return;
 				this.enableDKIMModal = false;
 				this.setupDKIMModal = true;
-				this.st.alert.success('keyPair generated.');
-			})
+				this.alert().success('keyPair generated.');
+			}.bind(this))
 			.finally(function() {
-				this.st.loading.go(100);
+				this.loading().go(100);
 				this.disableGenerateButton = false;
 				this.fetchSecurity();
-			})
+			}.bind(this))
 		},
 		verifyDKIM: function() {
-			this.st.loading.go(30);
-			api.updateDomain(this, {
+			this.loading().go(30);
+			this.updateDomain({
 				action: 'verifyKeyPair',
 				domainId: this.domainId
 			})
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
 				this.setupDKIMModal = false;
-				this.st.alert.success('DKIM is setup correctly.');
-			})
+				this.alert().success('DKIM is setup correctly.');
+			}.bind(this))
 			.finally(function() {
-				this.st.loading.go(100);
-			})
+				this.loading().go(100);
+			}.bind(this))
 		},
 		confirmDisableDKIM: function() {
-			this.st.alert
+			this.alert()
 			.okBtn("Yes")
 			.cancelBtn("No")
 			.confirm('<span class="block h5">Are you sure that you want to disable DKIM for this domain? The keypair will be REMOVED, and your outbound emails will NOT be signed.</span>')
@@ -246,25 +240,24 @@ module.exports = {
 
 				if (resolved.buttonClicked !== 'ok') return;
 
-				api.updateDomain(this, {
+				this.updateDomain({
 					action: 'deleteKeyPair',
 					domainId: this.domainId
 				})
 				.then(function(res) {
 					if (typeof res === 'undefined') return;
 					this.setupDKIMModal = false;
-					this.st.alert.success('keyPair deleted.');
-				})
+					this.alert().success('keyPair deleted.');
+				}.bind(this))
 				.finally(function() {
-					this.st.loading.go(100);
+					this.loading().go(100);
 					this.fetchSecurity();
-				})
-
+				}.bind(this))
 			}.bind(this))
 		}
 	},
 	ready: function() {
-		this.st.setTitle('Security');
+		this.setTitle('Security');
 		this.fetchSecurity();
 	}
 }

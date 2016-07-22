@@ -15,7 +15,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="m0 p0" v-if="st.accounts.length === 0">
+			<div class="m0 p0" v-if="accounts.length === 0">
 				<div class="clearfix">
 					<div class="left black">
 						<span class="btn h5 not-clickable">
@@ -24,12 +24,12 @@
 					</div>
 				</div>
 			</div>
-			<template v-for="account in st.accounts">
+			<template v-for="account in accounts">
 				<div class="m0 p0 border-top">
 					<div class="clearfix">
 						<div class="left black">
 							<a v-link="{ name: 'account', params: { accountId: account.accountId } }" class="btn block h5">
-								{{ account.account }} <span class="muted black">@{{ account.domain }}</span> <span class="muted {{st.color}}" v-if="account.notify">&nbsp;&#9834;</span>
+								{{ account.account }} <span class="muted black">@{{ account.domain }}</span> <span class="muted {{color}}" v-if="account.notify">&nbsp;&#9834;</span>
 							</a>
 						</div>
 						<div class="right">
@@ -53,10 +53,10 @@
 				</div>
 				<div class="m0 p2 border-top">
 					<div class="clearfix">
-						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ st.color }}" v-link="{ name: 'settingPushNotification' }">Notifications</a>
-						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ st.color }}" @click="alias.selectDomainModal = true">Alias</a>
-						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ st.color }}" >Add an account</a>
-						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ st.color }}" >Add a domain</a>
+						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ color }}" v-link="{ name: 'settingPushNotification' }">Notifications</a>
+						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ color }}" @click="alias.selectDomainModal = true">Alias</a>
+						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ color }}" >Add an account</a>
+						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ color }}" >Add a domain</a>
 					</div>
 				</div>
 			</div>
@@ -67,7 +67,7 @@
 				<form v-on:submit.prevent="selectDomain" class="h5">
 					<label for="domain">For domain:</label>
 					<select class="block col-12 mb2 field" v-model="alias.selectedDomain">
-						<option v-for="account in st.accounts" value="{{ account.domainId }}">{{ account.domain }}</option>
+						<option v-for="account in accounts" value="{{ account.domainId }}">{{ account.domain }}</option>
 					</select>
 					<hr />
 					<span class="block mb1">Alias allows you to receive mails from multiple domain names under one account.</span>
@@ -92,13 +92,16 @@
 </template>
 <script>
 
-var api = require('../../lib/api.js');
-var st = require('../../lib/st.js');
+var getters = require('../../lib/vuex/getters.js')
+var actions = require('../../lib/vuex/actions.js')
 
 module.exports = {
+	vuex: {
+		getters: getters,
+		actions: actions
+	},
 	data: function() {
 		return {
-			st: st,
 			alias: {
 				modifyButtonDisabled: false,
 				selectDomainModal: false,
@@ -132,12 +135,12 @@ module.exports = {
 			var alias = e.target.attributes['data-alias'].value;
 			msg += '<p class="h4 muted">' + account + ':</p>';
 			msg += '<span class="h5 bold">' + alias + '</span>';
-			this.st.alert.alert(msg);
+			this.alert().alert(msg);
 		},
 		selectDomain: function() {
-			for (var i = 0; i < this.st.accounts.length; i++) {
-				if (this.st.accounts[i].hasOwnProperty('domainId') && this.st.accounts[i].domainId === this.alias.selectedDomain) {
-					this.alias.byDomainId = this.st.accounts[i].alias;
+			for (var i = 0; i < this.accounts.length; i++) {
+				if (this.accounts[i].hasOwnProperty('domainId') && this.accounts[i].domainId === this.alias.selectedDomain) {
+					this.alias.byDomainId = this.accounts[i].alias;
 				}
 			}
 			this.toggleViewAndModify();
@@ -147,7 +150,7 @@ module.exports = {
 			this.alias.editModal = !this.alias.editModal;
 		},
 		editDomainAlias: function() {
-			this.st.loading.go(30);
+			this.loading().go(30);
 			this.alias.modifyButtonDisabled = true;
 			api.updateDomain(this, {
 				action: 'updateAlias',
@@ -156,12 +159,12 @@ module.exports = {
 			})
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
-				this.st.alert.success('Domain updated.');
+				this.alert().success('Domain updated.');
 				this.resetAliasState();
 			})
 			.finally(function() {
 				this.$dispatch('getAccounts', function() {
-					this.st.loading.go(100);
+					this.loading().go(100);
 				}.bind(this))
 				this.alias.modifyButtonDisabled = false;
 			})
@@ -177,17 +180,18 @@ module.exports = {
 		}
 	},
 	created: function() {
-		this.st.account = {};
-		this.st.lastFolderId = null;
+		this.removeAccount();
+		this.removeLastFolderId();
 	},
 	compiled: function() {
 
-		this.st.loading.go(50);
+		this.loading().go(50);
 
-		this.st.setTitle('Accounts');
+		this.setTitle('Accounts');
 
-		this.$dispatch('getAccounts', function() {
-			this.st.loading.go(100);
+		this.getAccounts()
+		.then(function() {
+			this.loading().go(100);
 		}.bind(this))
 
 	}

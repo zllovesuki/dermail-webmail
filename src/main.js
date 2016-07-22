@@ -1,4 +1,5 @@
 var Vue = require('vue')
+
 var VueRouter = require('vue-router')
 
 var st = require('./lib/st.js')
@@ -8,7 +9,9 @@ Vue.use(VueRouter)
 Vue.use(require('vue-resource'))
 Vue.use(require('vue-moment'))
 
-var App = Vue.extend(require('./app.vue'))
+var _st = require('./lib/vuex/store.js');
+
+var App = require('./app.vue')
 var router = new VueRouter({
 	history: true,
 	saveScrollPosition: true
@@ -78,7 +81,7 @@ router.map({
 	}
 })
 
-require('./lib/init.js')(api, st, router)
+require('./lib/init.js')(api, st, _st, router)
 require('./lib/registerIcons.js')(Vue)
 require('./lib/registerFilters.js')(Vue)
 require('./lib/registerComponents.js')(Vue)

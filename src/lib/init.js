@@ -1,4 +1,4 @@
-module.exports = function(api, st, router) {
+module.exports = function(api, st, _st, router) {
 
 	function randomColor() {
 		var randomIndex = Math.floor(Math.random() * st.colors.length);
@@ -9,6 +9,7 @@ module.exports = function(api, st, router) {
 	if (!color) color = randomColor();
 
 	st.color = color; // set color scheme
+	_st.dispatch('setColor', color);
 
 	st.storage = require('localforage');
 
@@ -21,25 +22,17 @@ module.exports = function(api, st, router) {
 	});
 
 	router.beforeEach(function (transition) {
-		if (st.isAuthenticated()) {
+		var localToken = router.app.getLocalToken();
+		if (router.app.isAuthenticated()) {
 			return transition.next();
-		}else if (st.getToken()) {
-			api.ping(router.app)
+		}else if (localToken) {
+			router.app.ping()
 			.then(function(res) {
-				// We are fine
-				st.setAuthenticated(true);
-				// Message queue
-				api.queue().connect(router.app, api);
-				api.s3(router.app)
-				.then(function(res) {
-					var data = {};
-					if (res && res.data) {
-						data = res.json();
-					}
-					st.setS3(data);
-				})
+				_st.dispatch('setAuthenticated', true);
+				//api.queue().connect(router.app, api);
+				router.app.getS3()
 				.catch(function(res) {
-					st.alert.error('Unable to fetch S3 information, attachment functionalities may be impacted.');
+					router.app.alert().error('Unable to fetch S3 information, attachment functionalities may be impacted.');
 				})
 				.finally(function() {
 					transition.next();
@@ -51,15 +44,15 @@ module.exports = function(api, st, router) {
 					data = res.json();
 				}
 				if (data.message === 'Token invalid.') {
-					st.removeToken();
-					st.alert.error('Token invalid, please login again.');
-					this.$nextTick(function() {
+					_st.dispatch('removeToken');
+					router.app.alert().error('Token invalid, please login again.');
+					router.app.$nextTick(function() {
 						transition.redirect({name: 'login'});
 					})
 				}else{
-					st.alert.error('Service not available, please try again later.');
+					router.app.alert().error('Service not available, please try again later.');
 				}
-				st.loading.go(100);
+				router.app.loading().go(100);
 			})
 		}else if (transition.to.name !== 'login') {
 			transition.redirect({name: 'login'});
