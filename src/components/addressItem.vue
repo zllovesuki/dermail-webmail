@@ -27,30 +27,33 @@
 
 <script>
 
-var st = require('../lib/st.js');
-var api = require('../lib/api.js');
+var getters = require('../lib/vuex/getters.js')
+var actions = require('../lib/vuex/actions.js')
 
 module.exports = {
+	vuex: {
+		getters: getters,
+		actions: actions
+	},
 	props: {
 		address: Object
 	},
 	data: function () {
 		return {
-			st: st,
 			editModal: false
 		}
 	},
 	methods: {
 		doEditAddress: function() {
-			this.st.loading.go(30);
-			api.updateAddress(this, this.address)
+			this.loading().go(30);
+			this.updateAddress(this.address)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
-				this.st.alert.success('Address updated.');
+				this.alert().success('Address updated.');
 				this.editModal = false;
 			})
 			.finally(function() {
-				this.st.loading.go(100);
+				this.loading().go(100);
 			})
 		}
 	}

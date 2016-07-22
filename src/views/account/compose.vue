@@ -11,8 +11,8 @@
 			<div class="m0 p1">
 				<div class="clearfix">
 					<span class="btn black h6 not-clickable inline">To: </span>
-					<template v-for="to in compose.recipients.to">
-						<a class="muted h6 mxn1 bold btn {{ st.color }}" @click="removeRecipient" data-where="to" data-recipient="{{ to.address }}">
+					<template v-for="to in composing.recipients.to">
+						<a class="muted h6 mxn1 bold btn {{ color }}" @click="removeRecipient" data-where="to" data-recipient="{{ to.address }}">
 							{{ to.name + ' <' + to.address + '>' }}
 						</a>
 					</template>
@@ -21,29 +21,29 @@
 			</div>
 			<div class="m0 p1">
 				<div class="clearfix">
-					<a class="muted h6 ml1 bold btn {{ st.color }}" @click="showMore">
+					<a class="muted h6 ml1 bold btn {{ color }}" @click="showMore">
 						...
 					</a>
 				</div>
 			</div>
-			<div class="m0 p1" v-show="compose.showMore">
+			<div class="m0 p1" v-show="composing.showMore">
 				<div class="clearfix">
 					<span class="btn black h6 not-clickable inline">Cc: </span>
-					<template v-for="cc in compose.recipients.cc">
+					<template v-for="cc in composing.recipients.cc">
 						<a
-							class="muted h6 mxn1 bold btn {{ st.color }}" @click="removeRecipient" data-where="cc" data-recipient="{{ cc.address }}" >
+							class="muted h6 mxn1 bold btn {{ color }}" @click="removeRecipient" data-where="cc" data-recipient="{{ cc.address }}" >
 							{{ cc.name + ' <' + cc.address + '>' }}
 						</a>
 					</template>
 					<input type="text" class="field border-none" placeholder="cc..." data-where="cc" @keyup="splitTag">
 				</div>
 			</div>
-			<div class="m0 p1" v-show="compose.showMore">
+			<div class="m0 p1" v-show="composing.showMore">
 				<div class="clearfix">
 					<span class="btn black h6 not-clickable inline">Bcc: </span>
-					<template v-for="bcc in compose.recipients.bcc">
+					<template v-for="bcc in composing.recipients.bcc">
 						<a
-							class="muted h6 mxn1 bold btn {{ st.color }}" @click="removeRecipient" data-where="bcc" data-recipient="{{ bcc.address }}">
+							class="muted h6 mxn1 bold btn {{ color }}" @click="removeRecipient" data-where="bcc" data-recipient="{{ bcc.address }}">
 							{{ bcc.name + ' <' + bcc.address + '>' }}
 						</a>
 					</template>
@@ -54,21 +54,21 @@
 		<div class="overflow-hidden bg-white border rounded mb2">
 			<div class="m0 p2">
 				<div class="clearfix">
-					<input type="text" class="col col-12 field border-none" placeholder="title..." v-model="compose.subject">
+					<input type="text" class="col col-12 field border-none" placeholder="title..." v-model="composing.subject">
 				</div>
 			</div>
 			<div class="m0 p2 border-top ">
 				<autoresize-textarea></autoresize-textarea>
 			</div>
 			<div class="m0 p2 border-top" style="line-height: 1.5em;">
-				{{{ compose.html }}}
+				{{{ composing.html }}}
 			</div>
 		</div>
 		<div class="overflow-hidden bg-white border rounded mb2">
 			<div class="m0 p1">
 				<div class="clearfix">
 					<span class="btn black h6 not-clickable">Attachments: </span>
-					<span class="btn black h5 muted {{ st.color }}">
+					<span class="btn black h5 muted {{ color }}">
 						<label for="attachment-select" style="cursor: pointer;" v-show="!attachDisabled">
 						(Click to attach a file)
 						</label>
@@ -76,10 +76,10 @@
 				</div>
 				<input type="file" v-on:change="handleUpload" style="display: none;" id="attachment-select">
 			</div>
-			<div class="m0 p1" v-show="compose.attachments.length > 0">
+			<div class="m0 p1" v-show="composing.attachments.length > 0">
 				<div class="clearfix">
-					<template v-for="attachment in compose.attachments">
-						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ st.color }}" v-on:click="confirmDelete(attachment)">
+					<template v-for="attachment in composing.attachments">
+						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ color }}" v-on:click="confirmDelete(attachment)">
 							{{attachment.filename}}
 						</a>
 					</template>
@@ -113,21 +113,21 @@
 
 <script>
 
-var st = require('../../lib/st.js');
-var api = require('../../lib/api.js');
 var validator = require('validator');
 var marked = require('marked');
 marked.setOptions({
 	breaks: true
 });
 
+var getters = require('../../lib/vuex/getters.js')
+var actions = require('../../lib/vuex/actions.js')
+
 module.exports = {
 	data: function() {
 		return {
-			st: st,
 			autoSaveText: null,
 			blockAutoSave: true,
-			compose: {
+			composing: {
 				accountId: '',
 				type: 'new',
 				showMore: false,
@@ -148,12 +148,16 @@ module.exports = {
 			loadAutoSaveEnabled: false
 		}
 	},
+	vuex: {
+		getters: getters,
+		actions: actions
+	},
 	computed: {
 		accountForceToArray: function() {
-			return [this.st.account];
+			return [this.account];
 		},
 		type: function() {
-			switch (this.compose.type) {
+			switch (this.composing.type) {
 				case 'reply':
 				return 'Reply';
 				break;
@@ -167,36 +171,44 @@ module.exports = {
 		}
 	},
 	methods: {
+		removeDuplicates: function(arr, prop) {
+			var new_arr = [];
+			var lookup  = {};
+
+	 		for (var i in arr) {
+				lookup[arr[i][prop]] = arr[i];
+			}
+
+			for (i in lookup) {
+				new_arr.push(lookup[i]);
+			}
+			return new_arr;
+		},
 		pushTags: function(where, tag) {
 			if (validator.isEmail(tag)) {
-				api.getAddress(this, {
-					accountId: this.$route.params.accountId,
+				this.getAddress({
+					accountId: this.route.params.accountId,
 					email: tag.toLowerCase().trim()
 				})
 				.then(function(res) {
 					if (typeof res === 'undefined') return;
-					var data = res.json();
-					if (data.hasOwnProperty('friendlyName')) {
-						var address = {};
-						address.name = data.friendlyName;
-						address.address = tag.toLowerCase().trim()
-						this.compose.recipients[where].push(address);
-						this.compose.recipients[where] = this.compose.recipients[where].filter(function(elem, index, self) {
-							return index == self.indexOf(elem); // remove duplicate
-						}) // http://stackoverflow.com/questions/16747798/delete-duplicate-elements-from-an-array
-					}
+					var address = {};
+					address.name = res.friendlyName;
+					address.address = tag.toLowerCase().trim()
+					this.composing.recipients[where].push(address);
+					this.composing.recipients[where] = this.removeDuplicates(this.composing.recipients[where], 'address');
 				});
 			}
 		},
 		removeRecipient: function(e) {
 			var recipient = e.target.getAttribute('data-recipient');
 			var where = e.target.getAttribute('data-where');
-			this.compose.recipients[where] = this.compose.recipients[where].filter(function(e) {
+			this.composing.recipients[where] = this.composing.recipients[where].filter(function(e) {
 				return e.address !== recipient; // remove by value
 			})
 		},
 		showMore: function(e) {
-			this.compose.showMore = true;
+			this.composing.showMore = true;
 			e.target.parentNode.parentNode.parentNode.removeChild(e.target.parentNode.parentNode);
 			// ugly hack
 		},
@@ -212,12 +224,12 @@ module.exports = {
 			}
 		},
 		sanityCheck: function(e) {
-			if (this.compose.recipients.to.length === 0) {
-				return this.st.alert.error('At least one "to" recipient is required.');
+			if (this.composing.recipients.to.length === 0) {
+				return this.alert().error('At least one "to" recipient is required.');
 			}
 
-			if (this.compose.subject.trim().length === 0) {
-				this.st.alert
+			if (this.composing.subject.trim().length === 0) {
+				this.alert()
 				.okBtn("Yes")
 				.cancelBtn("No")
 				.confirm('Are you sure to send an email without a subject?')
@@ -226,32 +238,32 @@ module.exports = {
 
 					if (resolved.buttonClicked !== 'ok') return;
 
-					this.sendMail();
+					this.doSendMail();
 
 				}.bind(this))
 			}else{
-				this.sendMail();
+				this.doSendMail();
 			}
 		},
-		sendMail: function() {
-			this.st.loading.go(30);
+		doSendMail: function() {
+			this.loading().go(30);
 			this.submitButtonDisabled = true;
-			this.compose.accountId = this.$route.params.accountId;
+			this.composing.accountId = this.route.params.accountId;
 
-			api.sendMail(this, this.compose)
+			this.sendMail(this.composing)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
 				this.clearAutoSave();
-				this.$route.router.go({ name: 'account', params: { accountId: this.$route.params.accountId } });
+				this.$route.router.go({ name: 'account', params: { accountId: this.route.params.accountId } });
 			})
 			.finally(function() {
-				this.st.loading.go(100);
+				this.loading().go(100);
 				this.submitButtonDisabled = false;
 			})
 		},
 		resetCompose: function() {
-			this.st.compose.markdown = '';
-			this.compose = {
+			this.updateComposeMarkdown('');
+			this.composing = {
 				accountId: '',
 				type: 'new',
 				showMore: false,
@@ -275,7 +287,7 @@ module.exports = {
 
 			this.attachDisabled = true;
 
-			this.st.loading.go(30);
+			this.loading().go(30);
 
 			var	form = new FormData(),
 				filename = file.name,
@@ -284,28 +296,28 @@ module.exports = {
 			form.append('attachment', file);
 			form.append('filename', filename);
 
-			api.UploadS3Stream(this, form)
+			this.uploadS3Stream(form)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
 				var data = res.json();
 				hash = data.checksum;
-				this.compose.attachments.push({
+				this.composing.attachments.push({
 					mutable: true,
 					filename: filename,
-					path: this.st.returnS3URL(hash, encodeURIComponent(filename))
+					path: this.returnS3URL(hash, encodeURIComponent(filename))
 				});
-				this.st.alert.success('File uploaded to S3!');
+				this.alert().success('File uploaded to S3!');
 			}.bind(this))
 			.finally(function() {
-				this.st.loading.go(100);
+				this.loading().go(100);
 				this.attachDisabled = false;
 			})
 		},
 		confirmDelete: function(attachment) {
 			if (!!!attachment.mutable) {
-				return this.st.alert.error('Cannot remove inline attachment.');
+				return this.alert().error('Cannot remove inline attachment.');
 			}
-			this.st.alert
+			this.alert()
 			.okBtn("Yes")
 			.cancelBtn("No")
 			.confirm('Are you sure to remove this attachment?')
@@ -314,37 +326,25 @@ module.exports = {
 
 				if (resolved.buttonClicked !== 'ok') return;
 
-				this.compose.attachments.$remove(attachment);
-				this.st.alert.success('File detached!');
+				this.composing.attachments.$remove(attachment);
+				this.alert().success('File detached!');
 
 			}.bind(this))
 		},
 		microsoftSucks: function(e) {
-			this.st.alert.alert("Microsoft's emails services (Live.com, Outlook, etc)" +
+			this.alert().alert("Microsoft's emails services (Live.com, Outlook, etc)" +
 			" are known to give postmaster headaches (see <a href='" +
 			"http://serverfault.com/questions/323747/hotmail-sender-id-always-fails-with-temperror-regardless-of-spf' " +
 			"target='_blank'>here</a>). If you suspect that your are experiencing delivery problems, " +
 			"please contact Microsoft to resolve the issue.");
 		},
-		clearAutoSave: function() {
-			return this.st.storage.removeItem('compose-' + this.$route.params.accountId).then(function() {
-				return this.st.storage.removeItem('md-' + this.$route.params.accountId)
-			}.bind(this))
-		},
 		loadAutoSave: function() {
 			this.blockAutoSave = true;
-			return this.st.storage.getItem('md-' + this.$route.params.accountId)
-			.then(function(markdown) {
-				if (markdown === null) return;
-				this.st.compose.markdown = markdown;
-			}.bind(this))
-			.then(function() {
-				return this.st.storage.getItem('compose-' + this.$route.params.accountId)
-			}.bind(this))
+			return this.getAutoSave()
 			.then(function(compose) {
 				if (compose === null) return;
 				this.autoSaveText = 'Loaded from auto save';
-				this.compose = compose;
+				this.composing = compose;
 			}.bind(this))
 			.then(function() {
 				this.blockAutoSave = false;
@@ -352,15 +352,15 @@ module.exports = {
 		}
 	},
 	watch: {
-		'st.compose.markdown': function(val, oldVal) {
+		'compose.markdown': function(val, oldVal) {
 			marked(val, function(err, content) {
-				this.compose.html = content;
+				this.composing.html = content;
 			}.bind(this))
 			if (this.blockAutoSave) return;
 			this.autoSaveText = 'Saving...';
-			this.st.storage.setItem('md-' + this.$route.params.accountId, this.st.compose.markdown)
+			this.storage.setItem('md-' + this.route.params.accountId, this.compose.markdown)
 			.then(function() {
-				return this.st.storage.setItem('compose-'+ this.$route.params.accountId, this.compose)
+				return this.storage.setItem('compose-'+ this.route.params.accountId, this.composing)
 			}.bind(this))
 			.then(function() {
 				this.autoSaveText = 'Last saved on ' + this.$moment(new Date()).format('hh:mm:ss a');
@@ -371,41 +371,41 @@ module.exports = {
 
 		this.resetCompose();
 
-		this.st.setTitle('Compose');
+		this.setTitle('Compose');
 
-		if (this.st.compose.addTo.length > 0) {
-			this.st.compose.addTo.forEach(function(tag) {
+		if (this.compose.addTo.length > 0) {
+			this.compose.addTo.forEach(function(tag) {
 				this.pushTags('to', tag.account + '@' + tag.domain);
 			}.bind(this))
-			this.st.compose.addTo = [];
+			this.updateComposeAddTo([]);
 		}
 
-		if (this.st.compose.addSubject.subject !== null) {
-			this.compose.subject = this.st.compose.addSubject.type + this.st.compose.addSubject.subject
-			this.st.compose.addSubject = {
+		if (this.compose.addSubject.subject !== null) {
+			this.composing.subject = this.compose.addSubject.type + this.compose.addSubject.subject
+			this.updateComposeAddSubject({
 				subject: null
-			}
+			});
 		}
 
-		if (this.st.compose.addAttachments.length > 0) {
-			this.compose.attachments = this.st.compose.addAttachments;
-			this.st.compose.addAttachments = [];
+		if (this.compose.addAttachments.length > 0) {
+			this.composing.attachments = this.compose.addAttachments;
+			this.updateComposeAddAttachmens([]);
 		}
 
-		if (this.st.compose.references.length > 0) {
-			this.compose.references = this.st.compose.references;
-			this.st.compose.references = [];
+		if (this.compose.references.length > 0) {
+			this.composing.references = this.compose.references;
+			this.updateComposeReferences([]);
 		}
 
-		if (this.st.compose.inReplyTo !== null) {
-			this.compose.inReplyTo = this.st.compose.inReplyTo;
-			this.st.compose.inReplyTo = null;
+		if (this.compose.inReplyTo !== null) {
+			this.composing.inReplyTo = this.compose.inReplyTo;
+			this.updateComposeInReplyTo(null);
 		}
 
-		this.compose.type = this.st.compose.type;
-		this.st.compose.type = 'new';
+		this.composing.type = this.compose.type;
+		this.updateComposeType('new');
 
-		this.st.storage.getItem('compose-' + this.$route.params.accountId)
+		this.storage.getItem('compose-' + this.route.params.accountId)
 		.then(function(compose) {
 			if (compose === null) return;
 			this.loadAutoSaveEnabled = true;
@@ -413,14 +413,14 @@ module.exports = {
 
 	},
 	compiled: function() {
-		api.grabDependencies(1, this)
+		this.grabDependencies(1)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
-			this.st.loading.go(100);
+			this.loading().go(100);
 		}.bind(this))
 
-		if (this.st.accounts.length === 0) {
-			this.$dispatch('getAccounts');
+		if (this.accounts.length === 0) {
+			this.getAccounts();
 		}
 	},
 	ready: function() {

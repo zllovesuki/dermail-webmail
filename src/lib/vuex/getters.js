@@ -1,5 +1,9 @@
 module.exports = {
 
+	storage: function(state) {
+		return state.storage;
+	},
+
 	hideInMoveOptions: function(state) {
 		return state.hideInMoveOptions
 	},
@@ -21,6 +25,9 @@ module.exports = {
 	},
 	color: function(state) {
 		return state.color
+	},
+	colors: function(state) {
+		return state.colors
 	},
 	title: function(state) {
 		return state.title
@@ -57,5 +64,11 @@ module.exports = {
 	},
 	route: function(state) {
 		return state.route
+	},
+	addresses: function(state) {
+		return state.addresses
+	},
+	compose: function(state) {
+		return state.compose
 	}
 }

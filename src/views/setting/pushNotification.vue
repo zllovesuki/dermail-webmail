@@ -11,13 +11,13 @@
 			</div>
 			<div class="m0 p2 border-top">
 				<div class="clearfix">
-					<button type="submit" class="h6 btn btn-outline {{ st.color }} ml1 mb1" v-if="canSubscribe" :disabled="disabled" @click="subscribe">
+					<button type="submit" class="h6 btn btn-outline {{ color }} ml1 mb1" v-if="canSubscribe" :disabled="disabled" @click="subscribe">
 						Subscribe
 					</button>
-					<button type="submit" class="h6 btn btn-outline {{ st.color }} ml1 mb1" v-if="canUnsubscribe" :disabled="disabled" @click="unsubscribe">
+					<button type="submit" class="h6 btn btn-outline {{ color }} ml1 mb1" v-if="canUnsubscribe" :disabled="disabled" @click="unsubscribe">
 						Unsubscribe
 					</button>
-					<button type="submit" class="h6 btn btn-outline {{ st.color }} ml1 mb1" v-if="canUnsubscribe" :disabled="disabled" @click="test">
+					<button type="submit" class="h6 btn btn-outline {{ color }} ml1 mb1" v-if="canUnsubscribe" :disabled="disabled" @click="test">
 						Send a test notification
 					</button>
 				</div>
@@ -40,14 +40,14 @@
 				</div>
 				<div class="clearfix">
 					<table class="h6 col col-12">
-						<template v-for="account in st.accounts">
+						<template v-for="account in accounts">
 							<tr>
 								<td class="col col-6">
 									<span class="btn not-clickable left">{{ account.account }}@{{ account.domain }}</span>
 								</td>
 								<td class="col col-6">
-									<button v-if="account.notify === false" type="button" class="right bold btn btn-outline {{ st.color }}" @click="popupEnableNotify(account.accountId)">Disabled</span>
-									<button v-if="account.notify === true" type="button" class="right bold btn btn-outline {{ st.color }}" @click="popupDisableNotify(account.accountId)">Enabled</span>
+									<button v-if="account.notify === false" type="button" class="right bold btn btn-outline {{ color }}" @click="popupEnableNotify(account.accountId)">Disabled</span>
+									<button v-if="account.notify === true" type="button" class="right bold btn btn-outline {{ color }}" @click="popupDisableNotify(account.accountId)">Enabled</span>
 								</td>
 							</tr>
 						</template>
@@ -74,13 +74,16 @@
 
 <script>
 
-var st = require('../../lib/st.js');
-var api = require('../../lib/api.js');
+var getters = require('../../lib/vuex/getters.js')
+var actions = require('../../lib/vuex/actions.js')
 
 module.exports = {
+	vuex: {
+		getters: getters,
+		actions: actions
+	},
 	data: function() {
 		return {
-			st: st,
 			canSubscribe: false,
 			canUnsubscribe: false,
 			disabled: false,
@@ -93,46 +96,46 @@ module.exports = {
 	methods: {
 		subscribe: function(e) {
 			this.disabled = true;
-			this.st.loading.go(30);
+			this.loading().go(30);
 			navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
-				this.st.loading.go(50);
+				this.loading().go(50);
 				serviceWorkerRegistration.pushManager.subscribe({userVisibleOnly: true})
 				.then(function(subscription) {
 					var payload = JSON.stringify(subscription);
-					this.st.loading.go(70);
-					api.pushNotification(this, {
+					this.loading().go(70);
+					return this.pushNotification({
 						action: 'subscribe',
 						payload: payload
 					})
 					.then(function() {
 						this.canSubscribe = false;
 						this.canUnsubscribe = true;
-						this.st.alert.success('Subscribed!');
+						this.alert().success('Subscribed!');
 					})
 					.finally(function() {
 						this.disabled = false;
-						this.st.loading.go(100);
+						this.loading().go(100);
 					}.bind(this))
 				}.bind(this))
 				.catch(function(e) {
 					console.log(e);
 					this.disabled = false;
-					this.st.alert.error('Error!')
-					this.st.loading.go(100);
+					this.alert().error('Error!')
+					this.loading().go(100);
 				}.bind(this))
 			}.bind(this))
 		},
 		unsubscribe: function(e) {
 			this.disabled = true;
-			this.st.loading.go(30);
+			this.loading().go(30);
 			navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
-				this.st.loading.go(50);
+				this.loading().go(50);
 				serviceWorkerRegistration.pushManager.getSubscription()
 				.then(function(subscription) {
-					this.st.loading.go(70);
+					this.loading().go(70);
 					if (subscription) {
 						var payload = JSON.stringify(subscription);
-						api.pushNotification(this, {
+						return this.pushNotification({
 							action: 'unsubscribe',
 							payload: payload
 						})
@@ -140,51 +143,52 @@ module.exports = {
 							return subscription.unsubscribe().then(function(successful) {
 								this.canSubscribe = true;
 								this.canUnsubscribe = false;
-								this.st.alert.success('Unsubscribed!');
+								this.alert().success('Unsubscribed!');
 							}.bind(this))
 						}.bind(this))
 						.finally(function() {
 							this.disabled = false;
-							this.st.loading.go(100);
+							this.loading().go(100);
 						}.bind(this))
 					}else{
 						this.disabled = false;
-						this.st.loading.go(100); // Oh well
+						this.loading().go(100); // Oh well
 					}
 				}.bind(this))
 			}.bind(this))
 		},
 		test: function() {
-			this.st.loading.go(30);
+			this.loading().go(30);
 			navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
-				this.st.loading.go(50);
+				this.loading().go(50);
 				serviceWorkerRegistration.pushManager.getSubscription()
 				.then(function(subscription) {
-					this.st.loading.go(70);
+					this.loading().go(70);
 					if (subscription) {
 						var payload = JSON.stringify(subscription);
-						api.pushNotification(this, {
+						return this.pushNotification({
 							action: 'test',
 							payload: payload
 						})
 						.then(function() {
-							this.st.alert.success('Test notification sent!');
-							this.st.loading.go(100);
+							this.alert().success('Test notification sent!');
+							this.loading().go(100);
 						}.bind(this))
 						.catch(function(res) {
-							this.st.alert.error('API Error!');
-							this.st.loading.go(100);
+							this.alert().error('API Error!');
+							this.loading().go(100);
 						}.bind(this))
 					}else{
-						this.st.alert.error('Not subscribed.');
-						this.st.loading.go(100); // Oh well
+						this.alert().error('Not subscribed.');
+						this.loading().go(100); // Oh well
 					}
 				}.bind(this))
 			}.bind(this))
 		},
 		fetchAccounts: function() {
-			this.$dispatch('getAccounts', function() {
-				this.st.loading.go(100);
+			this.getAccounts()
+			.then(function() {
+				this.loading().go(100);
 			}.bind(this))
 		},
 		popupEnableNotify: function(accountId) {
@@ -195,23 +199,20 @@ module.exports = {
 			this.accountId = accountId;
 			this.disableNotifyModal = true;
 		},
-		enableNotify: function() {
-
-		},
 		disableNotify: function() {
-			this.st.loading.go(30);
+			this.loading().go(30);
 			this.disableNotifyButton = true;
 			var payload = JSON.stringify({
 				accountId: this.accountId
 			}); // compatibility
-			api.pushNotification(this, {
+			return this.pushNotification({
 				action: 'disableNotify',
 				payload: payload
 			})
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
 				this.disableNotifyModal = false;
-				this.st.alert.success('Notification disabled.');
+				this.alert().success('Notification disabled.');
 			})
 			.finally(function() {
 				this.disableNotifyButton = false;
@@ -219,19 +220,19 @@ module.exports = {
 			})
 		},
 		enableNotify: function() {
-			this.st.loading.go(30);
+			this.loading().go(30);
 			this.disableNotifyButton = true;
 			var payload = JSON.stringify({
 				accountId: this.accountId
 			}); // compatibility
-			api.pushNotification(this, {
+			return this.pushNotification({
 				action: 'enableNotify',
 				payload: payload
 			})
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
 				this.enableNotifyModal = false;
-				this.st.alert.success('Notification enabled.');
+				this.alert().success('Notification enabled.');
 			})
 			.finally(function() {
 				this.disableNotifyButton = false;
@@ -240,7 +241,7 @@ module.exports = {
 		}
 	},
 	beforeCompile: function() {
-		this.st.setTitle('Push Notifications');
+		this.setTitle('Push Notifications');
 	},
 	ready: function() {
 		if ('serviceWorker' in navigator) {
@@ -258,7 +259,7 @@ module.exports = {
 			}.bind(this))
 			.catch(function(error) {
 				this.disabled = true;
-				this.st.alert.error(error);
+				this.alert().error(error);
 			}.bind(this))
 		}
 		this.fetchAccounts();

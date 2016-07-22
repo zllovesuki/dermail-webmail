@@ -3,42 +3,42 @@
 		<div class="m0 p0" v-bind:class="{ 'border-top': index > 0 }">
 			<div class="clearfix">
 				<div class="left black">
-					<a v-link="{ name: 'folder', params: { accountId: folder.accountId, folderId: folder.folderId } }" class="btn h5">
-						{{ folder.displayName }}
-						<span v-if="folder.count">({{ folder.count }})</span>
+					<a v-link="{ name: 'folder', params: { accountId: propFolder.accountId, folderId: propFolder.folderId } }" class="btn h5">
+						{{ propFolder.displayName }}
+						<span v-if="propFolder.count">({{ propFolder.count }})</span>
 						-
-						<span class="desc-{{ folder.folderId }} h5 muted black">
-							 {{ folder.description }}
+						<span class="desc-{{ propFolder.folderId }} h5 muted black">
+							 {{ propFolder.description }}
 						</span>
 					</a>
-					<span class="edit-group-{{ folder.folderId }} hide">
-						<a class="btn h3" @click="showDeleteFolder" v-if="folder.mutable">
+					<span class="edit-group-{{ propFolder.folderId }} hide">
+						<a class="btn h3" @click="showDeleteFolder" v-if="propFolder.mutable">
 							&times;
 						</a>
-						<a class="btn h3" @click="showEditFolder" v-if="folder.mutable">
+						<a class="btn h3" @click="showEditFolder" v-if="propFolder.mutable">
 							&#9998;
 						</a>
-						<a class="btn h3" @click="showAddFolder" v-if="folder.displayName != 'Trash'">
+						<a class="btn h3" @click="showAddFolder" v-if="propFolder.displayName != 'Trash'">
 							&#43;
 						</a>
 					</span>
 				</div>
 				<div class="right">
-					<a class="btn gray h3" @click="flipMenuAndDescription" v-if="folder.mutable || folder.displayName.toLowerCase() == 'inbox'">
+					<a class="btn gray h3" @click="flipMenuAndDescription" v-if="propFolder.mutable || propFolder.displayName.toLowerCase() == 'inbox'">
 						&#8942;
 					</a>
-					<a class="btn gray h4" @click="showTruncateFolder" v-if="st.hideInMoveOptions.indexOf(folder.displayName.toLowerCase()) !== -1">
+					<a class="btn gray h4" @click="showTruncateFolder" v-if="hideInMoveOptions.indexOf(propFolder.displayName.toLowerCase()) !== -1">
 						&#8709;
 					</a>
 				</div>
 			</div>
 		</div>
-		<ol class="m0" v-if="folder.child.length > 0"><folder-item v-for="folder in folder.child" :folder="folder" keep-alive></folder-item></ol>
+		<ol class="m0" v-if="propFolder.child.length > 0"><folder-item v-for="folder in propFolder.child" :prop-folder="folder" keep-alive></folder-item></ol>
 		<modal :show.sync="truncateModal">
 			<h4 slot="header">Truncate a Folder</h4>
 			<span slot="body">
 				<form v-on:submit.prevent="doTruncateFolder" class="h5">
-					<label for="displayName">Are you sure to truncate the folder <span class="bold">{{ folder.displayName }}</span>?</label>
+					<label for="displayName">Are you sure to truncate the folder <span class="bold">{{ propFolder.displayName }}</span>?</label>
 					<hr />
 					<span class="block mb2">All mails under this folder will be <span class="bold">deleted</span>.</span>
 					<button :disabled="buttonDisabled" type="submit" class="block btn btn-outline red">Truncate</button>
@@ -49,7 +49,7 @@
 			<h4 slot="header">Delete a Folder</h4>
 			<span slot="body">
 				<form v-on:submit.prevent="doDeleteFolder" class="h5">
-					<label for="displayName">Are you sure to delete folder <span class="bold">{{ folder.displayName }}</span>?</label>
+					<label for="displayName">Are you sure to delete folder <span class="bold">{{ propFolder.displayName }}</span>?</label>
 					<hr />
 					<span class="block mb1">All mails under this folder will be moved to "Trash".</span>
 					<span class="block mb2">If this folder is a parent folder, you need to delete the children folders first.</span>
@@ -62,13 +62,13 @@
 			<span slot="body">
 				<form v-on:submit.prevent="doEditFolder" class="h5">
 					<label for="displayName">Display Name: </label>
-					<input type="text" class="field block col-12 mb1" v-model="folder.displayName">
+					<input type="text" class="field block col-12 mb1" v-model="propFolder.displayName">
 					<label for="Description">Description: </label>
-					<input type="text" class="field block col-12 mb1" v-model="folder.description">
+					<input type="text" class="field block col-12 mb1" v-model="propFolder.description">
 					<label for="parentFolder">Nested Under:</label>
-					<select class="block col-12 mb2 field" v-model="folder.parent">
+					<select class="block col-12 mb2 field" v-model="propFolder.parent">
 						<option value="/root">(Root)</option>
-						<option v-for="f in st._folders" v-if="f.displayName != 'Trash' && f.folderId != folder.folderId" value="{{ f.folderId }}">{{ f.displayName }}</option>
+						<option v-for="f in flatFolders" v-if="f.displayName != 'Trash' && f.folderId != propFolder.folderId" value="{{ f.folderId }}">{{ f.displayName }}</option>
 					</select>
 					<button :disabled="buttonDisabled" type="submit" class="btn btn-primary">Edit</button>
 				</form>
@@ -85,7 +85,7 @@
 					<label for="parentFolder">Nested Under:</label>
 					<select class="block col-12 mb2 field" v-model="modal.parent">
 						<option value="/root">(Root)</option>
-						<option v-for="f in st._folders" v-if="f.displayName != 'Trash'" value="{{ f.folderId }}">{{ f.displayName }}</option>
+						<option v-for="f in flatFolders" v-if="f.displayName != 'Trash'" value="{{ f.folderId }}">{{ f.displayName }}</option>
 					</select>
 					<button :disabled="buttonDisabled" type="submit" class="btn btn-primary">Add</button>
 				</form>
@@ -96,12 +96,16 @@
 
 <script>
 
-var st = require('../lib/st.js');
-var api = require('../lib/api.js');
+var getters = require('../lib/vuex/getters.js')
+var actions = require('../lib/vuex/actions.js')
 
 module.exports = {
+	vuex: {
+		getters: getters,
+		actions: actions
+	},
 	props: {
-		folder: Object,
+		propFolder: Object,
 		index: {
 			type: Number,
 			default: 1
@@ -109,14 +113,13 @@ module.exports = {
 	},
 	data: function () {
 		return {
-			st: st,
 			buttonDisabled: false,
 			truncateModal: false,
 			deleteModal: false,
 			editModal: false,
 			addModal: false,
 			modal: {
-				accountId: this.$route.params.accountId,
+				accountId: this.route.params.accountId,
 				folderId: '',
 				displayName: '',
 				description: '',
@@ -129,7 +132,7 @@ module.exports = {
 	methods: {
 		flipMenuAndDescription: function() {
 			var menuVisible = this.menuVisible;
-			var folderId = this.folder.folderId;
+			var folderId = this.propFolder.folderId;
 			var menuBlock = document.getElementsByClassName('edit-group-' + folderId)[0];
 			var descBlock = document.getElementsByClassName('desc-' + folderId)[0];
 
@@ -151,19 +154,19 @@ module.exports = {
 			this.modal.folderId = '';
 			this.modal.displayName = '';
 			this.modal.description = '';
-			this.modal.parent = this.folder.parent || '/root';
+			this.modal.parent = this.propFolder.parent || '/root';
 		},
 		showTruncateFolder: function(e) {
 			this.truncateModal = true;
-			this.folder.action = 'truncateFolder';
+			this.propFolder.action = 'truncateFolder';
 		},
 		showDeleteFolder: function(e) {
 			this.deleteModal = true;
-			this.folder.action = 'deleteFolder';
+			this.propFolder.action = 'deleteFolder';
 		},
 		showEditFolder: function(e) {
 			this.editModal = true;
-			this.folder.action = 'updateFolder';
+			this.propFolder.action = 'updateFolder';
 		},
 		showAddFolder: function(e) {
 			this.addModal = true;
@@ -173,7 +176,7 @@ module.exports = {
 			this.modal.action = 'addFolder';
 		},
 		doTruncateFolder: function(e) {
-			this.st.alert
+			this.alert()
 			.okBtn("Yes")
 			.cancelBtn("No")
 			.confirm('Are you sure to truncate the folder?')
@@ -184,17 +187,17 @@ module.exports = {
 
 				this.buttonDisabled = true;
 
-				api.updateFolder(this, this.folder)
+				this.updateFolder(this.propFolder)
 				.then(function(res) {
 					if (typeof res === 'undefined') return;
-					this.st.alert.success('Action "truncateFolder" queued.');
+					this.alert().success('Action "truncateFolder" queued.');
 					this.truncateModal = false;
 					this.houseKeeping();
 				}.bind(this))
 			}.bind(this))
 		},
 		doDeleteFolder: function(e) {
-			this.st.alert
+			this.alert()
 			.okBtn("Yes")
 			.cancelBtn("No")
 			.confirm('Are you sure to delete the folder?')
@@ -205,10 +208,10 @@ module.exports = {
 
 				this.buttonDisabled = true;
 
-				api.updateFolder(this, this.folder)
+				this.updateFolder(this.propFolder)
 				.then(function(res) {
 					if (typeof res === 'undefined') return;
-					this.st.alert.success('Folder deleted.');
+					this.alert().success('Folder deleted.');
 					this.deleteModal = false;
 					this.houseKeeping();
 				}.bind(this))
@@ -216,27 +219,28 @@ module.exports = {
 		},
 		doEditFolder: function(e) {
 			this.buttonDisabled = true;
-			api.updateFolder(this, this.folder)
+			this.updateFolder(this.propFolder)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
-				this.st.alert.success('Folder updated.');
+				this.alert().success('Folder updated.');
 				this.editModal = false;
 				this.houseKeeping();
 			})
 		},
 		doAddFolder: function(e) {
 			this.buttonDisabled = true;
-			api.updateFolder(this, this.modal)
+			this.updateFolder(this.modal)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
-				this.st.alert.success('New folder created.');
+				this.alert().success('New folder created.');
 				this.addModal = false;
 				this.houseKeeping();
 			})
 		},
 		houseKeeping: function() {
-			this.$dispatch('getFoldersInAccount', function() {
-				this.st.loading.go(100);
+			this.getFoldersInAccount()
+			.then(function() {
+				this.loading().go(100);
 				this.buttonDisabled = false;
 			}.bind(this))
 		}

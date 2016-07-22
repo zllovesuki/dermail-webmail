@@ -33,8 +33,6 @@
 </template>
 <script>
 
-var st = require('../lib/st.js');
-var api = require('../lib/api.js');
 var getters = require('../lib/vuex/getters.js')
 var actions = require('../lib/vuex/actions.js')
 

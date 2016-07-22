@@ -116,6 +116,29 @@ var self = module.exports = {
 		return token;
 	},
 
+	setColor: function(_, color) {
+		_.dispatch('setColor', color)
+	},
+	saveColor: function(_) {
+		_.dispatch('saveColor')
+	},
+
+	clearAutoSave: function(_) {
+		return _.state.storage.removeItem('composing-' + _.state.route.params.accountId).then(function() {
+			return _.state.storage.removeItem('md-' + _.state.route.params.accountId)
+		}.bind(this))
+	},
+	getAutoSave: function(_) {
+		return _.state.storage.getItem('md-' + _.state.route.params.accountId)
+		.then(function(markdown) {
+			if (markdown === null) return;
+			this.updateComposeMarkdown(markdown);
+		}.bind(this))
+		.then(function() {
+			return _.state.storage.getItem('compose-' + _.state.route.params.accountId)
+		}.bind(this))
+	},
+
 	ping: function(_) {
 		return this.$http.get(PING_ENDPOINT, getHeader(_.state))
 	},
@@ -256,13 +279,80 @@ var self = module.exports = {
 			return data;
 		})
 	},
+	getAddress: function(_, data) {
+		return postWithHeader(this.$http, _.state, GETADDRESS_ENDPOINT, data)
+		.then(function(res) {
+			if (typeof res === 'undefined') return;
+			var data = res.json();
+			return data;
+		})
+	},
+	getAddresses: function(_, data) {
+		return postWithHeader(this.$http, _.state, GETADDDRESSES_ENDPOINT, data)
+		.then(function(res) {
+			if (typeof res === 'undefined') return;
+			var data = res.json();
+			this.putAddresses(data);
+			return data;
+		})
+	},
+
+	pushNotification: function(_, data) {
+		return postWithHeader(this.$http, _.state, PUSHSUB_ENDPOINT, data);
+	},
+
+	searchMailsInAccount: function(_, data) {
+		return postWithHeader(this.$http, _.state, SEARCHMAILSINACCOUNT_ENDPOINT, data);
+	},
 
 	putMails: function(_, mails) {
 		_.dispatch('putMails', mails);
 	},
+	putAddresses: function(_, data) {
+		_.dispatch('putAddresses', data);
+	},
+
+	updateComposeType: function(_, data) {
+		_.dispatch('updateComposeType', data);
+	},
+	updateComposeMarkdown: function(_, data) {
+		if (typeof data === 'object') data = data.target.value;
+		_.dispatch('updateComposeMarkdown', data);
+	},
+	updateComposeAddTo: function(_, data) {
+		_.dispatch('updateComposeAddTo', data);
+	},
+	updateComposeAddSubject: function(_, data) {
+		_.dispatch('updateComposeAddSubject', data);
+	},
+	updateComposeAddAttachmens: function(_, data) {
+		_.dispatch('updateComposeAddAttachmens', data);
+	},
+	updateComposeReferences: function(_, data) {
+		_.dispatch('updateComposeReferences', data);
+	},
+	updateComposeInReplyTo: function(_, data) {
+		_.dispatch('updateComposeInReplyTo', data);
+	},
+	sendMail: function(_, data) {
+		return postWithHeader(this.$http, _.state, SENDMAIL_ENDPOINT, data);
+	},
+	uploadS3Stream: function(_, data) {
+		return postWithHeader(this.$http, _.state, UPLOADS3STREAM_ENDPOINT, data);
+	},
+	returnS3URL: function(_, checksum, fileName) {
+		return 'https://' + _.state.s3.bucket + '.' + _.state.s3.endpoint + '/' + checksum + '/' + fileName;
+	},
 
 	updateDomain: function(_, data) {
 		return postWithHeader(this.$http, _.state, UPDATEDOMAIN_ENDPOINT, data);
+	},
+	updateAddress(_, data) {
+		return postWithHeader(this.$http, _.state, UPDATEADDRESS_ENDPOINT, data);
+	},
+
+	updateFolder: function(_, data) {
+		return postWithHeader(this.$http, _.state, UPDATEFOLDER_ENDPOINT, data);
 	},
 
 	setTitle: function(_, title) {

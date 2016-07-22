@@ -13,22 +13,19 @@
 </template>
 <script>
 
-var st = require('../lib/st.js');
-var api = require('../lib/api.js');
+var getters = require('../lib/vuex/getters.js')
+var actions = require('../lib/vuex/actions.js')
 
 module.exports = {
-	data: function() {
-		return {
-			st: st
-		}
-	},
-	computed: {
+	vuex: {
+		getters: getters,
+		actions: actions
 	},
 	ready: function() {
-		this.st.loading.go(100);
+		this.loading().go(100);
 	},
 	beforeCompile: function() {
-		this.st.setTitle('404');
+		this.setTitle('404');
 	}
 }
 </script>

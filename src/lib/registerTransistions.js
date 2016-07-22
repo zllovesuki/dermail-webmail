@@ -1,4 +1,4 @@
-module.exports = function(Vue, st) {
+module.exports = function(Vue) {
 	Vue.transition("fade", {
 		beforeLeave: function(t) {
 			t.textContent = "";
