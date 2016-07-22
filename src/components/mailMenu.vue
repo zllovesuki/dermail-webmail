@@ -1,12 +1,12 @@
 <template>
 	<span>
-		<a class="muted h6 mxn1 btn {{ st.color }}" @click="flipReadAndChangeBody" v-if="st.hideReadUnread.indexOf(st.folder.displayName.toLowerCase()) === -1">
+		<a class="muted h6 mxn1 btn {{ color }}" @click="flipReadAndChangeBody" v-if="hideReadUnread.indexOf(folder.displayName.toLowerCase()) === -1">
 			{{ context.isRead === true ? '> Unread': '> Read' }}
 		</a>
-		<a class="muted h6 mxn1 btn {{ st.color }}" @click="showMoveFolder" v-if="st.hideMoveToFolder.indexOf(st.folder.displayName.toLowerCase()) === -1">
+		<a class="muted h6 mxn1 btn {{ color }}" @click="showMoveFolder" v-if="hideMoveToFolder.indexOf(folder.displayName.toLowerCase()) === -1">
 			> Folder
 		</a>
-		<a class="h6 bold mxn1 btn red" @click.prevent="oneClickToTrash" v-if="st.hideMoveToTrash.indexOf(st.folder.displayName.toLowerCase()) === -1">
+		<a class="h6 bold mxn1 btn red" @click.prevent="oneClickToTrash" v-if="hideMoveToTrash.indexOf(folder.displayName.toLowerCase()) === -1">
 			> Trash
 		</a>
 		<modal :show.sync="folderModal">
@@ -15,7 +15,7 @@
 				<form v-on:submit.prevent="doMoveToFolder" class="h5">
 					<label for="folder">Move to:</label>
 					<select class="block col-12 mb2 field" v-model="modal.folderId">
-						<option v-for="f in st._folders" v-if="st.hideInMoveOptions.indexOf(f.displayName.toLowerCase()) === -1" value="{{ f.folderId }}">{{ f.displayName }}</option>
+						<option v-for="f in _folders" v-if="hideInMoveOptions.indexOf(f.displayName.toLowerCase()) === -1" value="{{ f.folderId }}">{{ f.displayName }}</option>
 					</select>
 					<button :disabled="buttonDisabled" class="btn btn-primary">Move</button>
 				</form>
@@ -25,10 +25,15 @@
 </template>
 
 <script>
-var st = require('../lib/st.js');
-var api = require('../lib/api.js');
+
+var getters = require('../lib/vuex/getters.js')
+var actions = require('../lib/vuex/actions.js')
 
 module.exports = {
+	vuex: {
+		getters: getters,
+		actions: actions
+	},
 	props: {
 		context: {
 			type: Object,
@@ -37,7 +42,6 @@ module.exports = {
 	},
 	data: function() {
 		return {
-			st: st,
 			buttonDisabled: false,
 			folderModal: false,
 			modal: {
@@ -66,7 +70,7 @@ module.exports = {
 				this.context.isRead = (newRead === 'read' ? true : false);
 				this.$dispatch('setReadInMailArray', messageId, this.context.isRead);
 
-				this.st.alert.success((newRead !== 'read' ? 'Unread' : 'Read') + ' : 👍');
+				this.alert().success((newRead !== 'read' ? 'Unread' : 'Read') + ' : 👍');
 			})
 		},
 		showMoveFolder: function(e) {
@@ -82,8 +86,8 @@ module.exports = {
 				api.updateMail(this, this.modal)
 				.then(function(res) {
 					if (typeof res === 'undefined') return;
-					this.st.lastFolderId = null;
-					this.st.alert.success('Moved to a folder.');
+					this.resetLastFolderId();
+					this.alert().success('Moved to a folder.');
 					this.$dispatch('houseKeeping', this.modal.folderId, this.modal.messageId);
 					this.buttonDisabled = false;
 				})
@@ -98,7 +102,7 @@ module.exports = {
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
 				var data = res.text();
-				this.st.alert.success('Moved to Trash.');
+				this.alert().success('Moved to Trash.');
 				this.modal.folderId = data; // see line 96 in showMoveFolder()
 				this.$dispatch('houseKeeping', data, this.modal.messageId);
 			})

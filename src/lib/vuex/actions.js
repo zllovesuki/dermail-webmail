@@ -1,5 +1,4 @@
 var config = require('../../../config.js');
-var Vue = require('Vue');
 var VERSION = '/v' + config.apiVersion;
 var API_ROOT = config.apiEndpoint;
 var API_ENDPOINT = API_ROOT + VERSION;
@@ -27,20 +26,51 @@ var PUSHSUB_ENDPOINT = API_ENDPOINT + '/write/pushSubscriptions'
 var SENDMAIL_ENDPOINT = API_ENDPOINT + '/relay/sendMail'
 var UPLOADS3STREAM_ENDPOINT = API_ENDPOINT + '/upload/s3Stream'
 
-var vueHTTP = Vue.http;
+var listToTree = function(data, options) {
+	options = options || {};
+	var ID_KEY = options.idKey || 'id';
+	var PARENT_KEY = options.parentKey || 'parent';
+	var CHILDREN_KEY = options.childrenKey || 'children';
+
+	var tree = [],
+		childrenOf = {};
+	var item, id, parentId;
+
+	for (var i = 0, length = data.length; i < length; i++) {
+		item = data[i];
+		id = item[ID_KEY];
+		parentId = item[PARENT_KEY] || 0;
+		// every item may have children
+		childrenOf[id] = childrenOf[id] || [];
+		// init its children
+		item[CHILDREN_KEY] = childrenOf[id];
+		if (parentId != 0) {
+			// init its parent's children object
+			childrenOf[parentId] = childrenOf[parentId] || [];
+			// push it into its parent's children object
+			childrenOf[parentId].push(item);
+		} else {
+			tree.push(item);
+		}
+	};
+
+	return tree;
+}
 
 var getHeader = function(state) {
 	return {
-		'Authorization': 'JWT ' + state.token
+		headers: {
+			'Authorization': 'JWT ' + state.token
+		}
 	}
 }
 
-var _http = function(state, action, endpoint, header, data) {
+var _http = function($http, state, action, endpoint, header, data) {
 	header = !!header ? getHeader(state): {};
 	data = data || {};
 	var handle;
-	if (action === 'get') handle = vueHTTP[action](endpoint, header)
-	else handle = vueHTTP[action](endpoint, data, header)
+	if (action === 'get') handle = $http[action](endpoint, header)
+	else handle = $http[action](endpoint, data, header)
 	return handle
 	.then(function(res) {
 		return res;
@@ -55,16 +85,16 @@ var _http = function(state, action, endpoint, header, data) {
 	})
 }
 
-var getWithHeader = function(state, endpoint) {
-	return _http(state, 'get', endpoint, true)
+var getWithHeader = function($http, state, endpoint) {
+	return _http($http, state, 'get', endpoint, true)
 }
 
-var postWithHeader = function(state, endpoint, data) {
-	return _http(state, 'post', endpoint, true, data)
+var postWithHeader = function($http, state, endpoint, data) {
+	return _http($http, state, 'post', endpoint, true, data)
 }
 
-var postWithoutHeader = function(state, endpoint, data) {
-	return _http(state, 'post', endpoint, false, data)
+var postWithoutHeader = function($http, state, endpoint, data) {
+	return _http($http, state, 'post', endpoint, false, data)
 }
 
 var self = module.exports = {
@@ -79,29 +109,18 @@ var self = module.exports = {
 		return _.state.authenticated;
 	},
 	getLocalToken: function(_) {
-		return localStorage.getItem('jwtToken')
+		var token = localStorage.getItem('jwtToken');
+		if (token) {
+			_.dispatch('setToken', token);
+		}
+		return token;
 	},
 
 	ping: function(_) {
-		return vueHTTP.get(PING_ENDPOINT, getHeader(_.state))
+		return this.$http.get(PING_ENDPOINT, getHeader(_.state))
 	},
-	login: function(_, data) {
-		return postWithoutHeader(_.state, LOGIN_ENDPOINT, data)
-		.then(function(res) {
-			if (typeof res === 'undefined') return;
-			var data = res.json();
-			if (data.hasOwnProperty('token')) {
-				_.dispatch('setToken', data.token);
-				_.dispatch('saveToken', data.token);
-				_.dispatch('setAuthenticated', true);
-				//api.queue().connect(this, api);
-				return true;
-			};
-		})
-	},
-
 	getS3: function(_) {
-		return vueHTTP.get(S3_ENDPOINT, getHeader(_.state))
+		return this.$http.get(S3_ENDPOINT, getHeader(_.state))
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
 			var data = {};
@@ -110,9 +129,72 @@ var self = module.exports = {
 			}
 			_.dispatch('setS3', data);
 		})
+		.catch(function(res) {
+			this.alert().error('Unable to fetch S3 information, attachment functionalities may be impacted.');
+		})
+	},
+
+	grabDependencies: function(_, priority) {
+		var _this = this;
+		var returnData;
+		var listOfDependencies = [
+			Promise.method(function() {
+				if (Object.keys(_this.account).length === 0 || priority === 1) {
+					return _this.getAccount().then(function(res) {
+						return res;
+					});
+				}
+			}.bind(this)),
+			Promise.method(function() {
+				return _this.getFolder().then(function(res) {
+					return res;
+				});
+			}.bind(this)),
+			Promise.method(function() {
+				return _this.getMail().then(function(res) {
+					if (typeof res === 'undefined') return;
+					var data = res.json();
+					_.dispatch('putMail', data);
+					return data;
+				});
+			}.bind(this))
+		];
+
+		return Promise.map(listOfDependencies, function(data, index) {
+			var eval = index + 1;
+			if (eval > priority) return;
+			return listOfDependencies[index]().then(function(res) {
+				if (priority === eval) {
+					returnData = res;
+				}
+			})
+		}, { concurrency: 3 })
+		.then(function() {
+			return returnData;
+		})
+	},
+
+	login: function(_, data) {
+		return postWithoutHeader(this.$http, _.state, LOGIN_ENDPOINT, data)
+		.then(function(res) {
+			if (typeof res === 'undefined') return;
+			var data = res.json();
+			if (data.hasOwnProperty('token')) {
+				_.dispatch('setToken', data.token);
+				_.dispatch('setAuthenticated', true);
+				//api.queue().connect(this, api);
+				return true;
+			};
+		})
+	},
+	logout: function(_) {
+		_.dispatch('setAuthenticated', false);
+		//api.queue().disconnect();
+		this.removeToken();
+		this.alert().success('Logout successfully!');
 	},
 	getSecurity: function(_) {
-		return getWithHeader(_.state, GETSECURITY_ENDPOINT)
+		return getWithHeader(this.$http, _.state, GETSECURITY_ENDPOINT)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
 			var data = {};
@@ -122,21 +204,75 @@ var self = module.exports = {
 			_.dispatch('putSecurity', data)
 		})
 	},
-	getAccounts: function(_) {
-		return getWithHeader(_.state, GETACCOUNTS_ENDPOINT)
+	getAccount: function(_) {
+		return postWithHeader(this.$http, _.state, GETACCOUNT_ENDPOINT, _.state.route.params)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
 			var data = res.json();
-			_.dispatch('putAccounts', data)
+			data.displayName = data['account'] + '@' + data['domain'];
+			_.dispatch('putAccount', data);
+			return data;
+		})
+	},
+	getAccounts: function(_) {
+		return getWithHeader(this.$http, _.state, GETACCOUNTS_ENDPOINT)
+		.then(function(res) {
+			if (typeof res === 'undefined') return;
+			var data = res.json();
+			_.dispatch('putAccounts', data);
+			return data;
+		})
+	},
+	getFolder: function(_) {
+		return postWithHeader(this.$http, _.state, GETFOLDER_ENDPOINT, _.state.route.params)
+		.then(function(res) {
+			if (typeof res === 'undefined') return;
+			var data = res.json();
+			_.dispatch('putFolder', data);
+			return data;
+		})
+	},
+	getFoldersInAccount: function(_) {
+		return postWithHeader(this.$http, _.state, GETFOLDERS_ENDPOINT, _.state.route.params)
+		.then(function(res) {
+			if (typeof res === 'undefined') return;
+			var data = res.json();
+			_.dispatch('putFoldersTree', listToTree(data, {
+				idKey: 'folderId',
+				parentKey: 'parent',
+				childrenKey: 'child'
+			}))
+			_.dispatch('putFoldersFlat', data);
+			return data;
+		})
+	},
+	getMailsInFolder: function(_, additional) {
+		var data = Object.assign(_.state.route.params, additional)
+		return postWithHeader(this.$http, _.state, GETMAILSINFOLDER_ENDPOINT, data)
+		.then(function(res) {
+			if (typeof res === 'undefined') return;
+			var data = res.json();
+			this.putMails(this.mails.concat(data));
+			return data;
 		})
 	},
 
+	putMails: function(_, mails) {
+		_.dispatch('putMails', mails);
+	},
+
 	updateDomain: function(_, data) {
-		return postWithHeader(_.state, UPDATEDOMAIN_ENDPOINT, data);
+		return postWithHeader(this.$http, _.state, UPDATEDOMAIN_ENDPOINT, data);
 	},
 
 	setTitle: function(_, title) {
 		_.dispatch('setTitle', title)
+	},
+	resetLastFolderId: function(_) {
+		_.dispatch('setLastFolderId', null)
+	},
+	setLastFolderId: function(_) {
+		_.dispatch('setLastFolderId', _.state.route.params.folderId)
 	},
 
 	removeToken: function(_) {
@@ -147,5 +283,20 @@ var self = module.exports = {
 	},
 	removeLastFolderId: function(_) {
 		_.dispatch('removeLastFolderId')
+	},
+	removeFolder: function(_) {
+		_.dispatch('removeFolder')
+	},
+	removeFlatFolders: function(_) {
+		_.dispatch('removeFlatFolders')
+	},
+	removeFolderTree: function(_) {
+		_.dispatch('removeFolderTree')
+	},
+	removeAddressBook: function(_) {
+		_.dispatch('removeAddressBook')
+	},
+	removeMails: function(_) {
+		_.dispatch('removeMails');
 	}
 }

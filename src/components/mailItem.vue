@@ -12,7 +12,7 @@
 					<div class="right">
 						<span class="menu-{{ mail.messageId }} hide">
 							<mail-menu :context="mail"></mail-menu>
-							<spam :folder-name="st.folder.displayName" :message-id="mail.messageId" :folder-id="mail.folderId" v-if="st.hideSpamButton.indexOf(st.folder.displayName.toLowerCase()) === -1"></spam>
+							<spam :folder-name="folder.displayName" :message-id="mail.messageId" :folder-id="mail.folderId" v-if="hideSpamButton.indexOf(folder.displayName.toLowerCase()) === -1"></spam>
 						</span>
 						<span class="address-{{ mail.messageId }}">
 							<address-button origin-text="From" :origin="mail.from" v-if="!atSentFolder"></address-button>
@@ -31,7 +31,7 @@
 							{{ mail.subject | excerpt 50 }}
 						</a>
 					</div>
-					<div class="clickable bodyblock right{{ mail.isRead === true ? ' muted' : ''}}" v-link="{ name: 'mail', params: { accountId: st.folder.accountId, folderId: st.folder.folderId, messageId: mail.messageId } }">
+					<div class="clickable bodyblock right{{ mail.isRead === true ? ' muted' : ''}}" v-link="{ name: 'mail', params: { accountId: folder.accountId, folderId: folder.folderId, messageId: mail.messageId } }">
 						<span class="btn h5 m0 black">
 							{{ mail.text | excerpt 75 }}
 						</span>
@@ -44,9 +44,14 @@
 
 <script>
 
-var st = require('../lib/st.js');
+var getters = require('../lib/vuex/getters.js')
+var actions = require('../lib/vuex/actions.js')
 
 module.exports = {
+	vuex: {
+		getters: getters,
+		actions: actions
+	},
 	props: {
 		mail: {
 			type: Object,
@@ -56,14 +61,13 @@ module.exports = {
 	},
 	data: function() {
 		return {
-			st: st,
 			folderModal: false,
 			menuVisible: false
 		}
 	},
 	computed: {
 		atSentFolder: function() {
-			return this.st.folder.displayName.toLowerCase() === 'sent';
+			return this.folder.displayName.toLowerCase() === 'sent';
 		}
 	},
 	methods: {

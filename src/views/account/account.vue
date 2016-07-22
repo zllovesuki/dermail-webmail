@@ -1,14 +1,14 @@
 <template>
 	<div>
-		<div class="overflow-hidden bg-white rounded mb2" v-show="st.folders.length === 0">
+		<div class="overflow-hidden bg-white rounded mb2" v-show="folders.length === 0">
 			<div class="m0 p2">
 				<span class="p2 bold h5 m0 black">
 					Loading folders for this account...
 				</span>
 			</div>
 		</div>
-		<div class="overflow-hidden bg-white rounded mb2 clearfix" v-if="st.folders.length > 0">
-			<folder-item v-for="folder in st.folders" :folder="folder" :index="$index" keep-alive></folder-item>
+		<div class="overflow-hidden bg-white rounded mb2 clearfix" v-if="folders.length > 0">
+			<folder-item v-for="folder in folders" :folder="folder" :index="$index" keep-alive></folder-item>
 		</div>
 		<div class="mt2 mb2">
 			<div class="overflow-hidden bg-white rounded mb2">
@@ -22,8 +22,8 @@
 				</div>
 				<div class="m0 p2 border-top">
 					<div class="clearfix">
-						<a class="muted h6 ml1 bold btn btn-outline {{ st.color }}" v-link="{ name: 'filter', params: { accountId: $route.params.accountId } }">Filters</a>
-						<a class="muted h6 ml1 bold btn btn-outline {{ st.color }}" v-link="{ name: 'addresses', params: { accountId: $route.params.accountId } }">Address Book</a>
+						<a class="muted h6 ml1 bold btn btn-outline {{ color }}" v-link="{ name: 'filter', params: { accountId: $route.params.accountId } }">Filters</a>
+						<a class="muted h6 ml1 bold btn btn-outline {{ color }}" v-link="{ name: 'addresses', params: { accountId: $route.params.accountId } }">Address Book</a>
 					</div>
 				</div>
 			</div>
@@ -33,35 +33,34 @@
 
 <script>
 
-var st = require('../../lib/st.js');
-var api = require('../../lib/api.js');
+var getters = require('../../lib/vuex/getters.js')
+var actions = require('../../lib/vuex/actions.js')
 
 module.exports = {
-	data: function() {
-		return {
-			st: st
-		}
+	vuex: {
+		getters: getters,
+		actions: actions
 	},
 	created: function() {
-		this.st.folder = {};
-		this.st.folders = [];
-		this.st._folders = [];
-		this.st.addresses = [];
+		this.removeFolder();
+		this.removeFlatFolders();
+		this.removeFolderTree();
+		this.removeAddressBook();
 	},
 	compiled: function() {
 
-		this.st.loading.go(50);
+		this.loading().go(50);
 
-		this.st.setTitle('Folders');
+		this.setTitle('Folders');
 
-		api.grabDependencies(1, this)
+		this.grabDependencies(1)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
-			this.st.loading.go(70);
-			this.$dispatch('getFoldersInAccount');
+			this.loading().go(70);
+			return this.getFoldersInAccount();
 		}.bind(this))
 		.finally(function() {
-			this.st.loading.go(100);
+			this.loading().go(100);
 		}.bind(this))
 	}
 }

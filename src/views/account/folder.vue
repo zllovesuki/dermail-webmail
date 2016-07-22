@@ -1,15 +1,15 @@
 <template>
 	<div>
-		<div class="overflow-hidden bg-white rounded mb2" v-if="st.mails.length === 0 || st.noMailsLeft">
+		<div class="overflow-hidden bg-white rounded mb2" v-if="mails.length === 0 || noMailsLeft">
 			<div class="m0 p2">
 				<span class="p2 bold h5 m0 black">
 					No mails in this folder
 				</span>
 			</div>
 		</div>
-		<mail-item v-for="mail in st.mails" :mail.sync="mail"></mail-item>
-		<p class="center" v-if="st.mails.length > 0 && !st.noMailsLeft">
-			<button class="h5 btn btn-outline {{ st.color }}" @click="loadMore" :disabled="disableLoadMore">
+		<mail-item v-for="mail in mails" :mail.sync="mail"></mail-item>
+		<p class="center" v-if="mails.length > 0 && !noMailsLeft">
+			<button class="h5 btn btn-outline {{ color }}" @click="loadMore" :disabled="disableLoadMore">
 				Load {{ slice.perPage }} More
 			</button>
 		</p>
@@ -17,50 +17,54 @@
 </template>
 <script>
 
-var st = require('../../lib/st.js');
-var api = require('../../lib/api.js');
+var getters = require('../../lib/vuex/getters.js')
+var actions = require('../../lib/vuex/actions.js')
 
 module.exports = {
+	vuex: {
+		getters: getters,
+		actions: actions
+	},
 	data: function() {
 		return {
-			st: st,
 			folderModal: false,
 			disableLoadMore: false,
 			slice: {
 				perPage: 10,
 				date: null,
-				starOnly: st.starOnly
+				starOnly: false
 			},
-			_tmpMails: [],
-			_tmpModified: false
+			tmpMails: [],
+			tmpModified: false
 		}
 	},
 	created: function() {
-		var currentFolderId = this.$route.params.folderId;
-		if (currentFolderId !== this.st.lastFolderId) {
-			this.st.mails = [];
+		var currentFolderId = this.route.params.folderId;
+		if (currentFolderId !== this.lastFolderId) {
+			this.removeMails();
 		}else{
-			this._tmpMails = this.st.mails;
-			this._tmpModified = true;
-			this.st.mails = [];
+			this.tmpMails = this.mails;
+			this.tmpModified = true;
+			this.removeMails();
 		}
 	},
 	compiled: function() {
 
-		this.st.loading.go(50);
+		this.loading().go(50);
 
-		api.grabDependencies(2, this)
+		this.grabDependencies(2)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
-			this.st.setTitle(this.st.folder.displayName);
-			if (this.st._folders.length === 0) {
-				this.$dispatch('getFoldersInAccount', function() {
+			this.setTitle(this.folder.displayName);
+			if (this.flatFolders.length === 0) {
+				this.getFoldersInAccount()
+				.then(function() {
 					this.loadMore();
 				}.bind(this))
 			}else{
 				this.loadMore();
 			}
-			this.st.lastFolderId = this.$route.params.folderId;
+			this.setLastFolderId();
 		}.bind(this))
 	},
 	events: {
@@ -70,40 +74,38 @@ module.exports = {
 			this.slice = {
 				perPage: 10,
 				date: null,
-				starOnly: st.starOnly
+				starOnly: false
 			}
 			this.loadMore();
 		}
 	},
 	methods: {
 		More: function() {
-			var lastMail = this.st.mails.slice(-1)[0];
+			var lastMail = this.mails.slice(-1)[0];
 			if (lastMail) {
 				this.slice.date = lastMail.date;
 			}
 		},
 		loadMore: function() {
-			this.st.loading.go(70);
-			if (this._tmpModified) {
-				this.st.mails = this._tmpMails;
-				this._tmpMails = [];
-				this._tmpModified = false;
-				this.st.loading.go(100);
+			this.loading().go(70);
+			if (this.tmpModified) {
+				this.putMails(this.tmpMails);
+				this.tmpMails = [];
+				this.tmpModified = false;
+				this.loading().go(100);
 			}else{
 				this.More();
-				api.getMailsInFolder(this, {
+				this.getMailsInFolder({
 					slice: this.slice
 				})
 				.then(function(res) {
 					if (typeof res === 'undefined') return;
-					var data = res.json();
-					this.st.mails = this.st.mails.concat(data);
-					if (this.st.mails.length < this.slice.perPage || data.length < this.slice.perPage) {
+					if (this.mails.length < this.slice.perPage || res.length < this.slice.perPage) {
 						this.disableLoadMore = true;
 					}
 				})
 				.finally(function() {
-					this.st.loading.go(100);
+					this.loading().go(100);
 				});
 			}
 		}

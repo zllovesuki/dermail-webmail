@@ -31,9 +31,6 @@ module.exports = function(api, st, _st, router) {
 				_st.dispatch('setAuthenticated', true);
 				//api.queue().connect(router.app, api);
 				router.app.getS3()
-				.catch(function(res) {
-					router.app.alert().error('Unable to fetch S3 information, attachment functionalities may be impacted.');
-				})
 				.finally(function() {
 					transition.next();
 				})

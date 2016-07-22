@@ -63,28 +63,18 @@ module.exports = {
 	methods: {
 		doLogin: function(e) {
 			this.submitButtonDisabled =  true;
-			this.loading().go(30);
 			return this.login(this.credentials)
 			.then(function(res) {
 				if (res === true) {
-					this.$route.router.go({ name: 'accounts' })
-					return;
 					return this.getS3()
-					.catch(function(res) {
-						console.log(res);
-						this.alert().error('Unable to fetch S3 information, attachment functionalities may be impacted.');
-					}.bind(this))
 					.finally(function() {
-						return true;
+						this.alert().success('Welcome back!');
+						this.$route.router.go({ name: 'accounts' })
 					}.bind(this))
-	/*				this.alert().success('Welcome back!');
-					this.$route.router.go({ name: 'accounts' })
-					*/
 				}
 			}.bind(this))
 			.finally(function() {
 				this.submitButtonDisabled = false;
-				this.loading().go(100);
 			}.bind(this))
 		},
 		resetForm: function() {

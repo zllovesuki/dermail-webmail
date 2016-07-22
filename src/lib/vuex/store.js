@@ -93,8 +93,6 @@ var mutations = {
 	},
 	setToken: function(state, token) {
 		state.token = token;
-	},
-	saveToken: function(state, token) {
 		localStorage.setItem('jwtToken', token);
 	},
 	removeToken: function(state) {
@@ -103,6 +101,9 @@ var mutations = {
 	},
 	setAuthenticated: function(state, isAuthenticated) {
 		state.authenticated = isAuthenticated;
+	},
+	setLastFolderId: function(state, id) {
+		state.lastFolderId = id;
 	},
 	putMail: function(state, mail) {
 		state.mail = mail;
@@ -139,6 +140,21 @@ var mutations = {
 	},
 	removeLastFolderId: function(state) {
 		state.removeLastFolderId = null;
+	},
+	removeFolder: function(state) {
+		state.folder = {};
+	},
+	removeFlatFolders: function(state) {
+		state._folders = [];
+	},
+	removeFolderTree: function(state) {
+		state.folders = [];
+	},
+	removeAddressBook: function(state) {
+		state.addresses = [];
+	},
+	removeMails: function(state) {
+		state.mails = [];
 	}
 };
 

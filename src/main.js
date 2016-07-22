@@ -1,6 +1,7 @@
 var Vue = require('vue')
 
 var VueRouter = require('vue-router')
+var sync = require('vuex-router-sync').sync
 
 var st = require('./lib/st.js')
 var api = require('./lib/api.js')
@@ -88,5 +89,7 @@ require('./lib/registerComponents.js')(Vue)
 require('./lib/registerTransistions.js')(Vue, st)
 
 window.App = App;
+
+sync(_st, router);
 
 router.start(App, '#app')
