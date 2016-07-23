@@ -102,9 +102,17 @@ var self = module.exports = {
 		})
 	},
 
-	refreshFolderView: function(_, targerAccountId) {
-		if (targerAccountId !== _.state.route.params.accountId) return;
-		return this.getFoldersInAccount();
+	refreshFolderView: function(_, targetAccountId) {
+		var data = {};
+
+		data = Object.assign({}, _.state.route.params);
+
+		if (targetAccountId !== _.state.route.params.accountId) {
+			if (targetAccountId !== _.state.lastAccountId) return;
+			data.accountId = _.state.lastAccountId;
+		}
+
+		return this.getFoldersInAccount(data);
 	},
 
 	incrementallyGetMailsInFolder: function(_, targetFolderId) {
@@ -124,7 +132,6 @@ var self = module.exports = {
 			data.folderId = _.state.lastFolderId;
 		}
 
-		console.log(data);
 		return helper.postWithHeader(this.$http, _.state, GETMAILSINFOLDER_ENDPOINT, data)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
@@ -243,8 +250,9 @@ var self = module.exports = {
 			return data;
 		})
 	},
-	getFoldersInAccount: function(_) {
-		return helper.postWithHeader(this.$http, _.state, GETFOLDERS_ENDPOINT, _.state.route.params)
+	getFoldersInAccount: function(_, params) {
+		params = params || _.state.route.params;
+		return helper.postWithHeader(this.$http, _.state, GETFOLDERS_ENDPOINT, params)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
 			var data = res.json();
