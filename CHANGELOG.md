@@ -1,5 +1,8 @@
 ## Changelog
 
+07/22/2016: 4.0.0
+1. Uses Vuex instead of direct state mutations
+
 07/17/2016: 3.2.0
 1. Address book: edit friendlyName and/or fold the address friendlyName
 
