@@ -476,6 +476,7 @@ var self = module.exports = {
 			else
 				_.router.go({ name: 'mail', params: { accountId: _.state.mail.accountId, folderId: folderId, messageId: _.state.mail.messageId } })
 		}
+		return Promise.resolve();
 	},
 
 	removeToken: function(_) {

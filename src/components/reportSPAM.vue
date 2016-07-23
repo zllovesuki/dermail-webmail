@@ -1,5 +1,5 @@
 <template>
-	<span>
+	<span v-show="!hide">
 		<a class="h6 mxn1 btn red" @click="moveToSPAM" v-if="alreadySpam">
 			> Spam!
 		</a>
@@ -33,6 +33,11 @@ module.exports = {
 			required: true
 		}
 	},
+	data: function() {
+		return {
+			hide: false
+		}
+	},
 	computed: {
 		alreadySpam: function() {
 			return this.folderName.toLowerCase() !== 'spam';
@@ -46,12 +51,16 @@ module.exports = {
 				action: 'spam'
 			};
 			var currentFolder = this.folderId;
+			this.hide = true;
 			this.updateMail(data)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
 				this.alert().success('I hate SPAM!');
 				return this.mailHouseKeeping(currentFolder, this.messageId, true);
-			})
+			}.bind(this))
+			.finally(function() {
+				this.hide = false;
+			}.bind(this))
 		},
 		notSPAM: function() {
 			var data = {
@@ -59,13 +68,17 @@ module.exports = {
 				messageId: this.messageId,
 				action: 'notspam'
 			};
+			this.hide = true;
 			this.updateMail(data)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
 				var data = res.text();
 				this.alert().success('Got it.');
 				return this.mailHouseKeeping(data, this.messageId, true);
-			})
+			}.bind(this))
+			.finally(function() {
+				this.hide = false;
+			}.bind(this))
 		}
 	}
 }

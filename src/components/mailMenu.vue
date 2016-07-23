@@ -1,5 +1,5 @@
 <template>
-	<span>
+	<span v-show="!hide">
 		<a class="muted h6 mxn1 btn {{ color }}" @click="flipReadAndChangeBody" v-if="hideReadUnread.indexOf(folder.displayName.toLowerCase()) === -1">
 			{{ context.isRead === true ? '> Unread': '> Read' }}
 		</a>
@@ -49,11 +49,13 @@ module.exports = {
 				folderId: this.context.folderId,
 				messageId: this.context.messageId,
 				oldFolder: ''
-			}
+			},
+			hide: false
 		}
 	},
 	methods: {
 		flipReadAndChangeBody: function(e) {
+			this.hide = true;
 			var messageId = this.modal.messageId;
 			var accountId = this.modal.accountId;
 			var currentRead = this.context.isRead;
@@ -70,6 +72,8 @@ module.exports = {
 				this.setReadInMailArray(messageId, (newRead === 'read' ? true : false));
 
 				this.alert().success((newRead !== 'read' ? 'Unread' : 'Read') + ' : 👍');
+
+				this.hide = false;
 			})
 		},
 		showMoveFolder: function(e) {
@@ -80,6 +84,7 @@ module.exports = {
 		},
 		doMoveToFolder: function(e) {
 
+			this.hide = true;
 			this.folderModal = false;
 
 			if (this.modal.oldFolder != this.modal.folderId) { // Not in this folder anymore
@@ -87,26 +92,37 @@ module.exports = {
 				return this.updateMail(this.modal)
 				.then(function(res) {
 					if (typeof res === 'undefined') return;
-					this.resetLastFolderId();
-					this.buttonDisabled = false;
-					this.alert().success('Moved to a folder.');
-					return this.mailHouseKeeping(this.modal.folderId, this.modal.messageId);
+					return this.mailHouseKeeping(this.modal.folderId, this.modal.messageId)
+					.then(function() {
+						this.resetLastFolderId();
+						this.buttonDisabled = false;
+						this.alert().success('Moved to a folder.');
+					}.bind(this))
 				})
+				.finally(function() {
+					this.hide = false;
+				}.bind(this))
 			}
 
 		},
 		oneClickToTrash: function(e) {
 
+			this.hide = true;
 			this.modal.action = 'trash';
 
 			return this.updateMail(this.modal)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
 				var data = res.text();
-				this.alert().success('Moved to Trash.');
-				this.modal.folderId = data; // see line 96 in showMoveFolder()
-				return this.mailHouseKeeping(data, this.modal.messageId);
+				return this.mailHouseKeeping(data, this.modal.messageId)
+				.then(function() {
+					this.modal.folderId = data; // see line 96 in showMoveFolder()
+					this.alert().success('Moved to Trash.');
+				}.bind(this))
 			})
+			.finally(function() {
+				this.hide = false;
+			}.bind(this))
 		},
 
 	}
