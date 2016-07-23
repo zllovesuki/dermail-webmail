@@ -44,7 +44,7 @@ var self = module.exports = {
 		return _.state.alert;
 	},
 	initializeStorage: function(_) {
-		_.dispatch('storage')
+		_.dispatch('initializeStorage')
 	},
 	storage: function(_) {
 		return _.state.storage;

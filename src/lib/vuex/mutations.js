@@ -1,14 +1,15 @@
 module.exports = {
 	// TODO: this throws an error in Vuex strict mode
-	storage: function(state) {
-		var localforage = require('localforage')
-		state.storage = localforage.createInstance({
-			driver: localforage.INDEXEDDB,
+	initializeStorage: function(state) {
+		var storage = require('localforage');
+		storage.config({
+			driver: storage.INDEXEDDB,
 			name: 'dermail',
 			version: 1.0,
 			storeName: 'keyvaluepairs',
 			description: 'Storage in the browser'
-		})
+		});
+		state.storage = storage;
 	},
 	setColor: function(state, color) {
 		state.color = color
