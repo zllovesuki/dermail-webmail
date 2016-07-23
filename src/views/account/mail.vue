@@ -75,7 +75,7 @@
 			</div>
 			<div class="m0 p1">
 				<div class="clearfix" v-if="ready">
-					<template v-for="attachment in mail.attachments">
+					<template v-for="attachment in mail.attachments" track-by="checksum">
 						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ color }}" href="{{ returnS3URL(attachment.checksum, attachment.generatedFileName) }}" target="_blank">
 							{{attachment.generatedFileName}}
 						</a>

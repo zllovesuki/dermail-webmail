@@ -19,7 +19,7 @@
 					</div>
 				</div>
 			</div>
-			<address-item v-for="address in addresses" :prop-address="address"></address-item>
+			<address-item v-for="address in addresses" track-by="addressId" :prop-address="address"></address-item>
 		</div>
 	</div>
 </template>

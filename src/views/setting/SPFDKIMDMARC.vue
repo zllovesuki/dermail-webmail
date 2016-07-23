@@ -39,7 +39,7 @@
 				</div>
 				<div class="clearfix">
 					<table class="h6 col col-12">
-						<template v-for="domain in securityCtx.dkim">
+						<template v-for="domain in securityCtx.dkim" track-by="domainId">
 							<tr>
 								<td class="col col-6">
 									<span class="btn not-clickable left">{{ domain.domain }}</span>

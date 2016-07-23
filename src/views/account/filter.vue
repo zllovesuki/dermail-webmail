@@ -19,7 +19,7 @@
 					</div>
 				</div>
 			</div>
-			<template v-for="filter in filters">
+			<template v-for="filter in filters" track-by="filterId">
 				<filter-item :filter="filter"></filter-item>
 			</template>
 		</div>
@@ -59,7 +59,7 @@
 			<h4 slot="header">Search results with filter ({{ searchResults.length }})</u></h4>
 			<span slot="body">
 				<ul class="list-reset block y-scrollable">
-					<li class="overflow-hidden" v-for="result in searchResults">
+					<li class="overflow-hidden" v-for="result in searchResults" track-by="messageId">
 					<a target="_blank" v-link="{ name: 'mail', params: { accountId: this.route.params.accountId, folderId: result.folder.folderId, messageId: result.messageId }}" class="btn">
 							<i>{{ result.folder.displayName }}</i> - {{ result.subject }}
 						</a>
@@ -77,7 +77,7 @@
 					<label for="folder">Move to folder: </label>
 					<select class="block col-12 mb2 field" v-model="post.folder">
 						<option value="default">(Default: Inbox)</option>
-						<option v-for="f in flatFolders" value="{{ f.folderId }}" v-if="f.displayName !== 'Inbox' && f.displayName !== 'Sent' ">{{ f.displayName }}</option>
+						<option v-for="f in flatFolders" track-by="folderId" value="{{ f.folderId }}" v-if="f.displayName !== 'Inbox' && f.displayName !== 'Sent' ">{{ f.displayName }}</option>
 					</select>
 					<label for="notify" class="block col-12 mb2">Do no notify:  <input type="checkbox" v-model="post.doNotNotify"></label>
 					<label for="read" class="block col-12 mb2">Mark read:  <input type="checkbox" v-model="post.markRead"></label>

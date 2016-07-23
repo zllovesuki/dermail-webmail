@@ -15,7 +15,7 @@
 				<form v-on:submit.prevent="doMoveToFolder" class="h5">
 					<label for="folder">Move to:</label>
 					<select class="block col-12 mb2 field" v-model="modal.folderId">
-						<option v-for="f in flatFolders" v-if="hideInMoveOptions.indexOf(f.displayName.toLowerCase()) === -1" value="{{ f.folderId }}">{{ f.displayName }}</option>
+						<option v-for="f in flatFolders" track-by="folderId" v-if="hideInMoveOptions.indexOf(f.displayName.toLowerCase()) === -1" value="{{ f.folderId }}">{{ f.displayName }}</option>
 					</select>
 					<button :disabled="buttonDisabled" class="btn btn-primary">Move</button>
 				</form>

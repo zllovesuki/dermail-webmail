@@ -8,7 +8,7 @@
 			</div>
 		</div>
 		<div class="overflow-hidden bg-white rounded mb2 clearfix" v-if="folders.length > 0">
-			<folder-item v-for="folder in folders" :prop-folder="folder" :index="$index" keep-alive></folder-item>
+			<folder-item v-for="folder in folders" track-by="folderId" :prop-folder="folder" :index="$index" keep-alive></folder-item>
 		</div>
 		<div class="mt2 mb2">
 			<div class="overflow-hidden bg-white rounded mb2">

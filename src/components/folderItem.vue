@@ -33,7 +33,7 @@
 				</div>
 			</div>
 		</div>
-		<ol class="m0" v-if="propFolder.child.length > 0"><folder-item v-for="folder in propFolder.child" :prop-folder="folder" keep-alive></folder-item></ol>
+		<ol class="m0" v-if="propFolder.child.length > 0"><folder-item v-for="folder in propFolder.child" track-by="folderId" :prop-folder="folder" keep-alive></folder-item></ol>
 		<modal :show.sync="truncateModal">
 			<h4 slot="header">Truncate a Folder</h4>
 			<span slot="body">
@@ -68,7 +68,7 @@
 					<label for="parentFolder">Nested Under:</label>
 					<select class="block col-12 mb2 field" v-model="modal.parent">
 						<option value="/root">(Root)</option>
-						<option v-for="f in flatFolders" v-if="f.displayName != 'Trash' && f.folderId != propFolder.folderId" value="{{ f.folderId }}">{{ f.displayName }}</option>
+						<option v-for="f in flatFolders" track-by="folderId" v-if="f.displayName != 'Trash' && f.folderId != propFolder.folderId" value="{{ f.folderId }}">{{ f.displayName }}</option>
 					</select>
 					<button :disabled="buttonDisabled" type="submit" class="btn btn-primary">Edit</button>
 				</form>
@@ -85,7 +85,7 @@
 					<label for="parentFolder">Nested Under:</label>
 					<select class="block col-12 mb2 field" v-model="modal.parent">
 						<option value="/root">(Root)</option>
-						<option v-for="f in flatFolders" v-if="f.displayName != 'Trash'" value="{{ f.folderId }}">{{ f.displayName }}</option>
+						<option v-for="f in flatFolders" track-by="folderId" v-if="f.displayName != 'Trash'" value="{{ f.folderId }}">{{ f.displayName }}</option>
 					</select>
 					<button :disabled="buttonDisabled" type="submit" class="btn btn-primary">Add</button>
 				</form>

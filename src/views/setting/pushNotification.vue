@@ -40,7 +40,7 @@
 				</div>
 				<div class="clearfix">
 					<table class="h6 col col-12">
-						<template v-for="account in accounts">
+						<template v-for="account in accounts" track-by="accountId">
 							<tr>
 								<td class="col col-6">
 									<span class="btn not-clickable left">{{ account.account }}@{{ account.domain }}</span>

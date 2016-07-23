@@ -11,7 +11,7 @@
 			<div class="m0 p1">
 				<div class="clearfix">
 					<span class="btn black h6 not-clickable inline">To: </span>
-					<template v-for="to in composing.recipients.to">
+					<template v-for="to in composing.recipients.to" track-by="$index">
 						<a class="muted h6 mxn1 bold btn {{ color }}" @click="removeRecipient" data-where="to" data-recipient="{{ to.address }}">
 							{{ to.name + ' <' + to.address + '>' }}
 						</a>
@@ -29,7 +29,7 @@
 			<div class="m0 p1" v-show="composing.showMore">
 				<div class="clearfix">
 					<span class="btn black h6 not-clickable inline">Cc: </span>
-					<template v-for="cc in composing.recipients.cc">
+					<template v-for="cc in composing.recipients.cc" track-by="$index">
 						<a
 							class="muted h6 mxn1 bold btn {{ color }}" @click="removeRecipient" data-where="cc" data-recipient="{{ cc.address }}" >
 							{{ cc.name + ' <' + cc.address + '>' }}
@@ -41,7 +41,7 @@
 			<div class="m0 p1" v-show="composing.showMore">
 				<div class="clearfix">
 					<span class="btn black h6 not-clickable inline">Bcc: </span>
-					<template v-for="bcc in composing.recipients.bcc">
+					<template v-for="bcc in composing.recipients.bcc" track-by="$index">
 						<a
 							class="muted h6 mxn1 bold btn {{ color }}" @click="removeRecipient" data-where="bcc" data-recipient="{{ bcc.address }}">
 							{{ bcc.name + ' <' + bcc.address + '>' }}
@@ -78,7 +78,7 @@
 			</div>
 			<div class="m0 p1" v-show="composing.attachments.length > 0">
 				<div class="clearfix">
-					<template v-for="attachment in composing.attachments">
+					<template v-for="attachment in composing.attachments" track-by="checksum">
 						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ color }}" v-on:click="confirmDelete(attachment)">
 							{{attachment.filename}}
 						</a>

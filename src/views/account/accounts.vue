@@ -24,7 +24,7 @@
 					</div>
 				</div>
 			</div>
-			<template v-for="account in accounts">
+			<template v-for="account in accounts" track-by="accountId">
 				<div class="m0 p0 border-top">
 					<div class="clearfix">
 						<div class="left black">
@@ -67,7 +67,7 @@
 				<form v-on:submit.prevent="selectDomain" class="h5">
 					<label for="domain">For domain:</label>
 					<select class="block col-12 mb2 field" v-model="alias.selectedDomain">
-						<option v-for="account in accounts" value="{{ account.domainId }}">{{ account.domain }}</option>
+						<option v-for="account in accounts" track-by="accountId" value="{{ account.domainId }}">{{ account.domain }}</option>
 					</select>
 					<hr />
 					<span class="block mb1">Alias allows you to receive mails from multiple domain names under one account.</span>
