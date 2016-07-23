@@ -315,11 +315,17 @@ var self = module.exports = {
 		return helper.postWithHeader(this.$http, _.state, UPLOADS3STREAM_ENDPOINT, data);
 	},
 
-	safeRaw: function(params) {
-		return API_ENDPOINT + '/safe/raw/' + params.accountId + '/' + params.messageId;
-	},
-	inlineImage: function(src) {
+	inlineImage: function(_, src) {
 		return API_ENDPOINT + '/safe/inline/?s=' + encodeURIComponent(src);
+	},
+	safeImage: function(_, src) {
+		return API_ENDPOINT + '/safe/image/?s=' + encodeURIComponent(src);
+	},
+	safeLink: function(_, src) {
+		return API_ENDPOINT + '/safe/href/?s=' + encodeURIComponent(src);
+	},
+	safeRaw: function(_, params) {
+		return API_ENDPOINT + '/safe/raw/' + params.accountId + '/' + params.messageId;
 	},
 	returnS3URL: function(_, checksum, fileName) {
 		return 'https://' + _.state.s3.bucket + '.' + _.state.s3.endpoint + '/' + checksum + '/' + fileName;
@@ -350,6 +356,9 @@ var self = module.exports = {
 		_.dispatch('setLastFolderId', _.state.route.params.folderId)
 	},
 
+	setReadInMail: function(_, read) {
+		_.dispatch('setReadInMail', read);
+	},
 	setReadInMailArray: function(_, messageId, read) {
 		_.dispatch('setReadInMailArray', messageId, read);
 	},

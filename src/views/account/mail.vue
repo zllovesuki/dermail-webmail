@@ -177,18 +177,19 @@ module.exports = {
 			script.innerHTML = this.iframeFix;
 			return script;
 		},
-		safeImage: function(html) {
+		reaplceWithSafeImage: function(html) {
+
 			if (html.indexOf('http://fonts.googleapis.com') !== -1) {
 				html = this.replaceall('http://fonts.googleapis.com', 'https://fonts.googleapis.com', html);
 			}
 
 			var replaceImg = function(img, src) {
 				if (src.substring(0, 3) === 'cid') {
-					html = this.replaceall(img, this.replaceall(src, api.inlineImage(src), img), html);
+					html = this.replaceall(img, this.replaceall(src, this.inlineImage(src), img), html);
 				}else{
 					var before = src;
 					var after = this.replaceMap(before);
-					html = this.replaceall(img, this.replaceall(before, api.safeImage(after), img), html);
+					html = this.replaceall(img, this.replaceall(before, this.safeImage(after), img), html);
 				}
 			}.bind(this);
 
@@ -221,9 +222,9 @@ module.exports = {
 			if (cssURL) {
 				cssURL.forEach(function(img) {
 					var src = img.match(/(?:\(['|"]?)(.*?)(?:['|"]?\))/i)[1];
-					html = this.replaceall('url(' + src, 'url(' + api.safeImage(src), html);
-					html = this.replaceall('url(\'' + src + '\'', 'url(' + api.safeImage(src), html);
-					html = this.replaceall('url("' + src + '"', 'url(' + api.safeImage(src), html);
+					html = this.replaceall('url(' + src, 'url(' + this.safeImage(src), html);
+					html = this.replaceall('url(\'' + src + '\'', 'url(' + this.safeImage(src), html);
+					html = this.replaceall('url("' + src + '"', 'url(' + this.safeImage(src), html);
 				}.bind(this))
 			}
 
@@ -239,7 +240,7 @@ module.exports = {
 				hrefs[i].onclick = function(e) {
 					e.preventDefault();
 					var href = e.target.href || e.target.parentElement.href;
-					var href = api.safeLink(href);
+					var href = this.safeLink(href);
 					this.alert()
 					.okBtn("Yes")
 					.cancelBtn("No")
@@ -267,7 +268,7 @@ module.exports = {
 				var frame = document.getElementById('iframe-body');
 				var iframe = frame.contentWindow.document;
 				iframe.head.appendChild(this.createiFrameFix());
-				iframe.body.innerHTML = this.safeImage(this.mail.html);
+				iframe.body.innerHTML = this.reaplceWithSafeImage(this.mail.html);
 				setTimeout(function() {
 					frame.style.height = (iframe.body.scrollHeight) + 'px';
 				}, 500);
@@ -342,7 +343,7 @@ module.exports = {
 						mutable: false,
 						filename: this.st.mail.attachments[i].generatedFileName,
 						cid: this.st.mail.attachments[i].contentId,
-						path: api.inlineImage('cid:' + this.st.mail.attachments[i].contentId)
+						path: this.inlineImage('cid:' + this.st.mail.attachments[i].contentId)
 					});
 				}
 			}
@@ -358,14 +359,15 @@ module.exports = {
 				this.ready = true;
 
 				if (typeof data.isRead == 'undefined' || data.isRead === false) {
-					api.updateMail(this, {
-						accountId: this.$route.params.accountId,
-						messageId: this.$route.params.messageId,
+					this.updateMail({
+						accountId: this.route.params.accountId,
+						messageId: this.route.params.messageId,
 						action: 'read'
 					})
 					.then(function(res) {
-						this.st.mail.isRead = true;
-						this.$dispatch('setReadInMailArray', this.$route.params.messageId, this.st.mail.isRead);
+						if (typeof res === 'undefined') return;
+						this.setReadInMail(true);
+						this.setReadInMailArray(this.route.params.messageId, this.mail.isRead);
 					});
 				}
 			}.bind(this))

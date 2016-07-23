@@ -35,6 +35,9 @@ module.exports = {
 	setLastFolderId: function(state, id) {
 		state.lastFolderId = id;
 	},
+	setReadInMail: function(state, read) {
+		state.mail.isRead = read;
+	},
 	setReadInMailArray: function(state, messageId, read) {
 		var mail = state.mails.filter(function(mail) {
 			return mail.messageId === messageId;

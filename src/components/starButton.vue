@@ -19,8 +19,7 @@ module.exports = {
 		},
 		isStar: {
 			type: Boolean,
-			required: true,
-			twoWay: true
+			required: true
 		}
 	},
 	data: function() {
