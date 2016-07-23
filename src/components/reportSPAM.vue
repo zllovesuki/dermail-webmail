@@ -10,10 +10,15 @@
 </template>
 
 <script>
-var st = require('../lib/st.js');
-var api = require('../lib/api.js');
+
+var getters = require('../lib/vuex/getters.js')
+var actions = require('../lib/vuex/actions.js')
 
 module.exports = {
+	vuex: {
+		getters: getters,
+		actions: actions
+	},
 	props: {
 		folderName: {
 			type: String,
@@ -28,11 +33,6 @@ module.exports = {
 			required: true
 		}
 	},
-	data: function() {
-		return {
-			st: st
-		}
-	},
 	computed: {
 		alreadySpam: function() {
 			return this.folderName.toLowerCase() !== 'spam';
@@ -41,30 +41,30 @@ module.exports = {
 	methods: {
 		moveToSPAM: function() {
 			var data = {
-				accountId: this.$route.params.accountId,
+				accountId: this.route.params.accountId,
 				messageId: this.messageId,
 				action: 'spam'
 			};
 			var currentFolder = this.folderId;
-			api.updateMail(this, data)
+			this.updateMail(data)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
-				this.st.alert.success('I hate SPAM!');
-				this.$dispatch('houseKeeping', currentFolder, this.messageId, true);
+				this.alert().success('I hate SPAM!');
+				return this.mailHouseKeeping(currentFolder, this.messageId, true);
 			})
 		},
 		notSPAM: function() {
 			var data = {
-				accountId: this.$route.params.accountId,
+				accountId: this.route.params.accountId,
 				messageId: this.messageId,
 				action: 'notspam'
 			};
-			api.updateMail(this, data)
+			this.updateMail(data)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
 				var data = res.text();
-				this.st.alert.success('Got it.');
-				this.$dispatch('houseKeeping', data, this.messageId, true);
+				this.alert().success('Got it.');
+				return this.mailHouseKeeping(data, this.messageId, true);
 			})
 		}
 	}

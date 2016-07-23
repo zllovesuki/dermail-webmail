@@ -4,31 +4,31 @@
 			<div class="mxn1 p1">
 				<div class="clearfix" v-if="ready">
 					<div class="left">
-						<star-button :message-id="st.mail.messageId" :is-star.sync="st.mail.isStar"></star-button>
+						<star-button :message-id="mail.messageId" :is-star="mail.isStar"></star-button>
 						<span class="mxn2 btn h6 muted black not-clickable">
-							{{ st.mail.date | moment "MM/DD/YYYY, HH:mm:ss"}}
+							{{ mail.date | moment "MM/DD/YYYY, HH:mm:ss"}}
 						</span>
 					</div>
 					<div class="right mr1">
-						<mail-menu :context="st.mail"></mail-menu>
+						<mail-menu :context="mail"></mail-menu>
 					</div>
 				</div>
 			</div>
 			<div class="m0 p1">
 				<div class="clearfix x-scrollable">
 					<span class="p2 bold h3 m0 black">
-						{{ st.mail.subject }}
+						{{ mail.subject }}
 					</span>
 				</div>
 			</div>
 			<div class="m0 p1">
 				<div class="clearfix" v-if="ready">
 					<div class="left ml2">
-						<address-button origin-text="From" :origin="st.mail.from"></address-button>
+						<address-button origin-text="From" :origin="mail.from"></address-button>
 					</div>
 					<div class="right mr1">
-						<address-button origin-text="To" :origin="st.mail.to"></address-button>
-						<a class="muted h6 bold btn mxn1 {{ st.color }}" @click="extraRecipients = true" v-if="(st.mail.cc && st.mail.cc.length > 0) || (st.mail.bcc && st.mail.bcc.length > 0)">...</a>
+						<address-button origin-text="To" :origin="mail.to"></address-button>
+						<a class="muted h6 bold btn mxn1 {{ color }}" @click="extraRecipients = true" v-if="(mail.cc && mail.cc.length > 0) || (mail.bcc && mail.bcc.length > 0)">...</a>
 					</div>
 				</div>
 			</div>
@@ -45,16 +45,16 @@
 					<iframe id="iframe-body"></iframe>
 				</div>
 				<div v-if="!containsStrangeTags" class="overflow-auto" id="html-body">
-					{{{ st.mail.html }}}
+					{{{ mail.html }}}
 				</div>
 			</div>
 			<div class="m0 p1 border-top">
 				<div class="clearfix" v-if="ready">
-					<div class="left" v-if="st.hideInMoveOptions.indexOf(st.folder.displayName.toLowerCase()) === -1">
-						<a class="muted h6 btn {{ st.color }}" @click="reply">
+					<div class="left" v-if="hideInMoveOptions.indexOf(folder.displayName.toLowerCase()) === -1">
+						<a class="muted h6 btn {{ color }}" @click="reply">
 							Reply
 						</a>
-						<a class="muted h6 btn {{ st.color }}" @click="forward">
+						<a class="muted h6 btn {{ color }}" @click="forward">
 							Forward
 						</a>
 					</div>
@@ -62,7 +62,7 @@
 						<a class="h6 mxn1 btn black" @click="showRaw">
 							Raw
 						</a>
-						<spam :folder-name="st.folder.displayName" :message-id="st.mail.messageId" :folder-id="st.mail.folderId" v-if="st.hideSpamButton.indexOf(st.folder.displayName.toLowerCase()) === -1"></spam>
+						<spam :folder-name="folder.displayName" :message-id="mail.messageId" :folder-id="mail.folderId" v-if="hideSpamButton.indexOf(folder.displayName.toLowerCase()) === -1"></spam>
 					</div>
 				</div>
 			</div>
@@ -75,8 +75,8 @@
 			</div>
 			<div class="m0 p1">
 				<div class="clearfix" v-if="ready">
-					<template v-for="attachment in st.mail.attachments">
-						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ st.color }}" href="{{ st.returnS3URL(attachment.checksum, attachment.generatedFileName) }}" target="_blank">
+					<template v-for="attachment in mail.attachments">
+						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ color }}" href="{{ returnS3URL(attachment.checksum, attachment.generatedFileName) }}" target="_blank">
 							{{attachment.generatedFileName}}
 						</a>
 					</template>
@@ -96,24 +96,27 @@
 		<modal :show.sync="extraRecipients">
 			<h4 slot="header"></h4>
 			<span slot="body">
-				<div v-if="st.mail.cc && st.mail.cc.length > 0"><address-button origin-text="CC" :origin="st.mail.cc"></address-button></div>
-				<div v-if="st.mail.bcc && st.mail.bcc.length > 0"><address-button origin-text="BCC" :origin="st.mail.bcc"></address-button></div>
+				<div v-if="mail.cc && mail.cc.length > 0"><address-button origin-text="CC" :origin="mail.cc"></address-button></div>
+				<div v-if="mail.bcc && mail.bcc.length > 0"><address-button origin-text="BCC" :origin="mail.bcc"></address-button></div>
 			</span>
 		</modal>
 	</div>
 </template>
 <script>
 
-var st = require('../../lib/st.js');
-var api = require('../../lib/api.js');
+var getters = require('../../lib/vuex/getters.js')
+var actions = require('../../lib/vuex/actions.js')
 
 module.exports = {
+	vuex: {
+		getters: getters,
+		actions: actions
+	},
 	data: function() {
 		return {
-			st: st,
 			helpModal: false,
 			extraRecipients: false,
-			iframeFix: 'self!==top&&(max=' + st.zoomFactor + ',myRedraw="width",b=document.getElementsByTagName("body")[0],zW=(b.clientWidth-5)/b.scrollWidth,"both"===myRedraw?(zH=b.clientHeight/b.scrollHeight,zH<zW&&zH<1?z=zH:z=zW):z=zW,z>1+max?z=1+max:z<1-max&&(z=1-max),s="zoom:"+z+"; -moz-transform: scale("+z+"); -moz-transform-origin: 0 0;","function"==typeof b.setAttribute?b.setAttribute("style",s):"object"==typeof b.style.setAttribute&&b.style.setAttribute("cssText",s));',
+			iframeFix: 'self!==top&&(max=' + this.zoomFactor + ',myRedraw="width",b=document.getElementsByTagName("body")[0],zW=(b.clientWidth-5)/b.scrollWidth,"both"===myRedraw?(zH=b.clientHeight/b.scrollHeight,zH<zW&&zH<1?z=zH:z=zW):z=zW,z>1+max?z=1+max:z<1-max&&(z=1-max),s="zoom:"+z+"; -moz-transform: scale("+z+"); -moz-transform-origin: 0 0;","function"==typeof b.setAttribute?b.setAttribute("style",s):"object"==typeof b.style.setAttribute&&b.style.setAttribute("cssText",s));',
 			ready: false,
 			encodingMap: [
 				{
@@ -129,25 +132,25 @@ module.exports = {
 	},
 	computed: {
 		hasAttachments: function() {
-			if (this.st.mail.hasOwnProperty('attachments')) {
-				if (this.st.mail.attachments.length > 0) {
+			if (this.mail.hasOwnProperty('attachments')) {
+				if (this.mail.attachments.length > 0) {
 					return true;
 				}
 			}
 			return false;
 		},
 		containsStrangeTags: function() {
-			if (this.st.mail.hasOwnProperty('html')) {
-				if (this.st.mail.html.toLowerCase().match(/<style/)) { // Warning, it contains <style>
+			if (this.mail.hasOwnProperty('html')) {
+				if (this.mail.html.toLowerCase().match(/<style/)) { // Warning, it contains <style>
 					return true;
 				}
-				if (this.st.mail.html.toLowerCase().match(/<script/)) { // Warning, it contains <script>
+				if (this.mail.html.toLowerCase().match(/<script/)) { // Warning, it contains <script>
 					return true;
 				}
-				if (this.st.mail.html.toLowerCase().match(/<img/)) { // Warning, it contains <img>
+				if (this.mail.html.toLowerCase().match(/<img/)) { // Warning, it contains <img>
 					return true;
 				}
-				if (this.st.mail.html.toLowerCase().replace(/ /g,'').match('position:absolute')) { // Warning, it contains absoulte
+				if (this.mail.html.toLowerCase().replace(/ /g,'').match('position:absolute')) { // Warning, it contains absoulte
 					return true;
 				}
 			}
@@ -167,25 +170,26 @@ module.exports = {
 		},
 		HTMLInNewWindow: function(e) {
 			var w = window.open();
-			w.document.body.innerHTML = this.st.mail.html;
+			w.document.body.innerHTML = this.mail.html;
 		},
 		createiFrameFix: function() {
 			var script = document.createElement("script");
 			script.innerHTML = this.iframeFix;
 			return script;
 		},
-		safeImage: function(html) {
+		reaplceWithSafeImage: function(html) {
+
 			if (html.indexOf('http://fonts.googleapis.com') !== -1) {
 				html = this.replaceall('http://fonts.googleapis.com', 'https://fonts.googleapis.com', html);
 			}
 
 			var replaceImg = function(img, src) {
 				if (src.substring(0, 3) === 'cid') {
-					html = this.replaceall(img, this.replaceall(src, api.inlineImage(src), img), html);
+					html = this.replaceall(img, this.replaceall(src, this.inlineImage(src), img), html);
 				}else{
 					var before = src;
 					var after = this.replaceMap(before);
-					html = this.replaceall(img, this.replaceall(before, api.safeImage(after), img), html);
+					html = this.replaceall(img, this.replaceall(before, this.safeImage(after), img), html);
 				}
 			}.bind(this);
 
@@ -218,9 +222,9 @@ module.exports = {
 			if (cssURL) {
 				cssURL.forEach(function(img) {
 					var src = img.match(/(?:\(['|"]?)(.*?)(?:['|"]?\))/i)[1];
-					html = this.replaceall('url(' + src, 'url(' + api.safeImage(src), html);
-					html = this.replaceall('url(\'' + src + '\'', 'url(' + api.safeImage(src), html);
-					html = this.replaceall('url("' + src + '"', 'url(' + api.safeImage(src), html);
+					html = this.replaceall('url(' + src, 'url(' + this.safeImage(src), html);
+					html = this.replaceall('url(\'' + src + '\'', 'url(' + this.safeImage(src), html);
+					html = this.replaceall('url("' + src + '"', 'url(' + this.safeImage(src), html);
 				}.bind(this))
 			}
 
@@ -236,8 +240,8 @@ module.exports = {
 				hrefs[i].onclick = function(e) {
 					e.preventDefault();
 					var href = e.target.href || e.target.parentElement.href;
-					var href = api.safeLink(href);
-					this.st.alert
+					var href = this.safeLink(href);
+					this.alert()
 					.okBtn("Yes")
 					.cancelBtn("No")
 					.confirm('Are you sure to leave?')
@@ -264,7 +268,7 @@ module.exports = {
 				var frame = document.getElementById('iframe-body');
 				var iframe = frame.contentWindow.document;
 				iframe.head.appendChild(this.createiFrameFix());
-				iframe.body.innerHTML = this.safeImage(this.st.mail.html);
+				iframe.body.innerHTML = this.reaplceWithSafeImage(this.mail.html);
 				setTimeout(function() {
 					frame.style.height = (iframe.body.scrollHeight) + 'px';
 				}, 500);
@@ -283,113 +287,110 @@ module.exports = {
 				friendlyName: email.name
 			}
 		},
-		reply: function() {
-			var obj;
-			if (typeof this.st.mail.replyTo !== 'undefined') {
-				obj = this.emailToObject(this.st.mail.replyTo[0]);
-			}else{
-				obj = this.st.mail.from[0];
+		appendToCompose: function() {
+			if (typeof this.mail._messageId === 'undefined') this.updateComposeInReplyTo(this.mail.messageId);
+			else this.updateComposeInReplyTo(this.mail._messageId);
+			if (typeof this.mail.references === 'object') {
+				this.updateComposeReferences(this.mail.references);
 			}
-			this.st.compose.addTo.push(obj);
-			var dedup = this.st.mail.subject;
-			while (dedup.toLowerCase().trimLeft().indexOf('re:') === 0) {
-				dedup = dedup.slice(3)
-			}
-			if (typeof this.st.mail._messageId === 'undefined') this.st.mail._messageId = this.st.mail.messageId;
-			this.st.compose.inReplyTo = this.st.mail._messageId;
-			if (typeof this.st.mail.references === 'object') {
-				this.st.compose.references = this.st.mail.references;
-			}
-			this.st.compose.addSubject = {
-				type: 'Re: ',
-				subject: dedup
-			};
-			this.st.compose.type = 'reply';
-			if (this.st.mail.attachments.length > 0) {
+
+			if (this.mail.attachments.length > 0) {
 				// Check if we have inline images, then we need to append them to reply
-				for (var i = 0; i < this.st.mail.attachments.length; i++) {
-					if (this.st.mail.attachments[i].contentDisposition === 'inline') {
-						this.st.compose.addAttachments.push({
+				for (var i = 0; i < this.mail.attachments.length; i++) {
+					if (this.mail.attachments[i].contentDisposition === 'inline') {
+						this.appendComposeAddAttachmens({
 							mutable: false,
-							filename: this.st.mail.attachments[i].generatedFileName,
-							cid: this.st.mail.attachments[i].contentId,
-							path: api.inlineImage('cid:' + this.st.mail.attachments[i].contentId)
-						});
+							filename: this.mail.attachments[i].generatedFileName,
+							cid: this.mail.attachments[i].contentId,
+							path: this.inlineImage('cid:' + this.mail.attachments[i].contentId)
+						})
 					}
 				}
 			}
-			return this.$route.router.go({ name: 'compose', params: { accountId: this.$route.params.accountId } })
+		},
+		reply: function() {
+			var obj;
+			var dedup = this.mail.subject;
+
+			if (typeof this.mail.replyTo !== 'undefined') {
+				obj = this.emailToObject(this.mail.replyTo[0]);
+			}else{
+				obj = this.mail.from[0];
+			}
+			this.appendComposeAddTo(obj);
+
+			while (dedup.toLowerCase().trimLeft().indexOf('re:') === 0) {
+				dedup = dedup.slice(3)
+			}
+			this.updateComposeAddSubject({
+				type: 'Re: ',
+				subject: dedup
+			});
+			this.updateComposeType('reply');
+
+			this.appendToCompose();
+
+			return this.$route.router.go({ name: 'compose', params: { accountId: this.route.params.accountId } })
 		},
 		forward: function() {
-			if (typeof this.st.mail._messageId === 'undefined') this.st.mail._messageId = this.st.mail.messageId;
-			this.st.compose.inReplyTo = this.st.mail._messageId;
-			if (typeof this.st.mail.references === 'object') {
-				this.st.compose.references = this.st.mail.references;
-			}
-			this.st.compose.addSubject = {
+			this.updateComposeAddSubject({
 				type: 'Fwd: ',
-				subject: this.st.mail.subject
-			};
-			this.st.compose.type = 'forward';
-			if (this.st.mail.attachments.length > 0) {
-				// Check if we have inline images, then we need to append them to reply
-				for (var i = 0; i < this.st.mail.attachments.length; i++) {
-					this.st.compose.addAttachments.push({
-						mutable: false,
-						filename: this.st.mail.attachments[i].generatedFileName,
-						cid: this.st.mail.attachments[i].contentId,
-						path: api.inlineImage('cid:' + this.st.mail.attachments[i].contentId)
-					});
-				}
-			}
+				subject: this.mail.subject
+			});
+			this.updateComposeType('forward');
+
+			this.appendToCompose();
+
 			return this.$route.router.go({ name: 'compose', params: { accountId: this.$route.params.accountId } })
 		},
 		downloadMail: function() {
-			this.st.loading.go(70);
-			api.grabDependencies(3, this)
+			this.loading().go(70);
+			this.grabDependencies(3)
 			.then(function(data) {
 				if (typeof data === 'undefined') return;
 				this.writeFrame();
-				this.st.loading.go(100);
+				this.loading().go(100);
 				this.ready = true;
 
 				if (typeof data.isRead == 'undefined' || data.isRead === false) {
-					api.updateMail(this, {
-						accountId: this.$route.params.accountId,
-						messageId: this.$route.params.messageId,
+					this.updateMail({
+						accountId: this.route.params.accountId,
+						messageId: this.route.params.messageId,
 						action: 'read'
 					})
 					.then(function(res) {
-						this.st.mail.isRead = true;
-						this.$dispatch('setReadInMailArray', this.$route.params.messageId, this.st.mail.isRead);
+						if (typeof res === 'undefined') return;
+						this.setReadInMail(true);
+						this.setReadInMailArray(this.route.params.messageId, this.mail.isRead);
 					});
 				}
 			}.bind(this))
 		},
 		showRaw: function() {
-			window.open(api.safeRaw(this.$route.params));
+			window.open(this.safeRaw(this.route.params));
 		}
 	},
 	watch: {
 		'$route.params': function(val, oldVal) {
 			this.ready = false;
-			this.st.mail = {};
+			this.removeMail();
 			this.downloadMail();
 		}
 	},
 	created: function() {
-		this.st.mail = {};
+		this.removeMail();
 	},
 	compiled: function() {
 
-		this.st.setTitle('Mail');
+		this.setTitle('Mail');
 
-		this.st.loading.go(50);
+		this.loading().go(50);
 
-		if (this.st._folders.length === 0) {
-			this.$dispatch('getFoldersInAccount', function() {
+		if (this.flatFolders.length === 0) {
+			this.getFoldersInAccount()
+			.then(function() {
 				this.downloadMail();
-			}.bind(this))
+			});
 		}else{
 			this.downloadMail();
 		}

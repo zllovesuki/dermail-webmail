@@ -27,24 +27,23 @@
 
 <script>
 
-var st = require('../../lib/st.js');
-var api = require('../../lib/api.js');
+var getters = require('../../lib/vuex/getters.js')
+var actions = require('../../lib/vuex/actions.js')
 
 module.exports = {
-	data: function() {
-		return {
-			st: st
-		}
+	vuex: {
+		getters: getters,
+		actions: actions
 	},
 	computed: {
 		isInPushNotification: function() {
-			return this.$route.name === 'settingPushNotification'
+			return this.route.name === 'settingPushNotification'
 		},
 		isInColor: function() {
-			return this.$route.name === 'settingColor'
+			return this.route.name === 'settingColor'
 		},
 		isInSPFDKIMDMARC: function() {
-			return this.$route.name === 'settingSPFDKIMDMARC'
+			return this.route.name === 'settingSPFDKIMDMARC'
 		}
 	},
 }

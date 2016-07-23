@@ -2,16 +2,21 @@
 	<span>
 		<span class="btn mxn2 black h6 not-clickable">{{ originText }}: </span>
 		<template v-for="address in origin">
-			<a class="muted h6 bold btn mxn1 {{ st.color }}" @click="popup" data-name="{{address.friendlyName}}" data-email="{{address.account}}@{{address.domain}}">{{ address | nameOrEmail | excerpt 20 }}</a>
+			<a class="muted h6 bold btn mxn1 {{ color }}" @click="popup" data-name="{{address.friendlyName}}" data-email="{{address.account}}@{{address.domain}}">{{ address | nameOrEmail | excerpt 20 }}</a>
 		</template>
 	</span>
 </template>
 
 <script>
 
-var st = require('../lib/st.js');
+var getters = require('../lib/vuex/getters.js')
+var actions = require('../lib/vuex/actions.js')
 
 module.exports = {
+	vuex: {
+		getters: getters,
+		actions: actions
+	},
 	props: {
 		originText: {
 			type: String,
@@ -20,11 +25,6 @@ module.exports = {
 		origin: {
 			type: Array,
 			required: true
-		}
-	},
-	data: function() {
-		return {
-			st: st
 		}
 	},
 	methods: {
@@ -38,7 +38,7 @@ module.exports = {
 			if (email.length > 1) {
 				msg += ' <span class="bold h5" style="word-wrap: break-word;">&lt;' + email + '></span>';
 			}
-			this.st.alert.alert(msg);
+			this.alert().alert(msg);
 		}
 	}
 }

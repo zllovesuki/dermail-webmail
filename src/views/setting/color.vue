@@ -11,10 +11,10 @@
 			</div>
 			<div class="m0 p2 border-top">
 				<div class="clearfix">
-					<select class="block col-3 mb2 field" v-model="st.color">
-						<option v-for="color in st.colors" value="{{ color }}">{{ color }}</option>
+					<select class="block col-3 mb2 field" :value="color" @change="dispatchColor">
+						<option v-for="color in colors" value="{{ color }}">{{ color }}</option>
 					</select>
-					<button class="h6 btn btn-outline {{ st.color }} ml1 mb1" @click="saveColor">Save</button>
+					<button class="h6 btn btn-outline {{ color }} ml1 mb1" @click="doSaveColor">Save</button>
 				</div>
 			</div>
 		</div>
@@ -23,27 +23,28 @@
 
 <script>
 
-var st = require('../../lib/st.js');
-var api = require('../../lib/api.js');
+var getters = require('../../lib/vuex/getters.js')
+var actions = require('../../lib/vuex/actions.js')
 
 module.exports = {
-	data: function() {
-		return {
-			st: st
-		}
+	vuex: {
+		getters: getters,
+		actions: actions
 	},
 	methods: {
-		saveColor: function() {
-			//this.st.setBarColor(this.st.color);
-			localStorage.setItem('color', this.st.color);
-			this.st.alert.success('Color scheme saved!');
+		dispatchColor: function(e) {
+			this.setColor(e.target.value);
+		},
+		doSaveColor: function() {
+			this.saveColor();
+			this.alert().success('Color scheme saved!');
 		},
 	},
 	beforeCompile: function() {
-		this.st.setTitle('Color');
+		this.setTitle('Color');
 	},
 	ready: function() {
-		this.st.loading.go(100);
+		this.loading().go(100);
 	}
 }
 </script>

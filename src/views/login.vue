@@ -33,13 +33,12 @@
 </template>
 <script>
 
-var st = require('../lib/st.js');
-var api = require('../lib/api.js');
+var getters = require('../lib/vuex/getters.js')
+var actions = require('../lib/vuex/actions.js')
 
 module.exports = {
 	data: function() {
 		return {
-			st: st,
 			credentials: {
 				username: '',
 				password: ''
@@ -47,56 +46,35 @@ module.exports = {
 			submitButtonDisabled: false
 		}
 	},
+	vuex: {
+		getters: getters,
+		actions: actions
+	},
 	computed: {
 		usernameNotFilled: function() {
 			return this.credentials.username < 1;
 		},
 		passwordNotFilled: function() {
 			return this.credentials.password < 1;
-		},
-		title: function() {
-			return this.st.title;
 		}
 	},
 	methods: {
-		disableSubmitButton: function() {
-			this.submitButtonDisabled = true;
-		},
-		enableSubmitButton: function() {
-			this.submitButtonDisabled = false;
-		},
 		doLogin: function(e) {
-			this.disableSubmitButton();
-			this.st.loading.go(30);
-			api.login(this, this.credentials)
+			this.submitButtonDisabled =  true;
+			this.alert().log('Logging you in...');
+			return this.login(this.credentials)
 			.then(function(res) {
-				if (typeof res === 'undefined') return;
-				var data = res.json();
-				if (data.hasOwnProperty('token')) {
-					this.st.setToken(data.token);
-					this.st.setAuthenticated(true);
-					api.queue().connect(this, api);
-
-					api.s3(this)
-					.then(function(res) {
-						var data = {};
-						if (res && res.data) {
-							data = res.json();
-						}
-						this.st.setS3(data);
-					})
-					.catch(function(err) {
-						this.st.alert.error('Unable to fetch S3 information, attachment functionalities may be impacted.');
-					})
+				if (res === true) {
+					return this.getS3()
 					.finally(function() {
-						this.st.alert.success('Welcome back!');
+						this.alert().success('Welcome back!');
 						this.$route.router.go({ name: 'accounts' })
-					})
-				};
-			})
+					}.bind(this))
+				}
+			}.bind(this))
 			.finally(function() {
-				this.enableSubmitButton();
-			})
+				this.submitButtonDisabled = false;
+			}.bind(this))
 		},
 		resetForm: function() {
 			this.credentials = {
@@ -106,11 +84,10 @@ module.exports = {
 		}
 	},
 	ready: function() {
-		if (this.st.isAuthenticated()) {
+		if (this.isAuthenticated()) {
 			return this.$route.router.go({ name: 'accounts' })
 		}else{
-			this.st.setTitle('Login');
-			if (!this.st.blockLoadingOnce) this.st.loading.go(100);
+			this.setTitle('Login');
 		}
 	}
 }

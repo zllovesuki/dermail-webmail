@@ -1,17 +1,17 @@
 <template>
 	<span>
-		<div class="fixed top-0 right-0 m2" v-if="$route.params && $route.params.accountId">
+		<div class="fixed top-0 right-0 m2" v-if="route.params && route.params.accountId">
 			<a class="btn block" @click="showModal">
 				<search-icon></search-icon>
 			</a>
 		</div>
 		<modal :show.sync="search.modal">
-			<h4 slot="header">Search in <u>{{ st.account.displayName }}</u></h4>
+			<h4 slot="header">Search in <u>{{ account.displayName }}</u></h4>
 			<span slot="body">
 					<input type="text" class="field block col-12 mb1 search-box" v-model="search.string" debounce="500">
 					<ul class="list-reset block y-scrollable">
 						<li class="overflow-hidden" v-for="result in search.results">
-							<a target="_blank" v-link="{ name: 'mail', params: { accountId: this.$route.params.accountId, folderId: result.folder.folderId, messageId: result.messageId }}" class="btn">
+							<a target="_blank" v-link="{ name: 'mail', params: { accountId: this.route.params.accountId, folderId: result.folder.folderId, messageId: result.messageId }}" class="btn">
 								{{result.folder.displayName}} - {{ result.subject }}
 							</a>
 						</li>
@@ -24,13 +24,16 @@
 
 <script>
 
-var st = require('../lib/st.js');
-var api = require('../lib/api.js');
+var getters = require('../lib/vuex/getters.js')
+var actions = require('../lib/vuex/actions.js')
 
 module.exports = {
+	vuex: {
+		getters: getters,
+		actions: actions
+	},
 	data: function() {
 		return {
-			st: st,
 			search: {
 				modal: false,
 				string: '',
@@ -41,8 +44,8 @@ module.exports = {
 	watch: {
 		'search.string': function(val, oldVal) {
 			if (val.length < 1) return;
-			this.st.loading.go(30);
-			api.searchMailsInAccount(this, {
+			this.loading().go(30);
+			this.searchMailsInAccount({
 				accountId: this.$route.params.accountId,
 				searchString: val
 			})
@@ -52,7 +55,7 @@ module.exports = {
 				this.search.results = data;
 			})
 			.finally(function() {
-				this.st.loading.go(100);
+				this.loading().go(100);
 			})
 		}
 	},

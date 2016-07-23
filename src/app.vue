@@ -5,11 +5,11 @@
 		<div class="clearfix mt2">
 			<div class="mb2 sm-flex center nowrap">
 				<div class="flex-auto block">
-					<p class="inline h2">Dermail | <small class="muted" >{{ st.title }}</small>
+					<p class="inline h2">Dermail | <small class="muted" >{{ title }}</small>
 				</div>
 			</div>
 
-			<div class="mn1 center" v-if="st.authenticated">
+			<div class="mn1 center" v-if="authenticated">
 				<a class="btn button-narrow" v-link="{ name: 'accounts'}">Accounts</a>
 				<a class="btn button-narrow" v-link="{ name: 'settingIndex'}">Settings</a>
 				<a class="btn button-narrow" @click="doLogout">Logout</a>
@@ -27,37 +27,21 @@
 </template>
 <script>
 
-var st = require('./lib/st.js')
-var api = require('./lib/api.js')
+var _st = require('./lib/vuex/store.js')
+var getters = require('./lib/vuex/getters.js')
+var actions = require('./lib/vuex/actions.js')
 
 module.exports = {
-	data: function () {
-		return {
-			st: st
-		}
+	store: _st,
+	vuex: {
+		getters: getters,
+		actions: actions
 	},
 	methods: {
 		doLogout: function() {
-			this.st.setAuthenticated(false);
-			this.st.blockLoadingOnce = false;
-			api.queue().disconnect();
-			this.st.removeToken();
-			this.st.alert.success('Logout successfully!');
+			this.logout();
+			this.disconnectQueue();
 			this.$route.router.go({name: 'login'});
-		}
-	},
-	events: {
-		'getAccounts': function(cb) {
-			this.st.loading.go(50);
-			api.getAccounts(this)
-			.then(function(res) {
-				if (typeof res === 'undefined') return;
-				var data = res.json();
-				this.st.putAccounts(data);
-			}.bind(this))
-			.finally(function() {
-				if (cb) cb();
-			})
 		}
 	}
 }

@@ -10,7 +10,8 @@
   "dependencies": {
     "debug": "~2.2.0",
     "express": "~4.14.0",
-    "localforage": "^1.4.2"
+    "localforage": "^1.4.2",
+    "vuex": "^1.0.0-rc.2"
   },
   "devDependencies": {
     "alertify.js": "^1.0.12",
@@ -31,6 +32,8 @@
     "vue-resource": "^0.9.3",
     "vue-router": "^0.7.13",
     "vueify": "^8.7.0",
-    "vueify-insert-css": "^1.0.0"
+    "vueify-insert-css": "^1.0.0",
+    "vuex": "^1.0.0-rc.2",
+    "vuex-router-sync": "git+https://github.com/zllovesuki/vuex-router-sync.git"
   }
 }

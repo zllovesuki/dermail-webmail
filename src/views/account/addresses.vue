@@ -10,7 +10,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="m0 p0" v-if="st.addresses.length === 0">
+			<div class="m0 p0" v-if="addresses.length === 0">
 				<div class="clearfix">
 					<div class="left black">
 						<span class="btn h5 not-clickable">
@@ -19,38 +19,33 @@
 					</div>
 				</div>
 			</div>
-			<address-item v-for="address in st.addresses" :address="address"></address-item>
+			<address-item v-for="address in addresses" :address="address"></address-item>
 		</div>
 	</div>
 </template>
 
 <script>
 
-var st = require('../../lib/st.js');
-var api = require('../../lib/api.js');
+var getters = require('../../lib/vuex/getters.js')
+var actions = require('../../lib/vuex/actions.js')
 
 module.exports = {
-	data: function() {
-		return {
-			st: st
-		}
+	vuex: {
+		getters: getters,
+		actions: actions
 	},
 	compiled: function() {
-		this.st.setTitle('Address Book');
-		api.grabDependencies(1, this)
-		.then(function(data) {
-			this.st.loading.go(70);
-			api.getAddresses(this, {
+		this.setTitle('Address Book');
+		this.grabDependencies(1)
+		.then(function(res) {
+			if (typeof res === 'undefined') return;
+			this.loading().go(70);
+			return this.getAddresses({
 				accountId: this.$route.params.accountId
 			})
-			.then(function(res) {
-				if (typeof res === 'undefined') return;
-				var data = res.json();
-				this.st.putAddresses(data);
-			})
-			.finally(function() {
-				this.st.loading.go(100);
-			})
+		}.bind(this))
+		.finally(function() {
+			this.loading().go(100);
 		}.bind(this))
 	}
 }

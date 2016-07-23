@@ -11,7 +11,7 @@
 			</div>
 			<div class="m0 p2 border-top">
 				<div class="clearfix">
-					<a class="muted h6 ml1 mb1 bold btn btn-outline {{ st.color }}" v-link="{ name: 'settingColor' }">Color Scheme</a>
+					<a class="muted h6 ml1 mb1 bold btn btn-outline {{ color }}" v-link="{ name: 'settingColor' }">Color Scheme</a>
 				</div>
 			</div>
 		</div>
@@ -26,7 +26,7 @@
 			</div>
 			<div class="m0 p2 border-top">
 				<div class="clearfix">
-					<a class="muted h6 ml1 mb1 bold btn btn-outline {{ st.color }}" v-link="{ name: 'settingPushNotification' }">Push Notification</a>
+					<a class="muted h6 ml1 mb1 bold btn btn-outline {{ color }}" v-link="{ name: 'settingPushNotification' }">Push Notification</a>
 				</div>
 			</div>
 		</div>
@@ -41,7 +41,7 @@
 			</div>
 			<div class="m0 p2 border-top">
 				<div class="clearfix">
-					<a class="muted h6 ml1 mb1 bold btn btn-outline {{ st.color }}" v-link="{ name: 'settingSPFDKIMDMARC' }">SPF, DKIM, and DMARC</a>
+					<a class="muted h6 ml1 mb1 bold btn btn-outline {{ color }}" v-link="{ name: 'settingSPFDKIMDMARC' }">SPF, DKIM, and DMARC</a>
 				</div>
 			</div>
 		</div>
@@ -49,18 +49,17 @@
 </template>
 <script>
 
-var api = require('../../lib/api.js');
-var st = require('../../lib/st.js');
+var getters = require('../../lib/vuex/getters.js')
+var actions = require('../../lib/vuex/actions.js')
 
 module.exports = {
-	data: function() {
-		return {
-			st: st
-		}
+	vuex: {
+		getters: getters,
+		actions: actions
 	},
 	ready: function() {
-		this.st.loading.go(100);
-		this.st.setTitle('Settings');
+		this.loading().go(100);
+		this.setTitle('Settings');
 	}
 }
 </script>
