@@ -1,3 +1,5 @@
+var helper = require('./helper')
+
 module.exports = {
 	// TODO: this throws an error in Vuex strict mode
 	initializeStorage: function(state) {
@@ -65,6 +67,19 @@ module.exports = {
 		})
 		if (mail.length === 1) {
 			mail[0].isRead = read;
+			// We also want to change the read count in folderTree
+			var folder = state._folders.filter(function(folder) {
+				return folder.folderId === mail[0].folderId;
+			})
+			if (folder.length === 1){
+				if (read) folder[0].count -= 1;
+				else folder[0].count += 1;
+			}
+			state.folders = helper.listToTree(state._folders, {
+				idKey: 'folderId',
+				parentKey: 'parent',
+				childrenKey: 'child'
+			})
 		}
 	},
 	setStarInMailArray: function(state, messageId, star) {
