@@ -20,6 +20,10 @@ module.exports = {
 		return state.hideMoveToTrash
 	},
 
+	zoomFactor: function(state) {
+		return state.zoomFactor
+	},
+
 	securityCtx: function(state) {
 		return state.securityCtx
 	},
@@ -55,6 +59,9 @@ module.exports = {
 	},
 	lastFolderId: function(state) {
 		return state.lastFolderId;
+	},
+	mail: function(state) {
+		return state.mail
 	},
 	mails: function(state) {
 		return state.mails

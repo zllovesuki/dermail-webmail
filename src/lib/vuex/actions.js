@@ -94,22 +94,22 @@ var self = module.exports = {
 		var listOfDependencies = [
 			Promise.method(function() {
 				if (Object.keys(_this.account).length === 0 || priority === 1) {
-					return _this.getAccount().then(function(res) {
+					return _this.getAccount()
+					.then(function(res) {
 						return res;
 					});
 				}
 			}.bind(this)),
 			Promise.method(function() {
-				return _this.getFolder().then(function(res) {
+				return _this.getFolder()
+				.then(function(res) {
 					return res;
 				});
 			}.bind(this)),
 			Promise.method(function() {
-				return _this.getMail().then(function(res) {
-					if (typeof res === 'undefined') return;
-					var data = res.json();
-					_.dispatch('putMail', data);
-					return data;
+				return _this.getMail()
+				.then(function(res) {
+					return res;
 				});
 			}.bind(this))
 		];
@@ -183,6 +183,15 @@ var self = module.exports = {
 			if (typeof res === 'undefined') return;
 			var data = res.json();
 			_.dispatch('putFolder', data);
+			return data;
+		})
+	},
+	getMail: function(_) {
+		return helper.postWithHeader(this.$http, _.state, GETMAIL_ENDPOINT, _.state.route.params)
+		.then(function(res) {
+			if (typeof res === 'undefined') return;
+			var data = res.json();
+			_.dispatch('putMail', data);
 			return data;
 		})
 	},
@@ -269,17 +278,32 @@ var self = module.exports = {
 		if (typeof data === 'object') data = data.target.value;
 		_.dispatch('updateComposeMarkdown', data);
 	},
-	updateComposeAddTo: function(_, data) {
-		_.dispatch('updateComposeAddTo', data);
+	resetComposeAddTo: function(_) {
+		_.dispatch('resetComposeAddTo');
+	},
+	appendComposeAddTo: function(_, data) {
+		_.dispatch('appendComposeAddTo', data);
+	},
+	resetComposeAddSubject: function(_) {
+		_.dispatch('resetComposeAddSubject');
 	},
 	updateComposeAddSubject: function(_, data) {
 		_.dispatch('updateComposeAddSubject', data);
 	},
-	updateComposeAddAttachmens: function(_, data) {
-		_.dispatch('updateComposeAddAttachmens', data);
+	resetComposeAddAttachmens: function(_) {
+		_.dispatch('resetComposeAddAttachmens');
+	},
+	appendComposeAddAttachmens: function(_, data) {
+		_.dispatch('appendComposeAddAttachmens', data);
+	},
+	resetComposeReferences: function(_) {
+		_.dispatch('resetComposeReferences');
 	},
 	updateComposeReferences: function(_, data) {
 		_.dispatch('updateComposeReferences', data);
+	},
+	resetComposeInReplyTo: function(_) {
+		_.dispatch('resetComposeInReplyTo');
 	},
 	updateComposeInReplyTo: function(_, data) {
 		_.dispatch('updateComposeInReplyTo', data);
@@ -289,6 +313,13 @@ var self = module.exports = {
 	},
 	uploadS3Stream: function(_, data) {
 		return helper.postWithHeader(this.$http, _.state, UPLOADS3STREAM_ENDPOINT, data);
+	},
+
+	safeRaw: function(params) {
+		return API_ENDPOINT + '/safe/raw/' + params.accountId + '/' + params.messageId;
+	},
+	inlineImage: function(src) {
+		return API_ENDPOINT + '/safe/inline/?s=' + encodeURIComponent(src);
 	},
 	returnS3URL: function(_, checksum, fileName) {
 		return 'https://' + _.state.s3.bucket + '.' + _.state.s3.endpoint + '/' + checksum + '/' + fileName;
@@ -364,6 +395,9 @@ var self = module.exports = {
 	},
 	removeAddressBook: function(_) {
 		_.dispatch('removeAddressBook')
+	},
+	removeMail: function(_) {
+		_.dispatch('removeMail');
 	},
 	removeMails: function(_) {
 		_.dispatch('removeMails');

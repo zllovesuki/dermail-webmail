@@ -377,29 +377,27 @@ module.exports = {
 			this.compose.addTo.forEach(function(tag) {
 				this.pushTags('to', tag.account + '@' + tag.domain);
 			}.bind(this))
-			this.updateComposeAddTo([]);
+			this.resetComposeAddTo();
 		}
 
 		if (this.compose.addSubject.subject !== null) {
 			this.composing.subject = this.compose.addSubject.type + this.compose.addSubject.subject
-			this.updateComposeAddSubject({
-				subject: null
-			});
+			this.resetComposeAddSubject();
 		}
 
 		if (this.compose.addAttachments.length > 0) {
 			this.composing.attachments = this.compose.addAttachments;
-			this.updateComposeAddAttachmens([]);
+			this.resetComposeAddAttachmens();
 		}
 
 		if (this.compose.references.length > 0) {
 			this.composing.references = this.compose.references;
-			this.updateComposeReferences([]);
+			this.resetComposeReferences();
 		}
 
 		if (this.compose.inReplyTo !== null) {
 			this.composing.inReplyTo = this.compose.inReplyTo;
-			this.updateComposeInReplyTo(null);
+			this.resetComposeInReplyTo();
 		}
 
 		this.composing.type = this.compose.type;

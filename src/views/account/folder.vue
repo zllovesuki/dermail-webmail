@@ -7,7 +7,7 @@
 				</span>
 			</div>
 		</div>
-		<mail-item v-for="mail in mails" :mail.sync="mail"></mail-item>
+		<mail-item v-for="mail in mails" :prop-mail="mail"></mail-item>
 		<p class="center" v-if="mails.length > 0 && !noMailsLeft">
 			<button class="h5 btn btn-outline {{ color }}" @click="loadMore" :disabled="disableLoadMore">
 				Load {{ slice.perPage }} More

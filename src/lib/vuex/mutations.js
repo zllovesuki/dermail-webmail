@@ -99,6 +99,9 @@ module.exports = {
 	removeAddressBook: function(state) {
 		state.addresses = [];
 	},
+	removeMail: function(state) {
+		state.mail = {};
+	},
 	removeMails: function(state) {
 		state.mails = [];
 	},
@@ -112,17 +115,34 @@ module.exports = {
 	updateComposeMarkdown: function(state, data) {
 		state.compose.markdown = data;
 	},
-	updateComposeAddTo: function(state, data) {
-		state.compose.addTo = data;
+	resetComposeAddTo: function(state) {
+		state.compose.addTo = [];
+	},
+	appendComposeAddTo: function(state, data) {
+		state.compose.addTo.push(data);
+	},
+	resetComposeAddSubject: function(stat) {
+		state.compose.addSubject = {
+			subject: null
+		};
 	},
 	updateComposeAddSubject: function(state, data) {
 		state.compose.addSubject = data;
 	},
-	updateComposeAddAttachmens: function(state, data) {
-		state.compose.addAttachments = data;
+	resetComposeAddAttachmens: function(state) {
+		state.compose.addAttachments = [];
+	},
+	appendComposeAddAttachmens: function(state, data) {
+		state.compose.addAttachments.push(data);
+	},
+	resetComposeReferences: function(state) {
+		state.compose.references = [];
 	},
 	updateComposeReferences: function(state, data) {
 		state.compose.references = data;
+	},
+	resetComposeInReplyTo: function(state) {
+		state.compose.inReplyTo = null;
 	},
 	updateComposeInReplyTo: function(state, data) {
 		state.compose.inReplyTo = data;
