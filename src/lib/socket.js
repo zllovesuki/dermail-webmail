@@ -16,19 +16,24 @@ module.exports = function(vue) {
 		});
 		this.socket.on('new', function(data) {
 			if (data !== null) {
-				document.getElementById('sound').play();
-				if (data.folder) {
-					vue.incrementallyGetMailsInFolder(data.folder.folderId)
-				}
-				vue.refreshFolderView(data.accountId);
-				_.state.alert.success(data.message, function(ev) {
-					ev.preventDefault();
+				vue.refreshFolderView(data.accountId)
+				.then(function() {
 					if (data.folder) {
-						_.router.go({ name: 'mail', params: { accountId: data.accountId, folderId: data.folder.folderId, messageId: data.messageId } })
-					}else{
-						_.router.go({ name: 'account', params: { accountId: data.accountId } })
+						return vue.incrementallyGetMailsInFolder(data.folder.folderId)
 					}
-				});
+				})
+				.then(function() {
+					if (!data.push) return;
+					document.getElementById('sound').play();
+					_.state.alert.success(data.message, function(ev) {
+						ev.preventDefault();
+						if (data.folder) {
+							_.router.go({ name: 'mail', params: { accountId: data.accountId, folderId: data.folder.folderId, messageId: data.messageId } })
+						}else{
+							_.router.go({ name: 'account', params: { accountId: data.accountId } })
+						}
+					});
+				})
 			}
 		});
 		this.socket.on('debug', function(data) {
