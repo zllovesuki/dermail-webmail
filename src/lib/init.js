@@ -19,7 +19,7 @@ module.exports = function(_, router) {
 			router.app.ping()
 			.then(function(res) {
 				_.dispatch('setAuthenticated', true);
-				//api.queue().connect(router.app, api);
+				router.app.connectQueue();
 				router.app.getS3()
 				.finally(function() {
 					transition.next();

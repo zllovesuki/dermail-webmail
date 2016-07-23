@@ -40,6 +40,7 @@ module.exports = {
 	methods: {
 		doLogout: function() {
 			this.logout();
+			this.disconnectQueue();
 			this.$route.router.go({name: 'login'});
 		}
 	}

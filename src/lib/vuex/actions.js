@@ -27,8 +27,15 @@ var SENDMAIL_ENDPOINT = API_ENDPOINT + '/relay/sendMail'
 var UPLOADS3STREAM_ENDPOINT = API_ENDPOINT + '/upload/s3Stream'
 
 var helper = require('./helper')
+var queue = require('../socket')
 
 var self = module.exports = {
+	connectQueue: function(_) {
+		return queue.connect(_, API_ROOT)
+	},
+	disconnectQueue: function(_) {
+		return queue.disconnect();
+	},
 	loading: function(_, percentage) {
 		return _.state.loading;
 	},
@@ -129,14 +136,14 @@ var self = module.exports = {
 	},
 
 	login: function(_, data) {
-		return postWithoutHeader(this.$http, _.state, LOGIN_ENDPOINT, data)
+		return helper.postWithoutHeader(this.$http, _.state, LOGIN_ENDPOINT, data)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
 			var data = res.json();
 			if (data.hasOwnProperty('token')) {
 				_.dispatch('setToken', data.token);
 				_.dispatch('setAuthenticated', true);
-				//api.queue().connect(this, api);
+				this.connectQueue();
 				return true;
 			};
 		})
