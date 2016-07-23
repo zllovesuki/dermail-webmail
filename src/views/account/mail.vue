@@ -230,7 +230,7 @@ module.exports = {
 
 			return html;
 		},
-		safeLink: function(element) {
+		replaceWithSafeLink: function(element) {
 			var a = element.getElementsByTagName('a');
 			var area = element.getElementsByTagName('area'); // DSW emails fix
 			var hrefs = [];
@@ -272,11 +272,11 @@ module.exports = {
 				setTimeout(function() {
 					frame.style.height = (iframe.body.scrollHeight) + 'px';
 				}, 500);
-				this.safeLink(iframe);
+				this.replaceWithSafeLink(iframe);
 			}else{
 				this.$nextTick(function() {
 					var body = document.getElementById('html-body');
-					this.safeLink(body);
+					this.replaceWithSafeLink(body);
 				})
 			}
 		},
