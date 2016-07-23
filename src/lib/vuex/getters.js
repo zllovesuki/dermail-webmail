@@ -54,7 +54,7 @@ module.exports = {
 	flatFolders: function(state) {
 		return state._folders
 	},
-	_starOnly: function(state) {
+	starOnly: function(state) {
 		return state.starOnly;
 	},
 	lastFolderId: function(state) {

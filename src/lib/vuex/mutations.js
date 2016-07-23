@@ -46,6 +46,14 @@ module.exports = {
 			mail[0].isRead = read;
 		}
 	},
+	setStarInMailArray: function(state, messageId, star) {
+		var mail = state.mails.filter(function(mail) {
+			return mail.messageId === messageId;
+		})
+		if (mail.length === 1) {
+			mail[0].isStar = star;
+		}
+	},
 	removeMailInMailArray: function(state, messageId) {
 		state.mails = state.mails.filter(function(e) {
 			return e.messageId !== messageId; // remove by value
@@ -110,6 +118,10 @@ module.exports = {
 	},
 	removeFilters: function(state) {
 		state.filters = [];
+	},
+
+	flipStar: function(state) {
+		state.starOnly = !state.starOnly;
 	},
 
 	updateComposeType: function(state, data) {

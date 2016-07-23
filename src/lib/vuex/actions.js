@@ -362,8 +362,24 @@ var self = module.exports = {
 	setReadInMailArray: function(_, messageId, read) {
 		_.dispatch('setReadInMailArray', messageId, read);
 	},
+	setStarInMailArray: function(_, messageId, star) {
+		_.dispatch('setStarInMailArray', messageId, star)
+	},
 	removeMailInMailArray: function(_, messageId) {
 		_.dispatch('removeMailInMailArray', messageId);
+	},
+	setNoMailsLeft: function(_, noMailsLeft) {
+		_.dispatch('noMailsLeft', noMailsLeft);
+	},
+	checkIfNeedToSetNoMailsLeftToFalse: function(_, input) {
+		if (input.length > 0) {
+			this.setNoMailsLeft(false);
+		}
+	},
+
+	flipStarOnly: function(_) {
+		_.dispatch('flipStar');
+		this.$broadcast('reloadFolder');
 	},
 
 	mailHouseKeeping: function(_, folderId, messageId, redirectToFolder) {
@@ -374,7 +390,7 @@ var self = module.exports = {
 
 		if (typeof message !== 'undefined') { // We are in folder view
 			if (_.state.mails.length === 0) { // We just removed the last one!
-				_.dispatch('noMailsLeft', true);
+				this.setNoMailsLeft(true);
 			}
 		}else{ // We are in mail view
 			if (redirectToFolder)

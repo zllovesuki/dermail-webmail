@@ -8,10 +8,14 @@
 
 <script>
 
-var st = require('../lib/st.js');
-var api = require('../lib/api.js');
+var getters = require('../lib/vuex/getters.js')
+var actions = require('../lib/vuex/actions.js')
 
 module.exports = {
+	vuex: {
+		getters: getters,
+		actions: actions
+	},
 	props: {
 		messageId: {
 			type: String,
@@ -22,18 +26,13 @@ module.exports = {
 			required: true
 		}
 	},
-	data: function() {
-		return {
-			st: st
-		}
-	},
 	methods: {
 		flipStar: function(e) {
 			var messageId = this.messageId;
 			var currentStar = this.isStar;
 			var newStar = (currentStar ? 'unstar' : 'star');
-			api.updateMail(this, {
-				accountId: this.$route.params.accountId,
+			this.updateMail({
+				accountId: this.route.params.accountId,
 				messageId: messageId,
 				action: newStar
 			})
@@ -41,8 +40,8 @@ module.exports = {
 				if (typeof res === 'undefined') return;
 				this.isStar = (newStar === 'star' ? true : false);
 				var star = (this.isStar ? '&#9733;' : '&#9734;')
-				this.$dispatch('setStarInMailArray', messageId, this.isStar);
-				this.st.alert.success(star + ' : 👍');
+				this.setStarInMailArray(messageId, this.isStar);
+				this.alert().success(star + ' : 👍');
 			})
 		}
 	}

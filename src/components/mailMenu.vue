@@ -87,9 +87,9 @@ module.exports = {
 				.then(function(res) {
 					if (typeof res === 'undefined') return;
 					this.resetLastFolderId();
-					this.alert().success('Moved to a folder.');
-					this.mailHouseKeeping(this.modal.folderId, this.modal.messageId);
 					this.buttonDisabled = false;
+					this.alert().success('Moved to a folder.');
+					return this.mailHouseKeeping(this.modal.folderId, this.modal.messageId);
 				})
 			}
 			this.folderModal = false;

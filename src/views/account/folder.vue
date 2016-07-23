@@ -35,7 +35,8 @@ module.exports = {
 				starOnly: false
 			},
 			tmpMails: [],
-			tmpModified: false
+			tmpModified: false,
+			initialLoad: true
 		}
 	},
 	created: function() {
@@ -69,12 +70,12 @@ module.exports = {
 	},
 	events: {
 		'reloadFolder': function(msg) {
-			this.st.mails = [];
+			this.removeMails();
 			this.disableLoadMore = false;
 			this.slice = {
 				perPage: 10,
 				date: null,
-				starOnly: false
+				starOnly: this.starOnly
 			}
 			this.loadMore();
 		}
@@ -89,13 +90,14 @@ module.exports = {
 		loadMore: function() {
 			this.loading().go(70);
 			if (this.tmpModified) {
+				this.checkIfNeedToSetNoMailsLeftToFalse(this.tmpMails);
 				this.putMails(this.tmpMails);
 				this.tmpMails = [];
 				this.tmpModified = false;
 				this.loading().go(100);
 			}else{
 				this.More();
-				this.getMailsInFolder({
+				return this.getMailsInFolder({
 					slice: this.slice
 				})
 				.then(function(res) {
@@ -103,10 +105,14 @@ module.exports = {
 					if (this.mails.length < this.slice.perPage || res.length < this.slice.perPage) {
 						this.disableLoadMore = true;
 					}
-				})
+					if (this.initialLoad) {
+						this.checkIfNeedToSetNoMailsLeftToFalse(this.mails);
+						this.initialLoad = false;
+					}
+				}.bind(this))
 				.finally(function() {
 					this.loading().go(100);
-				});
+				}.bind(this));
 			}
 		}
 	}

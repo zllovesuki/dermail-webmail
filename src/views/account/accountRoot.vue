@@ -75,22 +75,6 @@ module.exports = {
 		isInAddressBook: function() {
 			return this.$route.name === 'addresses'
 		}
-	},
-	methods: {
-		flipStarOnly: function(e) {
-			this.st.starOnly = !this.st.starOnly;
-			this.$broadcast('reloadFolder');
-		}
-	},
-	events: {
-		'setStarInMailArray': function(messageId, star, cb) {
-			var mail = this.st.mails.filter(function(mail) {
-				return mail.messageId === messageId;
-			})
-			if (mail.length === 1) {
-				mail[0].isStar = star;
-			}
-		}
 	}
 }
 </script>
