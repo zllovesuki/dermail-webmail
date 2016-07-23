@@ -8,7 +8,7 @@
 			</div>
 		</div>
 		<mail-item v-for="mail in mails" track-by="messageId" :prop-mail="mail" v-if="ready"></mail-item>
-		<p class="center" v-if="!hideLoadMore">
+		<p class="center" v-if="!hideLoadMore && ready">
 			<button class="h5 btn btn-outline {{ color }}" @click="loadMore" :disabled="disableLoadMore">
 				Load {{ slice.perPage }} More
 			</button>
