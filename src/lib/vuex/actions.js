@@ -432,6 +432,7 @@ var self = module.exports = {
 	},
 	setReadInMailArray: function(_, messageId, read) {
 		_.dispatch('setReadInMailArray', messageId, read);
+		_.dispatch('changeCountInFolders', messageId, read);
 	},
 	setStarInMailArray: function(_, messageId, star) {
 		_.dispatch('setStarInMailArray', messageId, star)

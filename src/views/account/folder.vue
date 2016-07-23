@@ -8,7 +8,7 @@
 			</div>
 		</div>
 		<mail-item v-for="mail in mails" track-by="messageId" :prop-mail="mail" v-if="ready"></mail-item>
-		<p class="center" v-if="mails.length > 0 && !noMailsLeft">
+		<p class="center" v-if="!hideLoadMore">
 			<button class="h5 btn btn-outline {{ color }}" @click="loadMore" :disabled="disableLoadMore">
 				Load {{ slice.perPage }} More
 			</button>
@@ -28,6 +28,7 @@ module.exports = {
 	data: function() {
 		return {
 			folderModal: false,
+			hideLoadMore: false,
 			disableLoadMore: false,
 			skipFetching: false,
 			initialLoad: true,
@@ -95,6 +96,7 @@ module.exports = {
 						this.checkIfNeedToSetNoMailsLeftToFalse(this.mails);
 						this.initialLoad = false;
 					}
+					if (res.length === 0 && this.hideLoadMore === false) this.hideLoadMore = true;
 				}.bind(this))
 				.finally(function() {
 					this.ready = true;

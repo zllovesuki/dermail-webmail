@@ -67,7 +67,13 @@ module.exports = {
 		})
 		if (mail.length === 1) {
 			mail[0].isRead = read;
-			// We also want to change the read count in folderTree
+		}
+	},
+	changeCountInFolders: function(state, messageId, read) {
+		var mail = state.mails.filter(function(mail) {
+			return mail.messageId === messageId;
+		})
+		if (mail.length === 1) {
 			var folder = state._folders.filter(function(folder) {
 				return folder.folderId === mail[0].folderId;
 			})
@@ -94,6 +100,9 @@ module.exports = {
 		state.mails = state.mails.filter(function(e) {
 			return e.messageId !== messageId; // remove by value
 		})
+		// moving mails will force folder and account view update
+		state.lastAccountId = null;
+		state.lastFolderId = null;
 	},
 	noMailsLeft: function(state, noMailsLeft) {
 		state.noMailsLeft = noMailsLeft;
