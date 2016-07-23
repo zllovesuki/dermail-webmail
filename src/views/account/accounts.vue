@@ -152,7 +152,7 @@ module.exports = {
 		editDomainAlias: function() {
 			this.loading().go(30);
 			this.alias.modifyButtonDisabled = true;
-			api.updateDomain(this, {
+			this.updateDomain({
 				action: 'updateAlias',
 				domainId: this.alias.selectedDomain,
 				alias: this.alias.byDomainId
@@ -163,10 +163,11 @@ module.exports = {
 				this.resetAliasState();
 			})
 			.finally(function() {
-				this.$dispatch('getAccounts', function() {
+				this.alias.modifyButtonDisabled = false;
+				return this.getAccounts()
+				.then(function() {
 					this.loading().go(100);
 				}.bind(this))
-				this.alias.modifyButtonDisabled = false;
 			})
 		},
 		resetAliasState: function() {
