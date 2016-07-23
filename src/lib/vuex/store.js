@@ -1,4 +1,4 @@
-var	Vue = require('Vue'),
+var	Vue = require('vue'),
 	Vuex = require('vuex'),
 	state = require('./state'),
 	mutations = require('./mutations');
