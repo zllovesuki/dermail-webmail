@@ -56,6 +56,9 @@ module.exports = {
 	lastFolderId: function(state) {
 		return state.lastFolderId;
 	},
+	lastAccountId: function(state) {
+		return state.lastAccountId;
+	},
 	mail: function(state) {
 		return state.mail
 	},

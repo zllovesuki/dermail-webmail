@@ -1,13 +1,13 @@
 <template>
 	<div>
-		<div class="overflow-hidden bg-white rounded mb2" v-show="folders.length === 0">
+		<div class="overflow-hidden bg-white rounded mb2" v-if="folders.length === 0 || !ready">
 			<div class="m0 p2">
 				<span class="p2 bold h5 m0 black">
 					Loading folders for this account...
 				</span>
 			</div>
 		</div>
-		<div class="overflow-hidden bg-white rounded mb2 clearfix" v-if="folders.length > 0">
+		<div class="overflow-hidden bg-white rounded mb2 clearfix" v-if="folders.length > 0 && ready">
 			<folder-item v-for="folder in folders" track-by="folderId" :prop-folder="folder" :index="$index" keep-alive></folder-item>
 		</div>
 		<div class="mt2 mb2">
@@ -41,13 +41,25 @@ module.exports = {
 		getters: getters,
 		actions: actions
 	},
+	data: function() {
+		return {
+			skipFetching: false,
+			initialLoad: true,
+			ready: false
+		}
+	},
 	created: function() {
+		var currentAccountId = this.route.params.accountId;
+		if (currentAccountId !== this.lastAccountId) {
+			this.removeFlatFolders();
+			this.removeFolderTree();
+		}else{
+			this.skipFetching = true;
+		}
 		this.removeFolder();
-		this.removeFlatFolders();
-		this.removeFolderTree();
 		this.removeAddressBook();
 	},
-	compiled: function() {
+	ready: function() {
 
 		this.loading().go(50);
 
@@ -56,10 +68,16 @@ module.exports = {
 		this.grabDependencies(1)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
+			this.setLastAccountId();
 			this.loading().go(70);
-			return this.getFoldersInAccount();
+			if (!this.skipFetching) {
+				return this.getFoldersInAccount();
+			}else{
+				this.skipFetching = false;
+			}
 		}.bind(this))
 		.finally(function() {
+			this.ready = true;
 			this.loading().go(100);
 		}.bind(this))
 	}

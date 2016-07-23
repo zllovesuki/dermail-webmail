@@ -405,6 +405,12 @@ var self = module.exports = {
 	setLastFolderId: function(_) {
 		_.dispatch('setLastFolderId', _.state.route.params.folderId)
 	},
+	resetLastAccountId: function(_) {
+		_.dispatch('setLastAccountId', null)
+	},
+	setLastAccountId: function(_) {
+		_.dispatch('setLastAccountId', _.state.route.params.accountId)
+	},
 
 	setHoldInAddress: function(_, addressId, hold) {
 		_.dispatch('setHoldInAddress', addressId, hold);
@@ -468,9 +474,6 @@ var self = module.exports = {
 	},
 	removeAccount: function(_) {
 		_.dispatch('removeAccount')
-	},
-	removeLastFolderId: function(_) {
-		_.dispatch('removeLastFolderId')
 	},
 	removeFolder: function(_) {
 		_.dispatch('removeFolder')

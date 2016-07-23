@@ -36,6 +36,7 @@ module.exports = {
 	blockLoadingOnce: true,
 
 	lastFolderId: null,
+	lastAccountId: null,
 	noMailsLeft: false,
 
 	hideInMoveOptions: [

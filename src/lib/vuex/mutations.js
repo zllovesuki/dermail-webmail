@@ -37,6 +37,9 @@ module.exports = {
 	setLastFolderId: function(state, id) {
 		state.lastFolderId = id;
 	},
+	setLastAccountId: function(state, id) {
+		state.lastAccountId = id;
+	},
 	setHoldInAddress: function(state, addressId, hold) {
 		var address = state.addresses.filter(function(address) {
 			return address.addressId === addressId;
@@ -112,9 +115,6 @@ module.exports = {
 	},
 	putSecurity: function(state, security) {
 		state.securityCtx = security;
-	},
-	removeLastFolderId: function(state) {
-		state.removeLastFolderId = null;
 	},
 	removeFolder: function(state) {
 		state.folder = {};

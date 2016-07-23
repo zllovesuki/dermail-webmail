@@ -182,13 +182,11 @@ module.exports = {
 	},
 	created: function() {
 		this.removeFolder();
-		this.removeFlatFolders();
-		this.removeFolderTree();
 		this.removeAddressBook();
 		this.removeAccount();
-		this.removeLastFolderId();
+		this.resetLastFolderId();
 	},
-	compiled: function() {
+	ready: function() {
 
 		this.loading().go(50);
 
