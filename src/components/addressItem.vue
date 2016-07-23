@@ -4,7 +4,7 @@
 			<div class="clearfix">
 				<div class="left black">
 					<a class="btn block h5" @click="editModal = true">
-						<span v-show="address.hold">&not;</span> <span class="h6 muted">{{ address.friendlyName }}</span> &lt;{{ address.account }}@{{ address.domain }}&gt;
+						<span v-show="propAddress.hold">&not;</span> <span class="h6 muted">{{ propAddress.friendlyName }}</span> &lt;{{ propAddress.account }}@{{ propAddress.domain }}&gt;
 					</a>
 				</div>
 			</div>
@@ -14,10 +14,10 @@
 			<span slot="body">
 				<form v-on:submit.prevent="doEditAddress" class="h5">
 					<label for="hold" class="block col-12 mb2">By default, Dermail will update the recipient's friendly name whenever a new mail comes in.</label>
-					<label for="read" class="block col-12 mb2">Do not update:  <input type="checkbox" v-model="address.hold"></label>
+					<label for="read" class="block col-12 mb2">Do not update:  <input type="checkbox" :value="propAddress.hold" @click="setHold"></label>
 					<hr />
 					<label for="name" class="block col-12 mb2">Edit name: </label>
-					<label for="box" class="block col-12 mb2"><input type="text" class="field block col-12 mb1" v-model="address.friendlyName"></label>
+					<label for="box" class="block col-12 mb2"><input type="text" class="field block col-12 mb1" :value="propAddress.friendlyName" @input="setName"></label>
 					<button type="submit" class="mt2 inline-block btn btn-primary">Update</button>
 				</form>
 			</span>
@@ -36,14 +36,27 @@ module.exports = {
 		actions: actions
 	},
 	props: {
-		address: Object
+		propAddress: Object
 	},
 	data: function () {
 		return {
-			editModal: false
+			editModal: false,
+			address: {
+				addressId: this.propAddress.addressId,
+				hold: false,
+				friendlyName: ''
+			}
 		}
 	},
 	methods: {
+		setHold: function(e) {
+			this.address.hold = e.target.checked;
+			this.setHoldInAddress(this.address.addressId, e.target.checked);
+		},
+		setName: function(e) {
+			this.address.friendlyName = e.target.value;
+			this.setNameInAddress(this.address.addressId, e.target.value);
+		},
 		doEditAddress: function() {
 			this.loading().go(30);
 			this.updateAddress(this.address)

@@ -9,7 +9,6 @@ module.exports = function(_, router) {
 	if (!color) color = randomColor();
 
 	_.dispatch('setColor', color);
-	_.dispatch('initializeStorage');
 
 	router.beforeEach(function (transition) {
 		var localToken = router.app.getLocalToken();

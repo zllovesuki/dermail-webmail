@@ -43,6 +43,9 @@ module.exports = {
 			this.disconnectQueue();
 			this.$route.router.go({name: 'login'});
 		}
+	},
+	ready: function() {
+		this.initializeStorage();
 	}
 }
 </script>

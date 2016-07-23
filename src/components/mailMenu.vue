@@ -67,8 +67,7 @@ module.exports = {
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
 
-				this.context.isRead = (newRead === 'read' ? true : false);
-				this.setReadInMailArray(messageId, this.context.isRead);
+				this.setReadInMailArray(messageId, (newRead === 'read' ? true : false));
 
 				this.alert().success((newRead !== 'read' ? 'Unread' : 'Read') + ' : 👍');
 			})

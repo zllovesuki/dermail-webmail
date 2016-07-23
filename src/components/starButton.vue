@@ -38,9 +38,9 @@ module.exports = {
 			})
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
-				this.isStar = (newStar === 'star' ? true : false);
-				var star = (this.isStar ? '&#9733;' : '&#9734;')
-				this.setStarInMailArray(messageId, this.isStar);
+				var isStar = (newStar === 'star' ? true : false);
+				var star = (isStar ? '&#9733;' : '&#9734;')
+				this.setStarInMailArray(messageId, isStar);
 				this.alert().success(star + ' : 👍');
 			})
 		}

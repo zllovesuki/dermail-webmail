@@ -62,11 +62,11 @@
 			<span slot="body">
 				<form v-on:submit.prevent="doEditFolder" class="h5">
 					<label for="displayName">Display Name: </label>
-					<input type="text" class="field block col-12 mb1" v-model="propFolder.displayName">
+					<input type="text" class="field block col-12 mb1" v-model="modal.displayName">
 					<label for="Description">Description: </label>
-					<input type="text" class="field block col-12 mb1" v-model="propFolder.description">
+					<input type="text" class="field block col-12 mb1" v-model="modal.description">
 					<label for="parentFolder">Nested Under:</label>
-					<select class="block col-12 mb2 field" v-model="propFolder.parent">
+					<select class="block col-12 mb2 field" v-model="modal.parent">
 						<option value="/root">(Root)</option>
 						<option v-for="f in flatFolders" v-if="f.displayName != 'Trash' && f.folderId != propFolder.folderId" value="{{ f.folderId }}">{{ f.displayName }}</option>
 					</select>
@@ -150,28 +150,34 @@ module.exports = {
 			menuBlock.className = menuClass;
 			descBlock.className = descClass;
 		},
-		setModal: function() {
-			this.modal.folderId = '';
-			this.modal.displayName = '';
-			this.modal.description = '';
+		setModal: function(empty) {
+			empty = empty || false;
+			this.modal.folderId = empty ? '' : this.propFolder.folderId;
+			this.modal.displayName = empty ? '' : this.propFolder.displayName;
+			this.modal.description = empty ? '' : this.propFolder.description;
 			this.modal.parent = this.propFolder.parent || '/root';
 		},
 		showTruncateFolder: function(e) {
 			this.truncateModal = true;
-			this.propFolder.action = 'truncateFolder';
+			this.setModal(false);
+			this.modal.action = 'truncateFolder';
 		},
 		showDeleteFolder: function(e) {
 			this.deleteModal = true;
-			this.propFolder.action = 'deleteFolder';
+			this.setModal(false);
+			this.modal.action = 'deleteFolder';
 		},
 		showEditFolder: function(e) {
 			this.editModal = true;
-			this.propFolder.action = 'updateFolder';
+
+			this.setModal(false);
+
+			this.modal.action = 'updateFolder';
 		},
 		showAddFolder: function(e) {
 			this.addModal = true;
 
-			this.setModal();
+			this.setModal(true);
 
 			this.modal.action = 'addFolder';
 		},
@@ -187,12 +193,15 @@ module.exports = {
 
 				this.buttonDisabled = true;
 
-				this.updateFolder(this.propFolder)
+				this.updateFolder(this.modal)
 				.then(function(res) {
 					if (typeof res === 'undefined') return;
 					this.alert().success('Action "truncateFolder" queued.');
 					this.truncateModal = false;
-					this.houseKeeping();
+					return this.houseKeeping();
+				}.bind(this))
+				.then(function() {
+					this.buttonDisabled = false;
 				}.bind(this))
 			}.bind(this))
 		},
@@ -208,23 +217,28 @@ module.exports = {
 
 				this.buttonDisabled = true;
 
-				this.updateFolder(this.propFolder)
+				this.updateFolder(this.modal)
 				.then(function(res) {
 					if (typeof res === 'undefined') return;
 					this.alert().success('Folder deleted.');
 					this.deleteModal = false;
-					this.houseKeeping();
+					return this.houseKeeping();
+				}.bind(this))
+				.then(function() {
+					this.buttonDisabled = false;
 				}.bind(this))
 			}.bind(this))
 		},
 		doEditFolder: function(e) {
 			this.buttonDisabled = true;
-			this.updateFolder(this.propFolder)
+			this.updateFolder(this.modal)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
 				this.alert().success('Folder updated.');
-				this.editModal = false;
-				this.houseKeeping();
+				return this.houseKeeping();
+			})
+			.then(function() {
+				this.buttonDisabled = false;
 			})
 		},
 		doAddFolder: function(e) {
@@ -234,14 +248,16 @@ module.exports = {
 				if (typeof res === 'undefined') return;
 				this.alert().success('New folder created.');
 				this.addModal = false;
-				this.houseKeeping();
+				return this.houseKeeping();
+			})
+			.then(function() {
+				this.buttonDisabled = false;
 			})
 		},
 		houseKeeping: function() {
-			this.getFoldersInAccount()
+			return this.getFoldersInAccount()
 			.then(function() {
 				this.loading().go(100);
-				this.buttonDisabled = false;
 			}.bind(this))
 		}
 	}

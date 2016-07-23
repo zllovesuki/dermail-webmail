@@ -28,6 +28,7 @@ var UPLOADS3STREAM_ENDPOINT = API_ENDPOINT + '/upload/s3Stream'
 
 var helper = require('./helper')
 var queue = require('../socket')
+var localforage = require('localforage');
 
 var self = module.exports = {
 	connectQueue: function(_) {
@@ -41,6 +42,12 @@ var self = module.exports = {
 	},
 	alert: function(_, msg) {
 		return _.state.alert;
+	},
+	initializeStorage: function(_) {
+		_.dispatch('storage')
+	},
+	storage: function(_) {
+		return _.state.storage;
 	},
 
 	isAuthenticated: function(_) {
@@ -388,6 +395,13 @@ var self = module.exports = {
 	},
 	setLastFolderId: function(_) {
 		_.dispatch('setLastFolderId', _.state.route.params.folderId)
+	},
+
+	setHoldInAddress: function(_, addressId, hold) {
+		_.dispatch('setHoldInAddress', addressId, hold);
+	},
+	setNameInAddress: function(_, addressId, name) {
+		_.dispatch('setNameInAddress', addressId, name);
 	},
 
 	setReadInMail: function(_, read) {

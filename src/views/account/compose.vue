@@ -358,9 +358,9 @@ module.exports = {
 			}.bind(this))
 			if (this.blockAutoSave) return;
 			this.autoSaveText = 'Saving...';
-			this.storage.setItem('md-' + this.route.params.accountId, this.compose.markdown)
+			this.storage().setItem('md-' + this.route.params.accountId, this.compose.markdown)
 			.then(function() {
-				return this.storage.setItem('compose-'+ this.route.params.accountId, this.composing)
+				return this.storage().setItem('compose-'+ this.route.params.accountId, this.composing)
 			}.bind(this))
 			.then(function() {
 				this.autoSaveText = 'Last saved on ' + this.$moment(new Date()).format('hh:mm:ss a');
@@ -403,7 +403,7 @@ module.exports = {
 		this.composing.type = this.compose.type;
 		this.updateComposeType('new');
 
-		this.storage.getItem('compose-' + this.route.params.accountId)
+		this.storage().getItem('compose-' + this.route.params.accountId)
 		.then(function(compose) {
 			if (compose === null) return;
 			this.loadAutoSaveEnabled = true;

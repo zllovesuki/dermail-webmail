@@ -1,13 +1,14 @@
 module.exports = {
-	initializeStorage: function(state) {
-		state.storage = require('localforage');
-		state.storage.config({
-			driver: state.storage.INDEXEDDB,
+	// TODO: this throws an error in Vuex strict mode
+	storage: function(state) {
+		var localforage = require('localforage')
+		state.storage = localforage.createInstance({
+			driver: localforage.INDEXEDDB,
 			name: 'dermail',
 			version: 1.0,
 			storeName: 'keyvaluepairs',
 			description: 'Storage in the browser'
-		});
+		})
 	},
 	setColor: function(state, color) {
 		state.color = color
@@ -34,6 +35,22 @@ module.exports = {
 	},
 	setLastFolderId: function(state, id) {
 		state.lastFolderId = id;
+	},
+	setHoldInAddress: function(state, addressId, hold) {
+		var address = state.addresses.filter(function(address) {
+			return address.addressId === addressId;
+		})
+		if (address.length === 1) {
+			address[0].hold = hold;
+		}
+	},
+	setNameInAddress: function(state, addressId, name) {
+		var address = state.addresses.filter(function(address) {
+			return address.addressId === addressId;
+		})
+		if (address.length === 1) {
+			address[0].friendlyName = name;
+		}
 	},
 	setReadInMail: function(state, read) {
 		state.mail.isRead = read;

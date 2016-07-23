@@ -1,9 +1,5 @@
 module.exports = {
 
-	storage: function(state) {
-		return state.storage;
-	},
-
 	hideInMoveOptions: function(state) {
 		return state.hideInMoveOptions
 	},
