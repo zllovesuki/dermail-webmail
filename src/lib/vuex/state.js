@@ -23,7 +23,11 @@ module.exports = {
 	mails: [],
 	mail: {},
 
-	starOnly: false,
+	slice: {
+		perPage: 10,
+		date: null,
+		starOnly: false
+	},
 
 	filters: [],
 

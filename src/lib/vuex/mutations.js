@@ -121,7 +121,17 @@ module.exports = {
 	},
 
 	flipStar: function(state) {
-		state.starOnly = !state.starOnly;
+		state.slice.starOnly = !state.slice.starOnly;
+	},
+	updateSliceDate: function(state, data) {
+		state.slice.date = data;
+	},
+	resetSlice: function(state) {
+		state.slice = {
+			perPage: 10,
+			date: null,
+			starOnly: false
+		}
 	},
 
 	updateComposeType: function(state, data) {

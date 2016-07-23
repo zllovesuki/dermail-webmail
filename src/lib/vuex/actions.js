@@ -95,6 +95,10 @@ var self = module.exports = {
 		})
 	},
 
+	incrementalGetMailsInFolder: function(_) {
+
+	},
+
 	grabDependencies: function(_, priority) {
 		var _this = this;
 		var returnData;
@@ -387,6 +391,12 @@ var self = module.exports = {
 	flipStarOnly: function(_) {
 		_.dispatch('flipStar');
 		this.$broadcast('reloadFolder');
+	},
+	updateSliceDate: function(_, data) {
+		_.dispatch('updateSliceDate', data);
+	},
+	resetSlice: function(_) {
+		_.dispatch('resetSlice');
 	},
 
 	mailHouseKeeping: function(_, folderId, messageId, redirectToFolder) {

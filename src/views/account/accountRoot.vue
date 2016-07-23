@@ -33,7 +33,7 @@
 				<span v-if="isInFolder && folder.displayName">
 					<chevron-right></chevron-right>
 					<span class="btn button-narrow mxn1" @click="flipStarOnly">
-						{{ starOnly === true ? '&#9733;': '&#9734;' }}
+						{{ slice.starOnly === true ? '&#9733;': '&#9734;' }}
 					</span>
 				</span>
 				<span v-if="isInAddressBook">

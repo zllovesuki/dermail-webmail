@@ -1,13 +1,13 @@
 <template>
 	<div>
-		<div class="overflow-hidden bg-white rounded mb2" v-if="mails.length === 0 || noMailsLeft">
+		<div class="overflow-hidden bg-white rounded mb2" v-if="mails.length === 0 || noMailsLeft || !ready">
 			<div class="m0 p2">
 				<span class="p2 bold h5 m0 black">
 					No mails in this folder
 				</span>
 			</div>
 		</div>
-		<mail-item v-for="mail in mails" :prop-mail="mail"></mail-item>
+		<mail-item v-for="mail in mails" :prop-mail="mail" v-if="ready"></mail-item>
 		<p class="center" v-if="mails.length > 0 && !noMailsLeft">
 			<button class="h5 btn btn-outline {{ color }}" @click="loadMore" :disabled="disableLoadMore">
 				Load {{ slice.perPage }} More
@@ -29,13 +29,9 @@ module.exports = {
 		return {
 			folderModal: false,
 			disableLoadMore: false,
-			slice: {
-				perPage: 10,
-				date: null,
-				starOnly: false
-			},
 			skipFetching: false,
-			initialLoad: true
+			initialLoad: true,
+			ready: false
 		}
 	},
 	created: function() {
@@ -45,35 +41,31 @@ module.exports = {
 		}else{
 			this.skipFetching = true;
 		}
+		this.resetSlice();
 	},
 	compiled: function() {
 
 		this.loading().go(50);
 
-		this.grabDependencies(2)
+		return this.grabDependencies(2)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
+			this.setLastFolderId();
 			this.setTitle(this.folder.displayName);
 			if (this.flatFolders.length === 0) {
-				this.getFoldersInAccount()
+				return this.getFoldersInAccount()
 				.then(function() {
-					this.loadMore();
+					return this.loadMore();
 				}.bind(this))
 			}else{
-				this.loadMore();
+				return this.loadMore();
 			}
-			this.setLastFolderId();
 		}.bind(this))
 	},
 	events: {
 		'reloadFolder': function(msg) {
 			this.removeMails();
 			this.disableLoadMore = false;
-			this.slice = {
-				perPage: 10,
-				date: null,
-				starOnly: this.starOnly
-			}
 			this.loadMore();
 		}
 	},
@@ -81,7 +73,7 @@ module.exports = {
 		More: function() {
 			var lastMail = this.mails.slice(-1)[0];
 			if (lastMail) {
-				this.slice.date = lastMail.date;
+				this.updateSliceDate(lastMail.date);
 			}
 		},
 		loadMore: function() {
@@ -89,6 +81,7 @@ module.exports = {
 			if (this.skipFetching) {
 				this.checkIfNeedToSetNoMailsLeftToFalse(this.mails);
 				this.skipFetching = false;
+				this.ready = true;
 				this.loading().go(100);
 			}else{
 				this.More();
@@ -106,6 +99,7 @@ module.exports = {
 					}
 				}.bind(this))
 				.finally(function() {
+					this.ready = true;
 					this.loading().go(100);
 				}.bind(this));
 			}
