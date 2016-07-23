@@ -81,9 +81,11 @@ module.exports = {
 		},
 		doMoveToFolder: function(e) {
 
+			this.folderModal = false;
+
 			if (this.modal.oldFolder != this.modal.folderId) { // Not in this folder anymore
 				this.buttonDisabled = true;
-				this.updateMail(this.modal)
+				return this.updateMail(this.modal)
 				.then(function(res) {
 					if (typeof res === 'undefined') return;
 					this.resetLastFolderId();
@@ -92,19 +94,19 @@ module.exports = {
 					return this.mailHouseKeeping(this.modal.folderId, this.modal.messageId);
 				})
 			}
-			this.folderModal = false;
+
 		},
 		oneClickToTrash: function(e) {
 
 			this.modal.action = 'trash';
 
-			this.updateMail(this.modal)
+			return this.updateMail(this.modal)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
 				var data = res.text();
 				this.alert().success('Moved to Trash.');
 				this.modal.folderId = data; // see line 96 in showMoveFolder()
-				this.mailHouseKeeping(data, this.modal.messageId);
+				return this.mailHouseKeeping(data, this.modal.messageId);
 			})
 		},
 

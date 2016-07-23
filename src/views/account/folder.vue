@@ -85,9 +85,7 @@ module.exports = {
 				this.loading().go(100);
 			}else{
 				this.More();
-				return this.getMailsInFolder({
-					slice: this.slice
-				})
+				return this.getMailsInFolder()
 				.then(function(res) {
 					if (typeof res === 'undefined') return;
 					if (this.mails.length < this.slice.perPage || res.length < this.slice.perPage) {
