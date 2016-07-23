@@ -255,6 +255,7 @@ module.exports = {
 			})
 		},
 		houseKeeping: function() {
+			this.resetLastFolderId();
 			return this.getFoldersInAccount()
 			.then(function() {
 				this.loading().go(100);
