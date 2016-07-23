@@ -287,28 +287,12 @@ module.exports = {
 				friendlyName: email.name
 			}
 		},
-		reply: function() {
-			var obj;
-			if (typeof this.mail.replyTo !== 'undefined') {
-				obj = this.emailToObject(this.mail.replyTo[0]);
-			}else{
-				obj = this.mail.from[0];
-			}
-			this.appendComposeAddTo(obj);
-			var dedup = this.mail.subject;
-			while (dedup.toLowerCase().trimLeft().indexOf('re:') === 0) {
-				dedup = dedup.slice(3)
-			}
+		appendToCompose: function() {
 			if (typeof this.mail._messageId === 'undefined') this.updateComposeInReplyTo(this.mail.messageId);
 			else this.updateComposeInReplyTo(this.mail._messageId);
 			if (typeof this.mail.references === 'object') {
 				this.updateComposeReferences(this.mail.references);
 			}
-			this.updateComposeAddSubject({
-				type: 'Re: ',
-				subject: dedup
-			});
-			this.updateComposeType('reply');
 
 			if (this.mail.attachments.length > 0) {
 				// Check if we have inline images, then we need to append them to reply
@@ -323,30 +307,40 @@ module.exports = {
 					}
 				}
 			}
+		},
+		reply: function() {
+			var obj;
+			var dedup = this.mail.subject;
+
+			if (typeof this.mail.replyTo !== 'undefined') {
+				obj = this.emailToObject(this.mail.replyTo[0]);
+			}else{
+				obj = this.mail.from[0];
+			}
+			this.appendComposeAddTo(obj);
+
+			while (dedup.toLowerCase().trimLeft().indexOf('re:') === 0) {
+				dedup = dedup.slice(3)
+			}
+			this.updateComposeAddSubject({
+				type: 'Re: ',
+				subject: dedup
+			});
+			this.updateComposeType('reply');
+
+			this.appendToCompose();
+
 			return this.$route.router.go({ name: 'compose', params: { accountId: this.route.params.accountId } })
 		},
 		forward: function() {
-			if (typeof this.st.mail._messageId === 'undefined') this.st.mail._messageId = this.st.mail.messageId;
-			this.st.compose.inReplyTo = this.st.mail._messageId;
-			if (typeof this.st.mail.references === 'object') {
-				this.st.compose.references = this.st.mail.references;
-			}
-			this.st.compose.addSubject = {
+			this.updateComposeAddSubject({
 				type: 'Fwd: ',
-				subject: this.st.mail.subject
-			};
-			this.st.compose.type = 'forward';
-			if (this.st.mail.attachments.length > 0) {
-				// Check if we have inline images, then we need to append them to reply
-				for (var i = 0; i < this.st.mail.attachments.length; i++) {
-					this.st.compose.addAttachments.push({
-						mutable: false,
-						filename: this.st.mail.attachments[i].generatedFileName,
-						cid: this.st.mail.attachments[i].contentId,
-						path: this.inlineImage('cid:' + this.st.mail.attachments[i].contentId)
-					});
-				}
-			}
+				subject: this.mail.subject
+			});
+			this.updateComposeType('forward');
+
+			this.appendToCompose();
+
 			return this.$route.router.go({ name: 'compose', params: { accountId: this.$route.params.accountId } })
 		},
 		downloadMail: function() {

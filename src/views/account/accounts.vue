@@ -180,6 +180,10 @@ module.exports = {
 		}
 	},
 	created: function() {
+		this.removeFolder();
+		this.removeFlatFolders();
+		this.removeFolderTree();
+		this.removeAddressBook();
 		this.removeAccount();
 		this.removeLastFolderId();
 	},

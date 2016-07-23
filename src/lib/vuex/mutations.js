@@ -136,7 +136,7 @@ module.exports = {
 	appendComposeAddTo: function(state, data) {
 		state.compose.addTo.push(data);
 	},
-	resetComposeAddSubject: function(stat) {
+	resetComposeAddSubject: function(state) {
 		state.compose.addSubject = {
 			subject: null
 		};

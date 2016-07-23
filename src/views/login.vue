@@ -61,6 +61,7 @@ module.exports = {
 	methods: {
 		doLogin: function(e) {
 			this.submitButtonDisabled =  true;
+			this.alert().log('Logging you in...');
 			return this.login(this.credentials)
 			.then(function(res) {
 				if (res === true) {
