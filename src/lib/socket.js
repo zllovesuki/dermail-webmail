@@ -20,6 +20,7 @@ module.exports = function(vue) {
 				if (data.folder) {
 					vue.incrementallyGetMailsInFolder(data.folder.folderId)
 				}
+				vue.refreshFolderView(data.accountId);
 				_.state.alert.success(data.message, function(ev) {
 					ev.preventDefault();
 					if (data.folder) {

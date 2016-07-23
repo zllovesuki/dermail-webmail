@@ -95,6 +95,11 @@ var self = module.exports = {
 		})
 	},
 
+	refreshFolderView: function(_, targerAccountId) {
+		if (targerAccountId !== _.state.route.params.accountId) return;
+		return this.getFoldersInAccount();
+	},
+
 	incrementallyGetMailsInFolder: function(_, targetFolderId) {
 		if (targetFolderId !== _.state.route.params.folderId) return;
 		var data = Object.assign(_.state.route.params, {
