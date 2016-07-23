@@ -1,8 +1,8 @@
 var io = require('socket.io-client/socket.io.js');
 
-module.exports = {
-	socket: '',
-	connect: function(_, ROOT) {
+module.exports = function(vue) {
+	this.socket = '',
+	this.connect = function(_, ROOT) {
 		var _this = this;
 		this.socket = io.connect(ROOT);
 		this.socket.on('connect', function() {
@@ -17,6 +17,9 @@ module.exports = {
 		this.socket.on('new', function(data) {
 			if (data !== null) {
 				document.getElementById('sound').play();
+				if (data.folder) {
+					vue.incrementallyGetMailsInFolder(data.folder.folderId)
+				}
 				_.state.alert.success(data.message, function(ev) {
 					ev.preventDefault();
 					if (data.folder) {
@@ -30,8 +33,9 @@ module.exports = {
 		this.socket.on('debug', function(data) {
 			console.log(data);
 		});
-	},
-	disconnect: function() {
+	};
+	this.disconnect = function() {
 		return this.socket.disconnect();
 	}
+	return this;
 }

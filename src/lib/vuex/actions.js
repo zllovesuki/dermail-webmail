@@ -31,10 +31,10 @@ var queue = require('../socket')
 
 var self = module.exports = {
 	connectQueue: function(_) {
-		return queue.connect(_, API_ROOT)
+		return queue(this).connect(_, API_ROOT)
 	},
 	disconnectQueue: function(_) {
-		return queue.disconnect();
+		return queue(this).disconnect();
 	},
 	loading: function(_, percentage) {
 		return _.state.loading;
@@ -95,8 +95,24 @@ var self = module.exports = {
 		})
 	},
 
-	incrementalGetMailsInFolder: function(_) {
-
+	incrementallyGetMailsInFolder: function(_, targetFolderId) {
+		if (targetFolderId !== _.state.route.params.folderId) return;
+		var data = Object.assign(_.state.route.params, {
+			slice: {
+				perPage: 1,
+				date: null,
+				starOnly: _.state.slice.starOnly
+			}
+		})
+		return helper.postWithHeader(this.$http, _.state, GETMAILSINFOLDER_ENDPOINT, data)
+		.then(function(res) {
+			if (typeof res === 'undefined') return;
+			var data = res.json();
+			this.putMails(helper.arrayUnion(data, _.state.mails, function(a, b) {
+				return a.messageId === b.messageId;
+			}));
+			return data;
+		})
 	},
 
 	grabDependencies: function(_, priority) {
@@ -221,7 +237,9 @@ var self = module.exports = {
 		})
 	},
 	getMailsInFolder: function(_, additional) {
-		var data = Object.assign(_.state.route.params, additional)
+		var data = Object.assign(_.state.route.params, {
+			slice: _.state.slice
+		})
 		return helper.postWithHeader(this.$http, _.state, GETMAILSINFOLDER_ENDPOINT, data)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
