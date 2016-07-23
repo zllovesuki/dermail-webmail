@@ -108,14 +108,23 @@ var self = module.exports = {
 	},
 
 	incrementallyGetMailsInFolder: function(_, targetFolderId) {
-		if (targetFolderId !== _.state.route.params.folderId) return;
-		var data = Object.assign(_.state.route.params, {
+		var additional = {
 			slice: {
 				perPage: 1,
 				date: null,
 				starOnly: _.state.slice.starOnly
 			}
-		})
+		};
+		var data = {};
+
+		data = Object.assign(_.state.route.params, additional);
+
+		if (targetFolderId !== _.state.route.params.folderId) {
+			if (targetFolderId !== _.state.lastFolderId) return;
+			data.folderId = _.state.lastFolderId;
+		}
+
+		console.log(data);
 		return helper.postWithHeader(this.$http, _.state, GETMAILSINFOLDER_ENDPOINT, data)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
