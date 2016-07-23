@@ -34,8 +34,7 @@ module.exports = {
 				date: null,
 				starOnly: false
 			},
-			tmpMails: [],
-			tmpModified: false,
+			skipFetching: false,
 			initialLoad: true
 		}
 	},
@@ -44,9 +43,7 @@ module.exports = {
 		if (currentFolderId !== this.lastFolderId) {
 			this.removeMails();
 		}else{
-			this.tmpMails = this.mails;
-			this.tmpModified = true;
-			this.removeMails();
+			this.skipFetching = true;
 		}
 	},
 	compiled: function() {
@@ -89,11 +86,9 @@ module.exports = {
 		},
 		loadMore: function() {
 			this.loading().go(70);
-			if (this.tmpModified) {
-				this.checkIfNeedToSetNoMailsLeftToFalse(this.tmpMails);
-				this.putMails(this.tmpMails);
-				this.tmpMails = [];
-				this.tmpModified = false;
+			if (this.skipFetching) {
+				this.checkIfNeedToSetNoMailsLeftToFalse(this.mails);
+				this.skipFetching = false;
 				this.loading().go(100);
 			}else{
 				this.More();
