@@ -341,7 +341,7 @@ var self = module.exports = {
 	updateDomain: function(_, data) {
 		return helper.postWithHeader(this.$http, _.state, UPDATEDOMAIN_ENDPOINT, data);
 	},
-	updateAddress(_, data) {
+	updateAddress: function(_, data) {
 		return helper.postWithHeader(this.$http, _.state, UPDATEADDRESS_ENDPOINT, data);
 	},
 
