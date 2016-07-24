@@ -43,12 +43,6 @@ var self = module.exports = {
 	alert: function(_, msg) {
 		return _.state.alert;
 	},
-	initializeStorage: function(_) {
-		_.dispatch('initializeStorage')
-	},
-	storage: function(_) {
-		return _.state.storage;
-	},
 
 	isAuthenticated: function(_) {
 		return _.state.authenticated;
@@ -66,22 +60,6 @@ var self = module.exports = {
 	},
 	saveColor: function(_) {
 		_.dispatch('saveColor')
-	},
-
-	clearAutoSave: function(_) {
-		return _.state.storage.removeItem('composing-' + _.state.route.params.accountId).then(function() {
-			return _.state.storage.removeItem('md-' + _.state.route.params.accountId)
-		}.bind(this))
-	},
-	getAutoSave: function(_) {
-		return _.state.storage.getItem('md-' + _.state.route.params.accountId)
-		.then(function(markdown) {
-			if (markdown === null) return;
-			this.updateComposeMarkdown(markdown);
-		}.bind(this))
-		.then(function() {
-			return _.state.storage.getItem('compose-' + _.state.route.params.accountId)
-		}.bind(this))
 	},
 
 	ping: function(_) {

@@ -5,8 +5,6 @@ module.exports = {
 
 	token: null,
 
-	storage: null,
-
 	colors: ['aqua', 'blue', 'black', 'navy', 'teal', 'green', 'olive', 'lime', 'orange', 'red', 'fuchsia', 'purple', 'maroon'],
 
 	zoomFactor: (screen.width > 768 ? 0.1 : 0.5),

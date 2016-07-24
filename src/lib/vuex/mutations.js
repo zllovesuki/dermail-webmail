@@ -1,18 +1,6 @@
 var helper = require('./helper')
 
 module.exports = {
-	// TODO: this throws an error in Vuex strict mode
-	initializeStorage: function(state) {
-		var storage = require('localforage');
-		storage.config({
-			driver: storage.INDEXEDDB,
-			name: 'dermail',
-			version: 1.0,
-			storeName: 'keyvaluepairs',
-			description: 'Storage in the browser'
-		});
-		state.storage = storage;
-	},
 	setColor: function(state, color) {
 		state.color = color
 	},

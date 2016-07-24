@@ -125,6 +125,7 @@ var actions = require('../../lib/vuex/actions.js')
 module.exports = {
 	data: function() {
 		return {
+			storage: null,
 			autoSaveText: null,
 			blockAutoSave: true,
 			composing: {
@@ -171,6 +172,16 @@ module.exports = {
 		}
 	},
 	methods: {
+		initializeStorage: function() {
+			this.storage = require('localforage');
+			this.storage.config({
+				driver: this.storage.INDEXEDDB,
+				name: 'dermail',
+				version: 1.0,
+				storeName: 'keyvaluepairs',
+				description: 'Storage in the browser'
+			});
+		},
 		removeDuplicates: function(arr, prop) {
 			var new_arr = [];
 			var lookup  = {};
@@ -338,9 +349,22 @@ module.exports = {
 			"target='_blank'>here</a>). If you suspect that your are experiencing delivery problems, " +
 			"please contact Microsoft to resolve the issue.");
 		},
+		clearAutoSave: function() {
+			return this.storage.removeItem('composing-' + this.route.params.accountId)
+			.then(function() {
+				return this.storage.removeItem('md-' + this.route.params.accountId)
+			}.bind(this))
+		},
 		loadAutoSave: function() {
 			this.blockAutoSave = true;
-			return this.getAutoSave()
+			return this.storage.getItem('md-' + this.route.params.accountId)
+			.then(function(markdown) {
+				if (markdown === null) return;
+				this.updateComposeMarkdown(markdown);
+			}.bind(this))
+			.then(function() {
+				return this.storage.getItem('compose-' + this.route.params.accountId)
+			}.bind(this))
 			.then(function(compose) {
 				if (compose === null) return;
 				this.autoSaveText = 'Loaded from auto save';
@@ -358,9 +382,9 @@ module.exports = {
 			}.bind(this))
 			if (this.blockAutoSave) return;
 			this.autoSaveText = 'Saving...';
-			this.storage().setItem('md-' + this.route.params.accountId, this.compose.markdown)
+			this.storage.setItem('md-' + this.route.params.accountId, this.compose.markdown)
 			.then(function() {
-				return this.storage().setItem('compose-'+ this.route.params.accountId, this.composing)
+				return this.storage.setItem('compose-'+ this.route.params.accountId, this.composing)
 			}.bind(this))
 			.then(function() {
 				this.autoSaveText = 'Last saved on ' + this.$moment(new Date()).format('hh:mm:ss a');
@@ -370,6 +394,8 @@ module.exports = {
 	created: function() {
 
 		this.resetCompose();
+
+		this.initializeStorage();
 
 		this.setTitle('Compose');
 
@@ -403,7 +429,7 @@ module.exports = {
 		this.composing.type = this.compose.type;
 		this.updateComposeType('new');
 
-		this.storage().getItem('compose-' + this.route.params.accountId)
+		this.storage.getItem('compose-' + this.route.params.accountId)
 		.then(function(compose) {
 			if (compose === null) return;
 			this.loadAutoSaveEnabled = true;
