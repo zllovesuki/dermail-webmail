@@ -63,10 +63,10 @@ module.exports = {
 			}
 		}.bind(this))
 	},
-	events: {
-		'reloadFolder': function(msg) {
+	watch: {
+		'slice.starOnly': function() {
 			this.removeMails();
-			this.disableLoadMore = false;
+			this.ready = false;
 			this.loadMore();
 		}
 	},

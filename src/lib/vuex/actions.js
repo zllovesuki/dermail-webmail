@@ -451,7 +451,6 @@ var self = module.exports = {
 
 	flipStarOnly: function(_) {
 		_.dispatch('flipStar');
-		this.$broadcast('reloadFolder');
 	},
 	updateSliceDate: function(_, data) {
 		_.dispatch('updateSliceDate', data);
