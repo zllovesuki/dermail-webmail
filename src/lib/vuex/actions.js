@@ -405,6 +405,20 @@ var self = module.exports = {
 		_.dispatch('setNameInAddress', addressId, name);
 	},
 
+	updateMailRead: function(_, accountId, messageId, binary, cb) {
+		return this.updateMail({
+			accountId: accountId,
+			messageId: messageId,
+			action: (binary === true ? 'read': 'unread')
+		})
+		.then(function(res) {
+			if (typeof res === 'undefined') return;
+			this.setReadInMail(true);
+			this.setReadInMailArray(messageId, binary);
+			this.refreshFolderView();
+			if (cb) return cb();
+		});
+	},
 	setReadInMail: function(_, read) {
 		_.dispatch('setReadInMail', read);
 	},
