@@ -40,6 +40,7 @@ module.exports = {
 				if (typeof res === 'undefined') return;
 				var isStar = (newStar === 'star' ? true : false);
 				var star = (isStar ? '&#9733;' : '&#9734;')
+				this.setStarInMail(isStar);
 				this.setStarInMailArray(messageId, isStar);
 				this.alert().success(star + ' : 👍');
 			})
