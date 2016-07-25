@@ -415,7 +415,7 @@ var self = module.exports = {
 			if (typeof res === 'undefined') return;
 			this.setReadInMail(true);
 			this.setReadInMailArray(messageId, binary);
-			this.refreshFolderView();
+			//this.refreshFolderView();
 			if (cb) return cb();
 		});
 	},
