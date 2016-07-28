@@ -76,6 +76,9 @@ module.exports = {
 			})
 		}
 	},
+	setStarInMail: function(state, star) {
+		state.mail.isStar = star;
+	},
 	setStarInMailArray: function(state, messageId, star) {
 		var mail = state.mails.filter(function(mail) {
 			return mail.messageId === messageId;

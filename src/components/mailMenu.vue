@@ -60,21 +60,13 @@ module.exports = {
 			var accountId = this.modal.accountId;
 			var currentRead = this.context.isRead;
 			var newRead = (currentRead ? 'unread' : 'read');
+			var changeReadTo = (newRead === 'read' ? true : false);
 
-			this.updateMail({
-				accountId: accountId,
-				messageId: messageId,
-				action: newRead
-			})
-			.then(function(res) {
-				if (typeof res === 'undefined') return;
-
-				this.setReadInMailArray(messageId, (newRead === 'read' ? true : false));
-
+			this.updateMailRead(accountId, messageId, changeReadTo, function() {
 				this.alert().success((newRead !== 'read' ? 'Unread' : 'Read') + ' : 👍');
 
 				this.hide = false;
-			})
+			}.bind(this));
 		},
 		showMoveFolder: function(e) {
 			this.folderModal = true;

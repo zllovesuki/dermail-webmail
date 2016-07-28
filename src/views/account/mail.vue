@@ -353,16 +353,7 @@ module.exports = {
 				this.ready = true;
 
 				if (typeof data.isRead == 'undefined' || data.isRead === false) {
-					this.updateMail({
-						accountId: this.route.params.accountId,
-						messageId: this.route.params.messageId,
-						action: 'read'
-					})
-					.then(function(res) {
-						if (typeof res === 'undefined') return;
-						this.setReadInMail(true);
-						this.setReadInMailArray(this.route.params.messageId, this.mail.isRead);
-					});
+					this.updateMailRead(this.route.params.accountId, this.route.params.messageId, true);
 				}
 			}.bind(this))
 		},
