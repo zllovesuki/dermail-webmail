@@ -57,7 +57,9 @@ body {
 	font-family: "Lato", "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", "Microsoft Yahei", sans-serif;
 	font-size: 1em;
 	line-height: 1.5;
-	background-color: #f1f2f3
+	background-color: #f1f2f3;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 ::selection {
