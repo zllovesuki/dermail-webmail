@@ -78,7 +78,7 @@
 			</div>
 			<div class="m0 p1" v-show="composing.attachments.length > 0">
 				<div class="clearfix">
-					<template v-for="attachment in composing.attachments" track-by="checksum">
+					<template v-for="attachment in composing.attachments" track-by="path">
 						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ color }}" v-on:click="confirmDelete(attachment)">
 							{{attachment.filename}}
 						</a>
