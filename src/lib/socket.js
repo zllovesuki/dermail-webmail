@@ -20,6 +20,8 @@ module.exports = function(vue) {
 				.then(function() {
 					if (data.folder) {
 						return vue.incrementallyGetMailsInFolder(data.folder.folderId)
+					}else{
+						return Promise.resolve();
 					}
 				})
 				.then(function() {
