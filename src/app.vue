@@ -5,7 +5,7 @@
 		<div class="clearfix mt2">
 			<div class="mb2 sm-flex center nowrap">
 				<div class="flex-auto block">
-					<p class="inline h2">Dermail | <small class="muted" >{{ title }}</small>
+					<p class="inline h2">Dermail | <small class="muted" >{{ title }}</small></p>
 				</div>
 			</div>
 
