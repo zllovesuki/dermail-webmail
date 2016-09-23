@@ -2,10 +2,12 @@ var Vue = require('vue')
 
 var VueRouter = require('vue-router')
 var sync = require('vuex-router-sync').sync
+var infiniteScroll = require('vue-infinite-scroll')
 
 Vue.use(VueRouter)
 Vue.use(require('vue-resource'))
 Vue.use(require('vue-moment'))
+Vue.use(infiniteScroll)
 
 var store = require('./lib/vuex/store.js');
 

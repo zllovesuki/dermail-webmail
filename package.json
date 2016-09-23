@@ -11,6 +11,7 @@
     "debug": "~2.2.0",
     "express": "~4.14.0",
     "localforage": "^1.4.2",
+    "vue-infinite-scroll": "^0.2.3",
     "vuex": "^1.0.0-rc.2"
   },
   "devDependencies": {

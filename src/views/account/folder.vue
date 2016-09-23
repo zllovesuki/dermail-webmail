@@ -9,10 +9,11 @@
 		</div>
 		<mail-item v-for="mail in mails" track-by="messageId" :prop-mail="mail" v-if="ready"></mail-item>
 		<p class="center" v-show="!hideLoadMore && ready">
-			<button class="h5 btn btn-outline {{ color }}" @click="loadMore" :disabled="disableLoadMore">
-				Load {{ slice.perPage }} More
-			</button>
+            <button class="h5 btn btn-outline {{ color }}" @click="loadMore" :disabled="disableLoadMore">
+                Load {{ slice.perPage }} More
+            </button>
 		</p>
+        <div v-infinite-scroll="loadMore()" infinite-scroll-disabled="busy" infinite-scroll-distance="5"></div>
 	</div>
 </template>
 <script>
@@ -32,7 +33,8 @@ module.exports = {
 			disableLoadMore: false,
 			skipFetching: false,
 			initialLoad: true,
-			ready: false
+			ready: false,
+            busy: true
 		}
 	},
 	created: function() {
@@ -86,6 +88,7 @@ module.exports = {
 				this.loading().go(100);
 			}else{
 				this.More();
+                this.busy = true;
 				return this.getMailsInFolder()
 				.then(function(res) {
 					if (typeof res === 'undefined') return;
@@ -100,6 +103,7 @@ module.exports = {
 				}.bind(this))
 				.finally(function() {
 					this.ready = true;
+                    this.busy = this.hideLoadMore;
 					this.loading().go(100);
 				}.bind(this));
 			}
