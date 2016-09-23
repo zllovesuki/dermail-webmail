@@ -186,11 +186,11 @@ module.exports = {
 				this.alert().success('Filter created.');
 			})
 			.finally(function() {
+                this.buttonDisabled = false;
 				return this.getFilters()
 				.then(function() {
 					this.loading().go(100);
 				})
-				this.buttonDisabled = false;
 			})
 		}
 	},

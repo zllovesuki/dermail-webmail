@@ -310,14 +310,15 @@ module.exports = {
 			this.uploadS3Stream(form)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
-				var data = res.json();
-				hash = data.checksum;
-				this.composing.attachments.push({
-					mutable: true,
-					filename: filename,
-					path: this.returnS3URL(hash, encodeURIComponent(filename))
-				});
-				this.alert().success('File uploaded to S3!');
+				res.json().then(function(data) {
+                    hash = data.checksum;
+    				this.composing.attachments.push({
+    					mutable: true,
+    					filename: filename,
+    					path: this.returnS3URL(hash, encodeURIComponent(filename))
+    				});
+    				this.alert().success('File uploaded to S3!');
+                }.bind(this))
 			}.bind(this))
 			.finally(function() {
 				this.loading().go(100);

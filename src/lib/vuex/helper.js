@@ -65,12 +65,13 @@ var self = module.exports = {
 			return res;
 		})
 		.catch(function(res) {
-			var data = res.json();
-			if (data.hasOwnProperty('message')) {
-				state.alert.error(data.message);
-			}else{
-				state.alert.error(res.statusText);
-			}
+            res.json().then(function(data) {
+                if (data.hasOwnProperty('message')) {
+    				state.alert.error(data.message);
+    			}else{
+    				state.alert.error(res.statusText);
+    			}
+            })
 		})
 	},
 

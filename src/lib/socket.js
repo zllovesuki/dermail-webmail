@@ -1,20 +1,18 @@
 var io = require('socket.io-client/socket.io.js');
+var master;
 
 module.exports = function(vue) {
-	this.socket = '',
 	this.connect = function(_, ROOT) {
-		var _this = this;
-		this.socket = io.connect(ROOT);
-		this.socket.on('connect', function() {
-			_this.socket
-			.emit('authenticate', { token: _.state.token })
+		master = io.connect(ROOT);
+		master.on('connect', function() {
+			master.emit('authenticate', { token: _.state.token })
 		});
-		this.socket.on('Q', function(data) {
+		master.on('Q', function(data) {
 			if (data !== null) {
 				_.state.alert[data.level](data.message);
 			}
 		});
-		this.socket.on('new', function(data) {
+		master.on('new', function(data) {
 			if (data !== null) {
 				vue.refreshFolderView(data.accountId)
 				.then(function() {
@@ -38,12 +36,12 @@ module.exports = function(vue) {
 				})
 			}
 		});
-		this.socket.on('debug', function(data) {
+		master.on('debug', function(data) {
 			console.log(data);
 		});
 	};
 	this.disconnect = function() {
-		return this.socket.disconnect();
+		return master.disconnect();
 	}
 	return this;
 }

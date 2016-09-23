@@ -69,11 +69,9 @@ var self = module.exports = {
 		return this.$http.get(S3_ENDPOINT, helper.getHeader(_.state))
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
-			var data = {};
-			if (res && res.data) {
-				data = res.json();
-			}
-			_.dispatch('setS3', data);
+            return res.json().then(function(data) {
+                _.dispatch('setS3', data);
+            })
 		})
 		.catch(function(res) {
 			this.alert().error('Unable to fetch S3 information, attachment functionalities may be impacted.');
@@ -113,11 +111,12 @@ var self = module.exports = {
 		return helper.postWithHeader(this.$http, _.state, GETMAILSINFOLDER_ENDPOINT, data)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
-			var data = res.json();
-			this.putMails(helper.arrayUnion(data, _.state.mails, function(a, b) {
-				return a.messageId === b.messageId;
-			}));
-			return data;
+            return res.json().then(function(data) {
+                this.putMails(helper.arrayUnion(data, _.state.mails, function(a, b) {
+    				return a.messageId === b.messageId;
+    			}));
+    			return data;
+            })
 		})
 	},
 
@@ -165,13 +164,14 @@ var self = module.exports = {
 		return helper.postWithoutHeader(this.$http, _.state, LOGIN_ENDPOINT, data)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
-			var data = res.json();
-			if (data.hasOwnProperty('token')) {
-				_.dispatch('setToken', data.token);
-				_.dispatch('setAuthenticated', true);
-				this.connectQueue();
-				return true;
-			};
+            return res.json().then(function(data) {
+                if (data.hasOwnProperty('token')) {
+    				_.dispatch('setToken', data.token);
+    				_.dispatch('setAuthenticated', true);
+    				this.connectQueue();
+    				return true;
+    			};
+            }.bind(this))
 		})
 	},
 	logout: function(_) {
@@ -184,48 +184,50 @@ var self = module.exports = {
 		return helper.getWithHeader(this.$http, _.state, GETSECURITY_ENDPOINT)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
-			var data = {};
-			if (res && res.data) {
-				data = res.json();
-			}
-			_.dispatch('putSecurity', data)
+            return res.json().then(function(data) {
+                _.dispatch('putSecurity', data);
+            })
 		})
 	},
 	getAccount: function(_) {
 		return helper.postWithHeader(this.$http, _.state, GETACCOUNT_ENDPOINT, _.state.route.params)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
-			var data = res.json();
-			data.displayName = data['account'] + '@' + data['domain'];
-			_.dispatch('putAccount', data);
-			return data;
+            return res.json().then(function(data) {
+                data.displayName = data['account'] + '@' + data['domain'];
+    			_.dispatch('putAccount', data);
+    			return data;
+            })
 		})
 	},
 	getAccounts: function(_) {
 		return helper.getWithHeader(this.$http, _.state, GETACCOUNTS_ENDPOINT)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
-			var data = res.json();
-			_.dispatch('putAccounts', data);
-			return data;
+            return res.json().then(function(data) {
+                _.dispatch('putAccounts', data);
+    			return data;
+            })
 		})
 	},
 	getFolder: function(_) {
 		return helper.postWithHeader(this.$http, _.state, GETFOLDER_ENDPOINT, _.state.route.params)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
-			var data = res.json();
-			_.dispatch('putFolder', data);
-			return data;
+            return res.json().then(function(data) {
+                _.dispatch('putFolder', data);
+    			return data;
+            })
 		})
 	},
 	getMail: function(_) {
 		return helper.postWithHeader(this.$http, _.state, GETMAIL_ENDPOINT, _.state.route.params)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
-			var data = res.json();
-			_.dispatch('putMail', data);
-			return data;
+            return res.json().then(function(data) {
+                _.dispatch('putMail', data);
+    			return data;
+            })
 		})
 	},
 	getFoldersInAccount: function(_, params) {
@@ -233,14 +235,15 @@ var self = module.exports = {
 		return helper.postWithHeader(this.$http, _.state, GETFOLDERS_ENDPOINT, params)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
-			var data = res.json();
-			_.dispatch('putFoldersTree', helper.listToTree(data, {
-				idKey: 'folderId',
-				parentKey: 'parent',
-				childrenKey: 'child'
-			}))
-			_.dispatch('putFoldersFlat', data);
-			return data;
+            return res.json().then(function(data) {
+                _.dispatch('putFoldersTree', helper.listToTree(data, {
+    				idKey: 'folderId',
+    				parentKey: 'parent',
+    				childrenKey: 'child'
+    			}))
+    			_.dispatch('putFoldersFlat', data);
+    			return data;
+            })
 		})
 	},
 	getMailsInFolder: function(_, additional) {
@@ -250,35 +253,37 @@ var self = module.exports = {
 		return helper.postWithHeader(this.$http, _.state, GETMAILSINFOLDER_ENDPOINT, data)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
-			var data = res.json();
-			this.putMails(this.mails.concat(data));
-			return data;
+            return res.json().then(function(data) {
+                this.putMails(this.mails.concat(data));
+    			return data;
+            }.bind(this))
 		})
 	},
 	getAddress: function(_, data) {
 		return helper.postWithHeader(this.$http, _.state, GETADDRESS_ENDPOINT, data)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
-			var data = res.json();
-			return data;
+            return res.json()
 		})
 	},
 	getAddresses: function(_, data) {
 		return helper.postWithHeader(this.$http, _.state, GETADDDRESSES_ENDPOINT, data)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
-			var data = res.json();
-			this.putAddresses(data);
-			return data;
+            return res.json().then(function(data) {
+                this.putAddresses(data);
+    			return data;
+            }.bind(this))
 		})
 	},
 	getFilters: function(_, data) {
 		return helper.postWithHeader(this.$http, _.state, GETFILTERS_ENDPOINT, _.state.route.params)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
-			var data = res.json();
-			this.putFilters(data);
-			return data;
+            return res.json().then(function(data) {
+                this.putFilters(data);
+    			return data;
+            }.bind(this))
 		})
 	},
 

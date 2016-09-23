@@ -25,20 +25,18 @@ module.exports = function(_, router) {
 				})
 			})
 			.catch(function(res) {
-				var data = {};
-				if (res && res.data) {
-					data = res.json();
-				}
-				if (data.message === 'Token invalid.') {
-					_.dispatch('removeToken');
-					router.app.alert().error('Token invalid, please login again.');
-					router.app.$nextTick(function() {
-						transition.redirect({name: 'login'});
-					})
-				}else{
-					router.app.alert().error('Service not available, please try again later.');
-				}
-				router.app.loading().go(100);
+                res.json().then(function(data) {
+                    if (data.message === 'Token invalid.') {
+    					_.dispatch('removeToken');
+    					router.app.alert().error('Token invalid, please login again.');
+    					router.app.$nextTick(function() {
+    						transition.redirect({name: 'login'});
+    					})
+    				}else{
+    					router.app.alert().error('Service not available, please try again later.');
+    				}
+    				router.app.loading().go(100);
+                })
 			})
 		}else if (transition.to.name !== 'login') {
 			transition.redirect({name: 'login'});
