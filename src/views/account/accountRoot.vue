@@ -30,12 +30,12 @@
 						{{ folder.displayName }}
 					</span>
 				</span>
-				<span v-if="isInFolder && folder.displayName">
+				<!--<span v-if="isInFolder && folder.displayName">
 					<chevron-right></chevron-right>
 					<span class="btn button-narrow mxn1" @click="flipStarOnly">
 						{{ slice.starOnly === true ? '&#9733;': '&#9734;' }}
 					</span>
-				</span>
+				</span>-->
 				<span v-if="isInAddressBook">
 					<chevron-right></chevron-right>
 					<span class="btn button-narrow mxn1" v-link="{ name: 'addresses', params: { accountId: $route.params.accountId } }">
