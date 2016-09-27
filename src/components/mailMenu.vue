@@ -112,7 +112,7 @@ module.exports = {
 				.then(function() {
 					this.modal.folderId = data; // see line 96 in showMoveFolder()
 					this.alert().success('Moved to Trash.');
-				}
+				})
 			})
 			.finally(function() {
 				this.hide = false;
