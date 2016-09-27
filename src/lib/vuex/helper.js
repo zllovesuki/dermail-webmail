@@ -65,7 +65,7 @@ var self = module.exports = {
 			return res;
 		})
 		.catch(function(res) {
-            res.json().then(function(data) {
+            return res.json().then(function(data) {
                 if (data.hasOwnProperty('message')) {
     				state.alert.error(data.message);
     			}else{
