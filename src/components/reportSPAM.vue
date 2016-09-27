@@ -72,7 +72,9 @@ module.exports = {
 			this.updateMail(data)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
-				var data = res.text();
+                return res.text();
+            })
+            .then(function(data) {
 				this.alert().success('Got it.');
 				return this.mailHouseKeeping(data, this.messageId, true);
 			}.bind(this))
