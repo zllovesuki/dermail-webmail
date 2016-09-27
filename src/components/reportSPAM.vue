@@ -77,7 +77,7 @@ module.exports = {
             .then(function(data) {
 				this.alert().success('Got it.');
 				return this.mailHouseKeeping(data, this.messageId, true);
-			}.bind(this))
+			})
 			.finally(function() {
 				this.hide = false;
 			}.bind(this))

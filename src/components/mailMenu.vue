@@ -105,12 +105,14 @@ module.exports = {
 			return this.updateMail(this.modal)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
-				var data = res.text();
+                return res.text();
+            })
+            .then(function(data) {
 				return this.mailHouseKeeping(data, this.modal.messageId)
 				.then(function() {
 					this.modal.folderId = data; // see line 96 in showMoveFolder()
 					this.alert().success('Moved to Trash.');
-				}.bind(this))
+				}
 			})
 			.finally(function() {
 				this.hide = false;
