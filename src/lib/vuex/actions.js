@@ -14,6 +14,7 @@ var GETMAILSINFOLDER_ENDPOINT = API_ENDPOINT + '/read/getMailsInFolder'
 var GETMAIL_ENDPOINT = API_ENDPOINT + '/read/getMail'
 var GETADDRESS_ENDPOINT = API_ENDPOINT + '/read/getAddress'
 var GETADDDRESSES_ENDPOINT = API_ENDPOINT + '/read/getAddresses'
+var GETOWNADDDRESS_ENDPOINT = API_ENDPOINT + '/read/getMyOwnAddress'
 var GETFILTERS_ENDPOINT = API_ENDPOINT + '/read/getFilters'
 var SEARCHWITHFILTER_ENDPOINT = API_ENDPOINT + '/read/searchWithFilter'
 var SEARCHMAILSINACCOUNT_ENDPOINT = API_ENDPOINT + '/read/searchMailsInAccount'
@@ -282,9 +283,20 @@ var self = module.exports = {
 			if (typeof res === 'undefined') return;
             return res.json()
 		})
-        .then(function(data) {
-            this.putAddresses(data);
-            return data;
+        .then(function(result) {
+            this.putAddresses(result);
+            return result;
+        })
+	},
+    getOwnAddress: function(_, data) {
+		return helper.postWithHeader(this.$http, _.state, GETOWNADDDRESS_ENDPOINT, data)
+		.then(function(res) {
+			if (typeof res === 'undefined') return;
+            return res.json()
+		})
+        .then(function(result) {
+            this.appendAddresses(result);
+            return result;
         })
 	},
 	getFilters: function(_, data) {
@@ -319,6 +331,9 @@ var self = module.exports = {
 	},
 	putAddresses: function(_, data) {
 		_.dispatch('putAddresses', data);
+	},
+    appendAddresses: function(_, data) {
+		_.dispatch('appendAddresses', data);
 	},
 	putFilters: function(_, data) {
 		_.dispatch('putFilters', data);

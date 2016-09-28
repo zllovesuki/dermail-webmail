@@ -125,6 +125,9 @@ module.exports = {
 	putAddresses: function(state, addresses) {
 		state.addresses = addresses;
 	},
+    appendAddresses: function(state, addresses) {
+        state.addresses = addresses.concat(state.addresses)
+    },
 	putFilters: function(state, filters) {
 		state.filters = filters;
 	},

@@ -3,8 +3,14 @@
 		<div class="m0 p0 border-top">
 			<div class="clearfix">
 				<div class="left black">
-					<a class="btn block h5" @click="editModal = true">
+					<a class="btn block h5" @click="checkBeforePop">
 						<span v-show="propAddress.hold">&not;</span> <span class="h6 muted">{{ propAddress.friendlyName }}</span> &lt;{{ propAddress.account }}@{{ propAddress.domain }}&gt;
+					</a>
+				</div>
+                <div class="right black">
+					<a class="btn block h5">
+						<span class="muted" v-show="propAddress.internalOwner !== null && !propAddress.aliasOf">Yourself!</span>
+                        <span class="muted" v-show="propAddress.internalOwner !== null && propAddress.aliasOf">Alias</span>
 					</a>
 				</div>
 			</div>
@@ -13,9 +19,15 @@
 			<h4 slot="header">Edit an Address</h4>
 			<span slot="body">
 				<form v-on:submit.prevent="doEditAddress" class="h5">
-					<label for="hold" class="block col-12 mb2">By default, Dermail will update the recipient's friendly name whenever a new mail comes in.</label>
-					<label for="read" class="block col-12 mb2">Do not update:  <input type="checkbox" :value="propAddress.hold" @click="setHold"></label>
-					<hr />
+                    <div v-show="propAddress.internalOwner === null">
+    					<label for="hold" class="block col-12 mb2">By default, Dermail will update the recipient's friendly name whenever a new mail comes in.</label>
+    					<label for="read" class="block col-12 mb2">Do not update:  <input type="checkbox" :value="propAddress.hold" @click="setHold"></label>
+    					<hr />
+                    </div>
+                    <div v-show="propAddress.internalOwner !== null">
+    					<label for="self" class="block col-12 mb2">You can edit the name for your outgoing address here.</label>
+    					<hr />
+                    </div>
 					<label for="name" class="block col-12 mb2">Edit name: </label>
 					<label for="box" class="block col-12 mb2"><input type="text" class="field block col-12 mb1" :value="propAddress.friendlyName" @input="setName"></label>
 					<button type="submit" class="mt2 inline-block btn btn-primary">Update</button>
@@ -49,6 +61,12 @@ module.exports = {
 		}
 	},
 	methods: {
+        checkBeforePop: function(e) {
+            if (this.propAddress.internalOwner !== null && this.propAddress.aliasOf) {
+                return this.alert().error('Editing alias is currently not supported.');
+            }
+            this.editModal = true;
+        },
 		setHold: function(e) {
 			this.address.hold = e.target.checked;
 			this.setHoldInAddress(this.address.addressId, e.target.checked);

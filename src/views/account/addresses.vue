@@ -44,6 +44,11 @@ module.exports = {
 				accountId: this.$route.params.accountId
 			})
 		}.bind(this))
+        .then(function() {
+            return this.getOwnAddress({
+                accountId: this.$route.params.accountId
+            })
+        }.bind(this))
 		.finally(function() {
 			this.loading().go(100);
 		}.bind(this))
