@@ -4,7 +4,7 @@
 			<div class="m0 p1">
 				<div class="clearfix">
 					<div class="left ml2">
-						<address-button origin-text="From" :origin="accountForceToArray"></address-button>
+						<address-button origin-text="From" :origin="ownAddress"></address-button>
 					</div>
 				</div>
 			</div>
@@ -125,6 +125,7 @@ var actions = require('../../lib/vuex/actions.js')
 module.exports = {
 	data: function() {
 		return {
+            ownAddress: [],
 			storage: null,
 			autoSaveText: null,
 			blockAutoSave: true,
@@ -154,9 +155,6 @@ module.exports = {
 		actions: actions
 	},
 	computed: {
-		accountForceToArray: function() {
-			return [this.account];
-		},
 		type: function() {
 			switch (this.composing.type) {
 				case 'reply':
@@ -436,6 +434,18 @@ module.exports = {
 			if (compose === null) return;
 			this.loadAutoSaveEnabled = true;
 		}.bind(this))
+
+        this.getOwnAddress({
+            accountId: this.route.params.accountId
+        })
+        .then(function(array) {
+            for (var i = 0, length = array.length; i < length; i++) {
+                if (!array[i].aliasOf) {
+                    this.ownAddress = [array[i]];
+                    break;
+                }
+            }
+        })
 
 	},
 	compiled: function() {
