@@ -1,6 +1,9 @@
 ## Changelog
 
-09/20/2015: 4.0.0 -> 4.1.0
+09/30/2016: 4.1.0 -> 4.1.1
+1. "Add an account" is now live. Please uses API >= 3.3.1 for this new functionality
+
+09/30/2016: 4.0.0 -> 4.1.0
 1. unreadCount is now separated from folders
 2. Please uses API >= 3.3.0 for this new change
 

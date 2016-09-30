@@ -33,7 +33,7 @@
 							</a>
 						</div>
 						<div class="right">
-							<a class="btn h6 muted" @click="popup" data-account="{{account.account}}@{{account.domain}}" data-alias="{{ account.alias.join(', ') }}" v-show="account.alias.length > 0">
+							<a class="btn h6 muted" @click="popup" data-account="{{account.account}}" data-address="{{account.account}}@{{account.domain}}" data-alias="{{ account.alias.join(',') }}" v-show="account.alias.length > 0">
 								show
 							</a>
 						</div>
@@ -55,8 +55,8 @@
 					<div class="clearfix">
 						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ color }}" v-link="{ name: 'settingPushNotification' }">Notifications</a>
 						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ color }}" @click="alias.selectDomainModal = true">Alias</a>
-						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ color }}" >Add an account</a>
 						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ color }}" >Add a domain</a>
+						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ color }}" @click="account.selectDomainModal = true">Add an account</a>
 					</div>
 				</div>
 			</div>
@@ -64,14 +64,14 @@
 		<modal :show.sync="alias.selectDomainModal">
 			<h4 slot="header">Select a domain</h4>
 			<span slot="body">
-				<form v-on:submit.prevent="selectDomain" class="h5">
+				<form v-on:submit.prevent="selectAliasDomain" class="h5">
 					<label for="domain">For domain:</label>
-					<select class="block col-12 mb2 field" v-model="alias.selectedDomain">
-						<option v-for="account in accounts" track-by="accountId" value="{{ account.domainId }}">{{ account.domain }}</option>
+					<select class="block col-12 mt2 mb2 field" v-model="alias.selectedDomain">
+						<option v-for="domain in uniqueDomains" track-by="accountId" value="{{ domain.domainId }}">{{ domain.domain }}</option>
 					</select>
 					<hr />
 					<span class="block mb1">Alias allows you to receive mails from multiple domain names under one account.</span>
-					<button type="submit" class="btn btn-primary mb1" :disabled="!hasSelectedDomain">View</button>
+					<button type="submit" class="btn btn-primary mb1" :disabled="!hasSelectedAliasDomain">View</button>
 				</form>
 			</span>
 		</modal>
@@ -80,11 +80,28 @@
 			<span slot="body">
 				<form v-on:submit.prevent="editDomainAlias" class="h5">
 					<label for="alias">Alias (one per line):</label>
-					<textarea class="block field col-12 mb1" style="resize: none; line-height: 1em; min-height: 6em;" v-model="aliasList"></textarea>
+					<textarea class="block field col-12 mt2 mb1" style="resize: none; line-height: 1em; min-height: 6em;" v-model="aliasList"></textarea>
 					<hr />
 					<span class="block mb1">Make sure that you <i>didn't</i> remove an alias by accident.</span>
 					<button type="submit" class="btn btn-primary" :disabled="alias.modifyButtonDisabled">Modify</button>
-					<button type="button" class="btn btn-primary black bg-gray ml1" @click="toggleViewAndModify">Go back</button>
+					<button type="button" class="btn btn-primary black bg-gray ml1" @click="toggleAliasViewAndModify">Go back</button>
+				</form>
+			</span>
+		</modal>
+        <modal :show.sync="account.selectDomainModal">
+			<h4 slot="header">Select a domain</h4>
+			<span slot="body">
+				<form v-on:submit.prevent="addAccount" class="h5">
+					<label for="domain">For domain:</label>
+                    <label for="account" class="mt2 block">
+                        <input type="text" class="col-4 mb2 field inline-block" v-model="account.account">
+                        @
+    					<select class="col-6 mb2 field inline-block" v-model="account.selectedDomain">
+    						<option v-for="domain in uniqueDomains" track-by="accountId" value="{{ domain.domainId }}">{{ domain.domain }}</option>
+    					</select>
+                    </label>
+					<hr />
+					<button type="submit" class="btn btn-primary mb1" :disabled="!hasSelectedAccountDomain">Add</button>
 				</form>
 			</span>
 		</modal>
@@ -108,7 +125,12 @@ module.exports = {
 				selectedDomain: null,
 				editModal: false,
 				byDomainId: []
-			}
+			},
+            account: {
+				selectDomainModal: false,
+				selectedDomain: null,
+				account: ''
+            }
 		}
 	},
 	computed: {
@@ -124,30 +146,77 @@ module.exports = {
 				});
 			}
 		},
-		hasSelectedDomain: function() {
+		hasSelectedAliasDomain: function() {
 			return !!this.alias.selectedDomain;
-		}
+		},
+		hasSelectedAccountDomain: function() {
+			return !!this.account.selectedDomain && this.account.account.length > 0;
+		},
+        uniqueDomains: function() {
+            var array = [];
+            var dup = {};
+            for (var i = 0, accounts = this.accounts, length = accounts.length; i < length; i++) {
+                if (dup[accounts[i].domain] !== true) {
+                    dup[accounts[i].domain] = true;
+                    array.push({
+                        accountId: accounts[i].accountId,
+                        domain: accounts[i].domain,
+                        domainId: accounts[i].domainId
+                    })
+                }
+            }
+            return array;
+        }
 	},
 	methods: {
 		popup: function(e) {
 			var msg = '';
 			var account = e.target.attributes['data-account'].value;
+            var address = e.target.attributes['data-address'].value;
 			var alias = e.target.attributes['data-alias'].value;
-			msg += '<p class="h4 muted">' + account + ':</p>';
-			msg += '<span class="h5 bold">' + alias + '</span>';
+            var array = [];
+            msg += '<p class="h4 muted">' + address + ':</p>';
+            alias.split(',').forEach(function(singleAlias) {
+                array.push(account + '@' + singleAlias);
+            });
+
+            msg += '<span class="h5 bold">' + array.join(', ') + '</span>';
 			this.alert().alert(msg);
 		},
-		selectDomain: function() {
+		selectAliasDomain: function() {
 			for (var i = 0; i < this.accounts.length; i++) {
 				if (this.accounts[i].hasOwnProperty('domainId') && this.accounts[i].domainId === this.alias.selectedDomain) {
 					this.alias.byDomainId = this.accounts[i].alias;
 				}
 			}
-			this.toggleViewAndModify();
+			this.toggleAliasViewAndModify();
 		},
-		toggleViewAndModify: function() {
+		toggleAliasViewAndModify: function() {
 			this.alias.selectDomainModal = !this.alias.selectDomainModal
 			this.alias.editModal = !this.alias.editModal;
+		},
+        addAccount: function() {
+			this.account.selectDomainModal = !this.account.selectDomainModal
+            this.loading().go(30);
+			this.updateAccount({
+				action: 'newAccount',
+				domainId: this.account.selectedDomain,
+				account: this.account.account
+			})
+			.then(function(res) {
+				if (typeof res === 'undefined') return;
+                return res.text();
+            })
+            .then(function(accountId) {
+				this.alert().success('New account added.');
+                return this.route.router.go({ name: 'account', params: { accountId: accountId } })
+			})
+			.finally(function() {
+				return this.getAccounts()
+				.then(function() {
+					this.loading().go(100);
+				}.bind(this))
+			})
 		},
 		editDomainAlias: function() {
 			this.loading().go(30);

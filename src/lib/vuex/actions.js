@@ -3,6 +3,7 @@ var VERSION = '/v' + config.apiVersion;
 var API_ROOT = config.apiEndpoint;
 var API_ENDPOINT = API_ROOT + VERSION;
 var LOGIN_ENDPOINT = API_ENDPOINT + '/login'
+var RENEW_ENDPOINT = API_ENDPOINT + '/login/renew'
 var PING_ENDPOINT = API_ENDPOINT + '/read/ping'
 var GETSECURITY_ENDPOINT = API_ENDPOINT + '/read/security'
 var S3_ENDPOINT = API_ENDPOINT + '/read/s3'
@@ -23,6 +24,7 @@ var MODIFYFILTER_ENDPOINT = API_ENDPOINT + '/write/modifyFilter'
 var UPDATEMAIL_ENDPOINT = API_ENDPOINT + '/write/updateMail'
 var UPDATEFOLDER_ENDPOINT = API_ENDPOINT + '/write/updateFolder'
 var UPDATEDOMAIN_ENDPOINT = API_ENDPOINT + '/write/updateDomain'
+var UPDATEACCOUNT_ENDPOINT = API_ENDPOINT + '/write/updateAccount'
 var UPDATEADDRESS_ENDPOINT = API_ENDPOINT + '/write/updateAddress'
 var PUSHSUB_ENDPOINT = API_ENDPOINT + '/write/pushSubscriptions'
 var SENDMAIL_ENDPOINT = API_ENDPOINT + '/relay/sendMail'
@@ -164,6 +166,19 @@ var self = module.exports = {
 		})
 	},
 
+    renewToken: function(_, data) {
+		return helper.postWithHeader(this.$http, _.state, RENEW_ENDPOINT)
+		.then(function(res) {
+			if (typeof res === 'undefined') return;
+            return res.json()
+		})
+        .then(function(data) {
+            if (data.hasOwnProperty('token')) {
+                _.dispatch('setToken', data.token);
+                return true;
+            };
+        })
+	},
 	login: function(_, data) {
 		return helper.postWithoutHeader(this.$http, _.state, LOGIN_ENDPOINT, data)
 		.then(function(res) {
@@ -415,6 +430,15 @@ var self = module.exports = {
 
 	updateDomain: function(_, data) {
 		return helper.postWithHeader(this.$http, _.state, UPDATEDOMAIN_ENDPOINT, data);
+	},
+    updateAccount: function(_, data) {
+		return helper.postWithHeader(this.$http, _.state, UPDATEACCOUNT_ENDPOINT, data)
+        .then(function(res) {
+            return this.renewToken()
+            .then(function() {
+                return res;
+            })
+        })
 	},
 	updateAddress: function(_, data) {
 		return helper.postWithHeader(this.$http, _.state, UPDATEADDRESS_ENDPOINT, data);
