@@ -59,6 +59,7 @@ module.exports = {
 		}
 		this.removeFolder();
 		this.removeAddressBook();
+        this.initUnreadCount();
 	},
 	ready: function() {
 
@@ -78,6 +79,7 @@ module.exports = {
 			}
 		}.bind(this))
         .then(function() {
+            this.ready = true;
             this.loading().go(90);
             return this.getUnread()
             .then(function() {
@@ -85,7 +87,6 @@ module.exports = {
             })
         }.bind(this))
 		.finally(function() {
-			this.ready = true;
 			this.loading().go(100);
 		}.bind(this))
 	}
