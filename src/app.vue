@@ -1,29 +1,36 @@
 <template>
-	<section id="container" class="container clearfix">
-		<search></search>
+    <div>
+    	<section id="container" class="container clearfix">
+    		<search></search>
 
-		<div class="clearfix mt2">
-			<div class="mb2 sm-flex center nowrap">
-				<div class="flex-auto block">
-					<p class="inline h2">Dermail | <small class="muted" >{{ title }}</small></p>
-				</div>
-			</div>
+    		<div class="clearfix mt2">
+    			<div class="mb2 sm-flex center nowrap">
+    				<div class="flex-auto block">
+    					<p class="inline h2">Dermail | <small class="muted" >{{ title }}</small></p>
+    				</div>
+    			</div>
 
-			<div class="mn1 center" v-if="authenticated">
-				<a class="btn button-narrow" v-link="{ name: 'accounts'}">Accounts</a>
-				<a class="btn button-narrow" v-link="{ name: 'settingIndex'}">Settings</a>
-				<a class="btn button-narrow" @click="doLogout">Logout</a>
-			</div>
+    			<div class="mn1 center" v-if="authenticated">
+    				<a class="btn button-narrow" v-link="{ name: 'accounts'}">Accounts</a>
+    				<a class="btn button-narrow" v-link="{ name: 'settingIndex'}">Settings</a>
+    				<a class="btn button-narrow" @click="doLogout">Logout</a>
+    			</div>
 
-			<div class="p0 col col-12">
-				<router-view transition="fade"></router-view>
-			</div>
-		</div>
-		<audio id="sound" preload="auto">
-			<source src="//dist.s3.fmt01.sdapi.net/sound/yoda.ogg" type="audio/ogg">
-		</audio>
-		<compose-button></compose-button>
-	</section>
+    			<div class="p0 col col-12">
+    				<router-view transition="fade"></router-view>
+    			</div>
+    		</div>
+    		<audio id="sound" preload="auto">
+    			<source src="//dist.s3.fmt01.sdapi.net/sound/yoda.ogg" type="audio/ogg">
+    		</audio>
+    		<compose-button></compose-button>
+    	</section>
+        <div class="container mb2 clearfix">
+            <div class="sm-flex center nowrap mb2 h5">
+                <div class="flex-auto muted">version {{ version }}</div>
+            </div>
+        </div>
+    </div>
 </template>
 <script>
 
@@ -37,6 +44,11 @@ module.exports = {
 		getters: getters,
 		actions: actions
 	},
+    data: function() {
+        return {
+            version: require('../package.json').version
+        }
+    },
 	methods: {
 		doLogout: function() {
 			this.logout();
