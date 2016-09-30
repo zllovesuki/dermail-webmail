@@ -1,5 +1,9 @@
 ## Changelog
 
+09/20/2015: 4.0.0 -> 4.1.0
+1. unreadCount is now separated from folders
+2. Please uses API >= 3.3.0 for this new change
+
 07/22/2016: 4.0.0
 1. Uses Vuex instead of direct state mutations
 
