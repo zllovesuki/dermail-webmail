@@ -5,7 +5,8 @@
 				<div class="left black">
 					<a v-link="{ name: 'folder', params: { accountId: propFolder.accountId, folderId: propFolder.folderId } }" class="btn h5">
 						{{ propFolder.displayName }}
-						<span v-if="folderUnread">({{ folderUnread }})</span>
+						<span v-if="!loadingUnread && folderUnread > 0">({{ folderUnread }})</span>
+                        <span v-if="loadingUnread">(...)</span>
 						-
 						<span class="desc-{{ propFolder.folderId }} h5 muted black">
 							 {{ propFolder.description }}
@@ -106,6 +107,7 @@ module.exports = {
 	},
 	props: {
 		propFolder: Object,
+        loadingUnread: Boolean,
 		index: {
 			type: Number,
 			default: 1

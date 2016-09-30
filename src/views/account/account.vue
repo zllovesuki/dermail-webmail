@@ -8,7 +8,7 @@
 			</div>
 		</div>
 		<div class="overflow-hidden bg-white rounded mb2 clearfix" v-if="folders.length > 0 && ready">
-			<folder-item v-for="folder in folders" track-by="folderId" :prop-folder="folder" :index="$index" keep-alive></folder-item>
+			<folder-item v-for="folder in folders" track-by="folderId" :prop-folder="folder" :loading-unread.sync="loadingUnread" :index="$index" keep-alive></folder-item>
 		</div>
 		<div class="mt2 mb2">
 			<div class="overflow-hidden bg-white rounded mb2">
@@ -45,7 +45,8 @@ module.exports = {
 		return {
 			skipFetching: false,
 			initialLoad: true,
-			ready: false
+			ready: false,
+            loadingUnread: true
 		}
 	},
 	created: function() {
@@ -66,9 +67,6 @@ module.exports = {
 		this.setTitle('Folders');
 
 		this.grabDependencies(1)
-        .then(function() {
-            return this.getUnread();
-        }.bind(this))
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
 			this.setLastAccountId();
@@ -79,6 +77,13 @@ module.exports = {
 				this.skipFetching = false;
 			}
 		}.bind(this))
+        .then(function() {
+            this.loading().go(90);
+            return this.getUnread()
+            .then(function() {
+                this.loadingUnread = false;
+            })
+        }.bind(this))
 		.finally(function() {
 			this.ready = true;
 			this.loading().go(100);
