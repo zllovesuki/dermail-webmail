@@ -9,6 +9,7 @@ var S3_ENDPOINT = API_ENDPOINT + '/read/s3'
 var GETACCOUNTS_ENDPOINT = API_ENDPOINT + '/read/getAccounts'
 var GETACCOUNT_ENDPOINT = API_ENDPOINT + '/read/getAccount'
 var GETFOLDERS_ENDPOINT = API_ENDPOINT + '/read/getFoldersInAccount'
+var GETUNREAD_ENDPOINT = API_ENDPOINT + '/read/getUnreadCountInAccount'
 var GETFOLDER_ENDPOINT = API_ENDPOINT + '/read/getFolder'
 var GETMAILSINFOLDER_ENDPOINT = API_ENDPOINT + '/read/getMailsInFolder'
 var GETMAIL_ENDPOINT = API_ENDPOINT + '/read/getMail'
@@ -80,17 +81,17 @@ var self = module.exports = {
 		})
 	},
 
-	refreshFolderView: function(_, targetAccountId) {
+	refreshUnreadCount: function(_, targetAccountId) {
 		var data = {};
 
 		data = Object.assign({}, _.state.route.params);
 
 		if (targetAccountId !== _.state.route.params.accountId) {
-			if (targetAccountId !== _.state.lastAccountId) return;
+			if (targetAccountId !== _.state.lastAccountId) return Promise.resolve();
 			data.accountId = _.state.lastAccountId;
 		}
 
-		return this.getFoldersInAccount(data);
+		return this.getUnread(data);
 	},
 
 	incrementallyGetMailsInFolder: function(_, targetFolderId) {
@@ -106,7 +107,7 @@ var self = module.exports = {
 		data = Object.assign(_.state.route.params, additional);
 
 		if (targetFolderId !== _.state.route.params.folderId) {
-			if (targetFolderId !== _.state.lastFolderId) return;
+			if (targetFolderId !== _.state.lastFolderId) return Promise.resolve();
 			data.folderId = _.state.lastFolderId;
 		}
 
@@ -253,6 +254,19 @@ var self = module.exports = {
                 childrenKey: 'child'
             }))
             _.dispatch('putFoldersFlat', data);
+            return data;
+        })
+	},
+    getUnread: function(_, params) {
+		params = params || _.state.route.params;
+		return helper.postWithHeader(this.$http, _.state, GETUNREAD_ENDPOINT, params)
+		.then(function(res) {
+			if (typeof res === 'undefined') return;
+            return res.json()
+		})
+        .then(function(data) {
+            this.initUnreadCount(params.accountId);
+            this.setUnreadCount(data, params.accountId)
             return data;
         })
 	},
@@ -429,6 +443,14 @@ var self = module.exports = {
 	setLastAccountId: function(_) {
 		_.dispatch('setLastAccountId', _.state.route.params.accountId)
 	},
+    setUnreadCount: function(_, counts, accountId) {
+        accountId = accountId ? accountId : _.state.route.params.accountId;
+		_.dispatch('putUnreadCount', counts, accountId)
+	},
+    initUnreadCount: function(_, accountId) {
+        accountId = accountId ? accountId : _.state.route.params.accountId;
+        _.dispatch('initUnreadCount', accountId)
+    },
 
 	setHoldInAddress: function(_, addressId, hold) {
 		_.dispatch('setHoldInAddress', addressId, hold);

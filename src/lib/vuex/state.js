@@ -20,6 +20,7 @@ module.exports = {
 	folder: {},
 	mails: [],
 	mail: {},
+    unreadCount: {},
 
 	slice: {
 		perPage: 10,

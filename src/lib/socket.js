@@ -9,12 +9,15 @@ module.exports = function(vue) {
 		});
 		master.on('Q', function(data) {
 			if (data !== null) {
-				_.state.alert[data.level](data.message);
+                _.state.alert[data.level](data.message);
+                if (data.message.indexOf('truncated') !== -1 && _.state.route.params.accountId) {
+                    vue.refreshUnreadCount(_.state.route.params.accountId);
+                }
 			}
 		});
 		master.on('new', function(data) {
 			if (data !== null) {
-				vue.refreshFolderView(data.accountId)
+				vue.refreshUnreadCount(data.accountId)
 				.then(function() {
 					if (data.folder) {
 						return vue.incrementallyGetMailsInFolder(data.folder.folderId)

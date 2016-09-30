@@ -66,6 +66,9 @@ module.exports = {
 		this.setTitle('Folders');
 
 		this.grabDependencies(1)
+        .then(function() {
+            return this.getUnread();
+        }.bind(this))
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
 			this.setLastAccountId();

@@ -122,6 +122,16 @@ module.exports = {
 	putFoldersFlat: function(state, folders) {
 		state._folders = folders;
 	},
+    putUnreadCount: function(state, counts, accountId) {
+        state.unreadCount[accountId] = Object.assign({}, state.unreadCount[accountId], counts);
+    },
+    initUnreadCount: function(state, accountId) {
+        if (typeof state.unreadCount[accountId] === 'undefined') {
+            var obj = {};
+            obj[accountId] = {};
+            state.unreadCount = Object.assign({}, state.unreadCount, obj);
+        }
+    },
 	putAddresses: function(state, addresses) {
 		state.addresses = addresses;
 	},

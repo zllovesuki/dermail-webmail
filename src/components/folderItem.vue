@@ -5,7 +5,7 @@
 				<div class="left black">
 					<a v-link="{ name: 'folder', params: { accountId: propFolder.accountId, folderId: propFolder.folderId } }" class="btn h5">
 						{{ propFolder.displayName }}
-						<span v-if="propFolder.count">({{ propFolder.count }})</span>
+						<span v-if="folderUnread">({{ folderUnread }})</span>
 						-
 						<span class="desc-{{ propFolder.folderId }} h5 muted black">
 							 {{ propFolder.description }}
@@ -129,6 +129,11 @@ module.exports = {
 			menuVisible: false
 		}
 	},
+    computed: {
+        folderUnread: function() {
+            return this.unreadCount[this.route.params.accountId][this.propFolder.folderId]
+        }
+    },
 	methods: {
 		flipMenuAndDescription: function() {
 			var menuVisible = this.menuVisible;

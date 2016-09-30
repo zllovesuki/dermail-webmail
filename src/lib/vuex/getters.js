@@ -50,6 +50,9 @@ module.exports = {
 	flatFolders: function(state) {
 		return state._folders
 	},
+    unreadCount: function(state) {
+        return state.unreadCount
+    },
 	slice: function(state) {
 		return state.slice;
 	},
