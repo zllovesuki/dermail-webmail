@@ -6,7 +6,7 @@
 					<span class="btn black h5">Push Notifications: </span>
 				</div>
 				<div class="clearfix">
-					<span class="ml1 btn black h6 muted not-clickable">By utilizing Google Cloud Messaging, Dermail will send push notification to your device when new mails arrive. (Chrome 42+)</span>
+					<span class="ml1 btn black h6 muted not-clickable">By utilizing Firebase Cloud Messaging and Mozilla Cloud Services, Dermail will send push notification to your device when new mails arrive. (Chrome 50+, Firefox 44+)</span>
 				</div>
 			</div>
 			<div class="m0 p2 border-top">
@@ -101,6 +101,10 @@ module.exports = {
 				this.loading().go(50);
 				serviceWorkerRegistration.pushManager.subscribe({userVisibleOnly: true})
 				.then(function(subscription) {
+                    if (typeof subscription.keys === 'undefined') {
+                        this.alert().error('Your browser is too old to support push notifications.');
+                        return subscription.unsubscribe()
+                    }
 					var payload = JSON.stringify(subscription);
 					this.loading().go(70);
 					return this.pushNotification({

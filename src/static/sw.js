@@ -50,23 +50,13 @@ function getData(event) {
 			var payload = event.data.json();
 			return resolve(payload);
 		}else{
-			return getEndpoint()
-			.then(function(endpoint) {
-				return fetch('__APIENDPOINT__/read/getPayload?endpoint=' + endpoint, {mode: 'cors'});
-			})
-			.then(function(response) {
-				return response.json();
-			})
-			.then(function(payload) {
-				return resolve(payload);
-			})
-			.catch(reject);
+			return reject('Deprecated')
 		}
 	})
 }
 
 self.addEventListener("push", function(event){
-	event.waitUntil(getData(event).then(countNotificationsAndNotify))
+	event.waitUntil(getData(event).then(countNotificationsAndNotify).catch(function(e) {console.log(e)}))
 });
 
 self.addEventListener('notificationclick', function(event) {
