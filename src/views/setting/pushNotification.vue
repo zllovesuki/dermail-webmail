@@ -101,7 +101,7 @@ module.exports = {
 				this.loading().go(50);
 				serviceWorkerRegistration.pushManager.subscribe({userVisibleOnly: true})
 				.then(function(subscription) {
-                    if (typeof subscription.keys === 'undefined') {
+                    if (typeof subscription.toJSON().keys === 'undefined') {
                         this.alert().error('Your browser is too old to support push notifications.');
                         return subscription.unsubscribe()
                     }
