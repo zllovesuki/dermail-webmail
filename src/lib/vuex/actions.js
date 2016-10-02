@@ -45,7 +45,7 @@ var self = module.exports = {
 		return _.state.loading;
 	},
 	alert: function(_, msg) {
-		return _.state.alert;
+		return _.state.alert.delay(0);
 	},
 
 	isAuthenticated: function(_) {

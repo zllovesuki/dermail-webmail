@@ -74,7 +74,7 @@ module.exports = {
 		addAttachments: []
 	},
 
-	alert: alertify.reset().closeLogOnClick(true).logPosition("bottom right"),
+	alert: alertify.closeLogOnClick(true).logPosition("bottom right").maxLogItems(3),
 
 	s3: {},
 
