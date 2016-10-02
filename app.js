@@ -9,10 +9,20 @@ module.exports = function() {
 	app.set('trust proxy', 'loopback, linklocal, uniquelocal');
 
 	var root = __dirname + '/src/static/prod.html';
+    var configDir = './config/';
 
 	if (process.env.RDB_HOST) {
 		root = __dirname + '/src/static/dev.html'
 	}
+
+    app.get('/public/manifest.json', function(req, res, next) {
+		fs.readFile(configDir + '/manifest.json', 'utf8', function (err, data) {
+			if (err) {
+				return next(err);
+			}
+			res.end(data);
+		})
+	});
 
 	app.use('/public', express.static(path.join(__dirname, 'public')));
 

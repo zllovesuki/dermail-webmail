@@ -4,5 +4,5 @@ dist/static/
 npm-debug.log
 public/app.js
 public/prod.js
-public/manifest.json
-config.json
+config/manifest.json
+config/config.json

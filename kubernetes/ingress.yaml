@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: webmail-map
+  namespace: dermail
+  annotations:
+    kubernetes.io/tls-acme: "true"
+spec:
+  tls:
+  - secretName: webmail-tls
+    hosts:
+    - dermail.net
+  rules:
+  - host: dermail.net
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: webmail
+          servicePort: 3001

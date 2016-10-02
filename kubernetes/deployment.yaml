@@ -1,0 +1,54 @@
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  labels:
+    app: webmail
+    version: v1
+  name: webmail
+  namespace: dermail
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webmail
+  template:
+    metadata:
+      labels:
+        app: webmail
+    spec:
+      containers:
+      - name: webmail
+        image: zllovesuki/dermail-webmail:4.1.1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3001
+          protocol: TCP
+        args:
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3001
+          initialDelaySeconds: 120
+          timeoutSeconds: 5
+        volumeMounts:
+        - name: config-volume
+          mountPath: /usr/src/app/config
+      volumes:
+      - name: config-volume
+        configMap:
+          name: webmail-config
+---
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: webmail
+  name: webmail
+  namespace: dermail
+spec:
+  type: ClusterIP
+  ports:
+  - port: 3001
+    targetPort: 3001
+  selector:
+    app: webmail
