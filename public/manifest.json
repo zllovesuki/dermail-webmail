@@ -1,7 +1,0 @@
-{
-	"name": "Dermail.net",
-	"short_name": "Dermail.net",
-	"start_url": "/",
-	"display": "standalone",
-	"gcm_sender_id": "736155605898"
-}
