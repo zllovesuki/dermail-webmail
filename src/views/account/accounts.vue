@@ -89,10 +89,9 @@
 			</span>
 		</modal>
         <modal :show.sync="account.selectDomainModal">
-			<h4 slot="header">Select a domain</h4>
+			<h4 slot="header">Add a new account</h4>
 			<span slot="body">
 				<form v-on:submit.prevent="addAccount" class="h5">
-					<label for="domain">For domain:</label>
                     <label for="account" class="mt2 block">
                         <input type="text" class="col-4 mb2 field inline-block" v-model="account.account">
                         @
