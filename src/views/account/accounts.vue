@@ -55,7 +55,7 @@
 					<div class="clearfix">
 						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ color }}" v-link="{ name: 'settingPushNotification' }">Notifications</a>
 						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ color }}" @click="alias.selectDomainModal = true">Alias</a>
-						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ color }}" >Add a domain</a>
+						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ color }}" @click="domain.selectDomainModal = true">Add a domain</a>
 						<a class="muted h6 ml1 mb1 bold btn btn-outline {{ color }}" @click="account.selectDomainModal = true">Add an account</a>
 					</div>
 				</div>
@@ -99,8 +99,22 @@
     						<option v-for="domain in uniqueDomains" track-by="accountId" value="{{ domain.domainId }}">{{ domain.domain }}</option>
     					</select>
                     </label>
-					<hr />
 					<button type="submit" class="btn btn-primary mb1" :disabled="!hasSelectedAccountDomain">Add</button>
+				</form>
+			</span>
+		</modal>
+        <modal :show.sync="domain.selectDomainModal">
+			<h4 slot="header">Add a new domain</h4>
+			<span slot="body">
+				<form v-on:submit.prevent="addDomain" class="h5">
+                    <label for="account" class="mt2 block">
+                        <input type="text" class="col-4 mb2 field inline-block" v-model="domain.account" placeholder="inbox">
+                        @
+    					<input type="text" class="col-6 mb2 field inline-block" v-model="domain.domain" placeholder="example.com">
+                    </label>
+                    <hr />
+					<span class="block mb1">It is logically to also add your first account for the domain.</span>
+					<button type="submit" class="btn btn-primary mb1" :disabled="!hasEnteredNewDomain">Add</button>
 				</form>
 			</span>
 		</modal>
@@ -129,6 +143,11 @@ module.exports = {
 				selectDomainModal: false,
 				selectedDomain: null,
 				account: ''
+            },
+            domain: {
+				selectDomainModal: false,
+				domain: '',
+				account: ''
             }
 		}
 	},
@@ -151,17 +170,16 @@ module.exports = {
 		hasSelectedAccountDomain: function() {
 			return !!this.account.selectedDomain && this.account.account.length > 0;
 		},
+        hasEnteredNewDomain: function () {
+            return this.domain.account.length > 0 && this.domain.domain.length > 0;
+        },
         uniqueDomains: function() {
             var array = [];
             var dup = {};
             for (var i = 0, accounts = this.accounts, length = accounts.length; i < length; i++) {
                 if (dup[accounts[i].domain] !== true) {
                     dup[accounts[i].domain] = true;
-                    array.push({
-                        accountId: accounts[i].accountId,
-                        domain: accounts[i].domain,
-                        domainId: accounts[i].domainId
-                    })
+                    array.push(accounts[i])
                 }
             }
             return array;
@@ -194,6 +212,39 @@ module.exports = {
 			this.alias.selectDomainModal = !this.alias.selectDomainModal
 			this.alias.editModal = !this.alias.editModal;
 		},
+        addDomain: function() {
+        this.loading().go(30);
+            this.domain.selectDomainModal = !this.domain.selectDomainModal
+			this.updateDomain({
+				action: 'newDomain',
+				domain: this.domain.domain
+			})
+			.then(function(res) {
+				if (typeof res === 'undefined') return;
+                return res.text();
+            })
+            .then(function(domainId) {
+    			return this.updateAccount({
+    				action: 'newAccount',
+    				domainId: domainId,
+    				account: this.domain.account
+    			})
+    			.then(function(res) {
+    				if (typeof res === 'undefined') return;
+                    return res.text();
+                })
+                .then(function(accountId) {
+    				this.alert().success('New account added.');
+                    return this.route.router.go({ name: 'account', params: { accountId: accountId } })
+    			})
+			})
+			.finally(function() {
+				return this.getAccounts()
+				.then(function() {
+					this.loading().go(100);
+				}.bind(this))
+			})
+        },
         addAccount: function() {
 			this.account.selectDomainModal = !this.account.selectDomainModal
             this.loading().go(30);
