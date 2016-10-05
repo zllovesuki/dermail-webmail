@@ -39,7 +39,7 @@
 				</div>
 				<div class="clearfix">
 					<table class="h6 col col-12">
-						<template v-for="domain in securityCtx.dkim" track-by="domainId">
+						<template v-for="domain in uniqueDomains" track-by="domainId">
 							<tr>
 								<td class="col col-6">
 									<span class="btn not-clickable left">{{ domain.domain }}</span>
@@ -179,7 +179,19 @@ module.exports = {
 			}.bind(this));
 			if (typeof search[0] !== 'undefined') return search[0];
 			else return {};
-		}
+		},
+        uniqueDomains: function() {
+            var array = [];
+            if (!this.securityCtx || !this.securityCtx.dkim) return array;
+            var dup = {};
+            for (var i = 0, accounts = this.securityCtx.dkim, length = accounts.length; i < length; i++) {
+                if (dup[accounts[i].domain] !== true) {
+                    dup[accounts[i].domain] = true;
+                    array.push(accounts[i])
+                }
+            }
+            return array;
+        }
 	},
 	methods: {
 		fetchSecurity: function() {
