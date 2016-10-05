@@ -1,5 +1,8 @@
 ## Changelog
 
+10/04/2016: 4.1.x -> 4.2.0
+1. "Add a domain" is now live. Please uses API >= 3.4.0 for this new functionality
+
 09/30/2016: 4.1.0 -> 4.1.1
 1. "Add an account" is now live. Please uses API >= 3.3.1 for this new functionality
 
