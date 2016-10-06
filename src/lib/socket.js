@@ -9,7 +9,7 @@ module.exports = function(vue) {
 		});
 		master.on('Q', function(data) {
 			if (data !== null) {
-                _.state.alert[data.level](data.message);
+                _.state.alert.delay(0)[data.level](data.message);
                 if (data.message.indexOf('truncated') !== -1 && _.state.route.params.accountId) {
                     vue.refreshUnreadCount(_.state.route.params.accountId);
                 }
@@ -28,7 +28,7 @@ module.exports = function(vue) {
 				.then(function() {
 					if (!data.push) return;
 					document.getElementById('sound').play();
-					_.state.alert.success(data.message, function(ev) {
+					_.state.alert.delay(0).success(data.message, function(ev) {
 						ev.preventDefault();
 						if (data.folder) {
 							_.router.go({ name: 'mail', params: { accountId: data.accountId, folderId: data.folder.folderId, messageId: data.messageId } })
