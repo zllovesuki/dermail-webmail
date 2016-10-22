@@ -35,12 +35,12 @@ function countNotificationsAndNotify(payload) {
 }
 
 function notify(payload, tag) {
-    if (window.navigator.vibrate) window.navigator.vibrate([300, 100, 300])
 	return self.registration.showNotification(payload.header, {
 		body: payload.body,
 		data: payload,
 		icon: '/public/mail_256x256.png',
-		tag: tag
+		tag: tag,
+		vibrate: [300, 100, 300]
 	})
 }
 
