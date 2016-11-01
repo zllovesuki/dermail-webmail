@@ -183,7 +183,7 @@ module.exports = {
 				if (typeof res === 'undefined') return;
 				this.actionModal = false;
 				// Force a refresh in case that filter changes anything
-				this.refreshFolderView();
+				// this.refreshFolderView();
 				this.resetLastFolderId();
 				this.alert().success('Filter created.');
 			})
