@@ -170,7 +170,7 @@ module.exports = {
 		state.slice.starOnly = !state.slice.starOnly;
 	},
 	updateSliceDate: function(state, data) {
-		state.slice.date = data;
+		state.slice.savedOn = data;
 	},
 	resetSlice: function(state) {
 		state.slice = {

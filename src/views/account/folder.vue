@@ -76,7 +76,7 @@ module.exports = {
 		More: function() {
 			var lastMail = this.mails.slice(-1)[0];
 			if (lastMail) {
-				this.updateSliceDate(lastMail.date);
+				this.updateSliceDate(lastMail.savedOn);
 			}
 		},
 		loadMore: function() {

@@ -1,5 +1,8 @@
 ## Changelog
 
+11/16/2016: 4.2.x -> 4.3.0
+1. Different index is now used. Please uses API >= 3.5.0 for this change.
+
 10/04/2016: 4.1.x -> 4.2.0
 1. "Add a domain" is now live. Please uses API >= 3.4.0 for this new functionality
 

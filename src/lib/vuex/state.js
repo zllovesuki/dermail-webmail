@@ -24,7 +24,7 @@ module.exports = {
 
 	slice: {
 		perPage: 10,
-		date: null,
+		savedOn: null,
 		starOnly: false
 	},
 
