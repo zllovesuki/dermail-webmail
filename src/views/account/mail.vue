@@ -310,7 +310,7 @@ module.exports = {
 		},
 		reply: function() {
 			var obj;
-			var dedup = this.mail.subject;
+			var dedup = this.mail.subject || '';
 
 			if (typeof this.mail.replyTo !== 'undefined') {
 				obj = this.emailToObject(this.mail.replyTo[0]);
@@ -335,7 +335,7 @@ module.exports = {
 		forward: function() {
 			this.updateComposeAddSubject({
 				type: 'Fwd: ',
-				subject: this.mail.subject
+				subject: this.mail.subject || ''
 			});
 			this.updateComposeType('forward');
 
