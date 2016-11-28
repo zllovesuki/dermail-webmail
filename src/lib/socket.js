@@ -1,9 +1,8 @@
-var io = require('socket.io-client/socket.io.js');
 var master;
 
 module.exports = function(vue) {
 	this.connect = function(_, ROOT) {
-		master = io.connect(ROOT);
+		master = require('socket.io-client')(ROOT);
 		master.on('connect', function() {
 			master.emit('authenticate', { token: _.state.token })
 		});
