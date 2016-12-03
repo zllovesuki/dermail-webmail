@@ -69,7 +69,7 @@
 					<label for="parentFolder">Nested Under:</label>
 					<select class="block col-12 mb2 field" v-model="modal.parent">
 						<option value="/root">(Root)</option>
-						<option v-for="f in flatFolders" track-by="folderId" v-if="f.displayName != 'Trash' && f.folderId != propFolder.folderId" value="{{ f.folderId }}">{{ f.displayName }}</option>
+						<option v-for="f in flatFolders" track-by="folderId" v-show="f.displayName != 'Trash' && f.folderId != propFolder.folderId" value="{{ f.folderId }}">{{ f.displayName }}</option>
 					</select>
 					<button :disabled="buttonDisabled" type="submit" class="btn btn-primary">Edit</button>
 				</form>
@@ -86,7 +86,7 @@
 					<label for="parentFolder">Nested Under:</label>
 					<select class="block col-12 mb2 field" v-model="modal.parent">
 						<option value="/root">(Root)</option>
-						<option v-for="f in flatFolders" track-by="folderId" v-if="f.displayName != 'Trash'" value="{{ f.folderId }}">{{ f.displayName }}</option>
+						<option v-for="f in flatFolders" track-by="folderId" v-show="f.displayName != 'Trash'" value="{{ f.folderId }}">{{ f.displayName }}</option>
 					</select>
 					<button :disabled="buttonDisabled" type="submit" class="btn btn-primary">Add</button>
 				</form>
