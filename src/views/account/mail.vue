@@ -295,8 +295,8 @@ module.exports = {
 			}
 
 			if (this.mail.attachments.length > 0) {
-				// Check if we have inline images, then we need to append them to reply
 				for (var i = 0; i < this.mail.attachments.length; i++) {
+                    // Check if we have inline images, then we need to append them to reply
 					if (this.mail.attachments[i].contentDisposition === 'inline') {
 						this.appendComposeAddAttachmens({
 							mutable: false,
@@ -304,7 +304,14 @@ module.exports = {
 							cid: this.mail.attachments[i].contentId,
 							path: this.inlineImage('cid:' + this.mail.attachments[i].contentId)
 						})
-					}
+					}else{
+                        // for non-inline images, we will keep them but set to mutable
+                        this.appendComposeAddAttachmens({
+							mutable: true,
+							filename: this.mail.attachments[i].generatedFileName,
+							path: this.inlineImage('cid:' + this.mail.attachments[i].contentId)
+						})
+                    }
 				}
 			}
 		},
