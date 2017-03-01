@@ -430,7 +430,7 @@ var self = module.exports = {
 		return API_ENDPOINT + '/safe/raw/' + params.accountId + '/' + params.messageId;
 	},
 	returnS3URL: function(_, checksum, fileName) {
-		return 'https://' + _.state.s3.bucket + '.' + _.state.s3.endpoint + '/' + checksum + '/' + fileName;
+		return 'https://' + _.state.s3.endpoint + '/' + _.state.s3.bucket + '/' + checksum + '/' + fileName;
 	},
 
 	updateDomain: function(_, data) {
