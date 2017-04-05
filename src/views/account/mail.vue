@@ -267,6 +267,7 @@ module.exports = {
 			if (this.containsStrangeTags) {
 				var frame = document.getElementById('iframe-body');
 				var iframe = frame.contentWindow.document;
+                iframe.head = '';
 				iframe.head.appendChild(this.createiFrameFix());
 				iframe.body.innerHTML = this.reaplceWithSafeImage(this.mail.html);
 				setTimeout(function() {
