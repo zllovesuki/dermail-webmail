@@ -24,10 +24,10 @@ module.exports = function(Vue) {
 	);
 	Vue.filter('nameOrEmail',
 		function(address) {
-			if (!address.hasOwnProperty('friendlyName') || address.friendlyName.length === 0) {
-				return address.account + '@' + address.domain;
+			if (!address.hasOwnProperty('name') || address.name.length === 0) {
+				return address.address;
 			}else{
-				return address.friendlyName;
+				return address.name;
 			}
 		}
 	);

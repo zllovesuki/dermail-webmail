@@ -2,7 +2,7 @@
 	<span>
 		<span class="btn mxn2 black h6 not-clickable">{{ originText }}: </span>
 		<template v-for="address in origin">
-			<a class="muted h6 bold btn mxn1 {{ color }}" @click="popup" data-name="{{address.friendlyName}}" data-email="{{address.account}}@{{address.domain}}">{{ address | nameOrEmail | excerpt 20 }}</a>
+			<a class="muted h6 bold btn mxn1 {{ color }}" @click="popup" data-name="{{address.name}}" data-email="{{address.address}}">{{ address | nameOrEmail | excerpt 20 }}</a>
 		</template>
 	</span>
 </template>
