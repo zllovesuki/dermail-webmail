@@ -23,7 +23,6 @@
 				<div class="m0 p2 border-top">
 					<div class="clearfix">
 						<a class="muted h6 ml1 bold btn btn-outline {{ color }}" v-link="{ name: 'filter', params: { accountId: $route.params.accountId } }">Filters</a>
-						<a class="muted h6 ml1 bold btn btn-outline {{ color }}" v-link="{ name: 'addresses', params: { accountId: $route.params.accountId } }">Address Book</a>
 					</div>
 				</div>
 			</div>
@@ -58,7 +57,6 @@ module.exports = {
 			this.skipFetching = true;
 		}
 		this.removeFolder();
-		this.removeAddressBook();
         this.initUnreadCount();
 	},
 	ready: function() {

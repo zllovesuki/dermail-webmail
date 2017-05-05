@@ -14,9 +14,6 @@ var GETUNREAD_ENDPOINT = API_ENDPOINT + '/read/getUnreadCountInAccount'
 var GETFOLDER_ENDPOINT = API_ENDPOINT + '/read/getFolder'
 var GETMAILSINFOLDER_ENDPOINT = API_ENDPOINT + '/read/getMailsInFolder'
 var GETMAIL_ENDPOINT = API_ENDPOINT + '/read/getMail'
-var GETADDRESS_ENDPOINT = API_ENDPOINT + '/read/getAddress'
-var GETADDDRESSES_ENDPOINT = API_ENDPOINT + '/read/getAddresses'
-var GETOWNADDDRESS_ENDPOINT = API_ENDPOINT + '/read/getMyOwnAddress'
 var GETFILTERS_ENDPOINT = API_ENDPOINT + '/read/getFilters'
 var SEARCHWITHFILTER_ENDPOINT = API_ENDPOINT + '/read/searchWithFilter'
 var SEARCHMAILSINACCOUNT_ENDPOINT = API_ENDPOINT + '/read/searchMailsInAccount'
@@ -25,7 +22,6 @@ var UPDATEMAIL_ENDPOINT = API_ENDPOINT + '/write/updateMail'
 var UPDATEFOLDER_ENDPOINT = API_ENDPOINT + '/write/updateFolder'
 var UPDATEDOMAIN_ENDPOINT = API_ENDPOINT + '/write/updateDomain'
 var UPDATEACCOUNT_ENDPOINT = API_ENDPOINT + '/write/updateAccount'
-var UPDATEADDRESS_ENDPOINT = API_ENDPOINT + '/write/updateAddress'
 var PUSHSUB_ENDPOINT = API_ENDPOINT + '/write/pushSubscriptions'
 var BAYES_ENDPOINT = API_ENDPOINT + '/write/trainBayes'
 var SENDMAIL_ENDPOINT = API_ENDPOINT + '/relay/sendMail'
@@ -300,35 +296,6 @@ var self = module.exports = {
             return data;
         })
 	},
-	getAddress: function(_, data) {
-		return helper.postWithHeader(this.$http, _.state, GETADDRESS_ENDPOINT, data)
-		.then(function(res) {
-			if (typeof res === 'undefined') return;
-            return res.json()
-		})
-	},
-	getAddresses: function(_, data) {
-		return helper.postWithHeader(this.$http, _.state, GETADDDRESSES_ENDPOINT, data)
-		.then(function(res) {
-			if (typeof res === 'undefined') return;
-            return res.json()
-		})
-        .then(function(result) {
-            this.putAddresses(result);
-            return result;
-        })
-	},
-    getOwnAddress: function(_, data) {
-		return helper.postWithHeader(this.$http, _.state, GETOWNADDDRESS_ENDPOINT, data)
-		.then(function(res) {
-			if (typeof res === 'undefined') return;
-            return res.json()
-		})
-        .then(function(result) {
-            this.appendAddresses(result);
-            return result;
-        })
-	},
 	getFilters: function(_, data) {
 		return helper.postWithHeader(this.$http, _.state, GETFILTERS_ENDPOINT, _.state.route.params)
 		.then(function(res) {
@@ -362,12 +329,6 @@ var self = module.exports = {
 
 	putMails: function(_, mails) {
 		_.dispatch('putMails', mails);
-	},
-	putAddresses: function(_, data) {
-		_.dispatch('putAddresses', data);
-	},
-    appendAddresses: function(_, data) {
-		_.dispatch('appendAddresses', data);
 	},
 	putFilters: function(_, data) {
 		_.dispatch('putFilters', data);
@@ -445,10 +406,6 @@ var self = module.exports = {
             })
         })
 	},
-	updateAddress: function(_, data) {
-		return helper.postWithHeader(this.$http, _.state, UPDATEADDRESS_ENDPOINT, data);
-	},
-
 	updateFolder: function(_, data) {
 		return helper.postWithHeader(this.$http, _.state, UPDATEFOLDER_ENDPOINT, data);
 	},
@@ -480,13 +437,6 @@ var self = module.exports = {
         accountId = accountId ? accountId : _.state.route.params.accountId;
         _.dispatch('initUnreadCount', accountId)
     },
-
-	setHoldInAddress: function(_, addressId, hold) {
-		_.dispatch('setHoldInAddress', addressId, hold);
-	},
-	setNameInAddress: function(_, addressId, name) {
-		_.dispatch('setNameInAddress', addressId, name);
-	},
 
 	updateMailRead: function(_, accountId, messageId, binary, cb) {
 		return this.updateMail({
@@ -570,9 +520,6 @@ var self = module.exports = {
 	},
 	removeFolderTree: function(_) {
 		_.dispatch('removeFolderTree')
-	},
-	removeAddressBook: function(_) {
-		_.dispatch('removeAddressBook')
 	},
 	removeMail: function(_) {
 		_.dispatch('removeMail');
