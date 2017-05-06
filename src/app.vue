@@ -21,7 +21,7 @@
     			</div>
     		</div>
     		<audio id="sound" preload="auto">
-    			<source src="//rachel.s3.fmt01.sdapi.net/dist/sound/yoda.ogg" type="audio/ogg">
+    			<source src="//rachel.objectstore.co/dist/sound/yoda.ogg" type="audio/ogg">
     		</audio>
     		<compose-button></compose-button>
     	</section>

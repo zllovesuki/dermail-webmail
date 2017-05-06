@@ -30,22 +30,6 @@ module.exports = {
 	setLastAccountId: function(state, id) {
 		state.lastAccountId = id;
 	},
-	setHoldInAddress: function(state, addressId, hold) {
-		var address = state.addresses.filter(function(address) {
-			return address.addressId === addressId;
-		})
-		if (address.length === 1) {
-			address[0].hold = hold;
-		}
-	},
-	setNameInAddress: function(state, addressId, name) {
-		var address = state.addresses.filter(function(address) {
-			return address.addressId === addressId;
-		})
-		if (address.length === 1) {
-			address[0].friendlyName = name;
-		}
-	},
 	setReadInMail: function(state, read) {
 		state.mail.isRead = read;
 	},
@@ -132,12 +116,6 @@ module.exports = {
             state.unreadCount = Object.assign({}, state.unreadCount, obj);
         }
     },
-	putAddresses: function(state, addresses) {
-		state.addresses = addresses;
-	},
-    appendAddresses: function(state, addresses) {
-        state.addresses = addresses.concat(state.addresses)
-    },
 	putFilters: function(state, filters) {
 		state.filters = filters;
 	},
@@ -152,9 +130,6 @@ module.exports = {
 	},
 	removeFolderTree: function(state) {
 		state.folders = [];
-	},
-	removeAddressBook: function(state) {
-		state.addresses = [];
 	},
 	removeMail: function(state) {
 		state.mail = {};

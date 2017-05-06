@@ -12,7 +12,6 @@ module.exports = {
 	authenticated: false,
 	title: 'Index',
 
-	addresses: [],
 	accounts: [],
 	account: {},
 	_folders: [],

@@ -10,5 +10,4 @@ module.exports = function(Vue) {
 	Vue.component('autoresize-textarea', require('../components/autoresizeTextArea.vue'))
 	Vue.component('spam', require('../components/reportSPAM.vue'))
 	Vue.component('filter-item', require('../components/filterItem.vue'))
-	Vue.component('address-item', require('../components/addressItem.vue'))
 }

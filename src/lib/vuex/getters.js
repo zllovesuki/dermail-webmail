@@ -74,9 +74,6 @@ module.exports = {
 	route: function(state) {
 		return state.route
 	},
-	addresses: function(state) {
-		return state.addresses
-	},
 	compose: function(state) {
 		return state.compose
 	},

@@ -1,22 +1,59 @@
 <template>
 	<div>
-		<div class="overflow-hidden bg-white border rounded mb2">
+		<div class="bg-white border rounded mb2">
 			<div class="m0 p1">
 				<div class="clearfix">
-					<div class="left ml2">
-						<address-button origin-text="From" :origin="ownAddress"></address-button>
-					</div>
+                    <span class="btn black h6 not-clickable inline-block">From: </span>
+                    <a
+                        v-show="composing.addresses.sender.name"
+                        class="muted h6 mxn1 bold btn {{ color }}"
+                        @click="removeAddress"
+                        data-where="sender"
+                        data-address="{{ composing.addresses.sender.address }}" >
+                        {{ composing.addresses.sender.name + ' <' + composing.addresses.sender.address + '>' }}
+                    </a>
+                    <span class="btn mxn2" v-show="!composing.addresses.sender.name">
+                        <form class="inline-block" onsubmit="return false;">
+                            <div class="typeahead__container">
+                                <div class="typeahead__field">
+                                    <span class="typeahead__query">
+                                        <input class="sender-typeahead-box"
+                                               placeholder="from..."
+                                               data-where="sender"
+                                               autocomplete="off">
+                                    </span>
+                                </div>
+                            </div>
+                        </form>
+                    </span>
 				</div>
 			</div>
 			<div class="m0 p1">
 				<div class="clearfix">
-					<span class="btn black h6 not-clickable inline">To: </span>
-					<template v-for="to in composing.recipients.to" track-by="$index">
-						<a class="muted h6 mxn1 bold btn {{ color }}" @click="removeRecipient" data-where="to" data-recipient="{{ to.address }}">
-							{{ to.name + ' <' + to.address + '>' }}
-						</a>
-					</template>
-					<input type="text" class="field border-none" placeholder="to..." data-where="to" @keyup="splitTag">
+                    <span class="btn black h6 not-clickable inline-block">To: </span>
+                    <template v-for="addr in composing.addresses.to" track-by="$index">
+                        <a
+                            class="muted h6 mxn1 bold btn {{ color }}"
+                            @click="removeAddress"
+                            data-where="to"
+                            data-address="{{ addr.address }}" >
+                            {{ addr.name + ' <' + addr.address + '>' }}
+                        </a>
+                    </template>
+                    <span class="btn mxn2">
+                        <form class="inline-block" onsubmit="return false;">
+                            <div class="typeahead__container">
+                                <div class="typeahead__field">
+                                    <span class="typeahead__query">
+                                        <input class="typeahead-box"
+                                               placeholder="to..."
+                                               data-where="to"
+                                               autocomplete="off">
+                                    </span>
+                                </div>
+                            </div>
+                        </form>
+                    </span>
 				</div>
 			</div>
 			<div class="m0 p1">
@@ -28,27 +65,59 @@
 			</div>
 			<div class="m0 p1" v-show="composing.showMore">
 				<div class="clearfix">
-					<span class="btn black h6 not-clickable inline">Cc: </span>
-					<template v-for="cc in composing.recipients.cc" track-by="$index">
-						<a
-							class="muted h6 mxn1 bold btn {{ color }}" @click="removeRecipient" data-where="cc" data-recipient="{{ cc.address }}" >
-							{{ cc.name + ' <' + cc.address + '>' }}
-						</a>
-					</template>
-					<input type="text" class="field border-none" placeholder="cc..." data-where="cc" @keyup="splitTag">
+                    <span class="btn black h6 not-clickable inline-block">Cc: </span>
+                    <template v-for="addr in composing.addresses.cc" track-by="$index">
+                        <a
+                            class="muted h6 mxn1 bold btn {{ color }}"
+                            @click="removeAddress"
+                            data-where="cc"
+                            data-address="{{ addr.address }}" >
+                            {{ addr.name + ' <' + addr.address + '>' }}
+                        </a>
+                    </template>
+                    <span class="btn mxn2">
+                        <form class="inline-block" onsubmit="return false;">
+                            <div class="typeahead__container">
+                                <div class="typeahead__field">
+                                    <span class="typeahead__query">
+                                        <input class="typeahead-box"
+                                               placeholder="cc..."
+                                               data-where="cc"
+                                               autocomplete="off">
+                                    </span>
+                                </div>
+                            </div>
+                        </form>
+                    </span>
 				</div>
 			</div>
 			<div class="m0 p1" v-show="composing.showMore">
 				<div class="clearfix">
-					<span class="btn black h6 not-clickable inline">Bcc: </span>
-					<template v-for="bcc in composing.recipients.bcc" track-by="$index">
-						<a
-							class="muted h6 mxn1 bold btn {{ color }}" @click="removeRecipient" data-where="bcc" data-recipient="{{ bcc.address }}">
-							{{ bcc.name + ' <' + bcc.address + '>' }}
-						</a>
-					</template>
-					<input type="text" class="field border-none" placeholder="bcc..." data-where="bcc" @keyup="splitTag">
-				</div>
+                    <span class="btn black h6 not-clickable inline-block">To: </span>
+                    <template v-for="addr in composing.addresses.bcc" track-by="$index">
+                        <a
+                            class="muted h6 mxn1 bold btn {{ color }}"
+                            @click="removeAddress"
+                            data-where="bcc"
+                            data-address="{{ addr.address }}" >
+                            {{ addr.name + ' <' + addr.address + '>' }}
+                        </a>
+                    </template>
+                    <span class="btn mxn2">
+                        <form class="inline-block" onsubmit="return false;">
+                            <div class="typeahead__container">
+                                <div class="typeahead__field">
+                                    <span class="typeahead__query">
+                                        <input class="typeahead-box"
+                                               placeholder="bcc..."
+                                               data-where="bcc"
+                                               autocomplete="off">
+                                    </span>
+                                </div>
+                            </div>
+                        </form>
+                    </span>
+                </div>
 			</div>
 		</div>
 		<div class="overflow-hidden bg-white border rounded mb2">
@@ -113,6 +182,14 @@
 
 <script>
 
+if (typeof jQuery === 'undefined') {
+    var $ = require('jquery')
+}
+
+if (!$().typeahead) {
+    require('jquery-typeahead')
+}
+
 var validator = require('validator');
 var marked = require('marked');
 marked.setOptions({
@@ -125,7 +202,7 @@ var actions = require('../../lib/vuex/actions.js')
 module.exports = {
 	data: function() {
 		return {
-            ownAddress: [],
+            ownAddresses: [],
 			storage: null,
 			autoSaveText: null,
 			blockAutoSave: true,
@@ -136,7 +213,8 @@ module.exports = {
 				subject: '',
 				toBox: '',
 				html: '',
-				recipients: {
+				addresses: {
+                    sender: {},
 					to: [],
 					cc: [],
 					bcc: []
@@ -193,48 +271,31 @@ module.exports = {
 			}
 			return new_arr;
 		},
-		pushTags: function(where, tag) {
-			if (validator.isEmail(tag)) {
-				this.getAddress({
-					accountId: this.route.params.accountId,
-					email: tag.toLowerCase().trim()
-				})
-				.then(function(res) {
-					if (typeof res === 'undefined') return;
-					var address = {};
-					address.name = res.friendlyName;
-					address.address = tag.toLowerCase().trim()
-					this.composing.recipients[where].push(address);
-					this.composing.recipients[where] = this.removeDuplicates(this.composing.recipients[where], 'address');
-				});
-			}
+		pushTags: function(where, obj) {
+            if (validator.isEmail(obj.address)) {
+                this.composing.addresses[where].push(obj);
+                this.composing.addresses[where] = this.removeDuplicates(this.composing.addresses[where], 'address');
+            }
 		},
-		removeRecipient: function(e) {
-			var recipient = e.target.getAttribute('data-recipient');
+		removeAddress: function(e) {
+			var address = e.target.getAttribute('data-address');
 			var where = e.target.getAttribute('data-where');
-			this.composing.recipients[where] = this.composing.recipients[where].filter(function(e) {
-				return e.address !== recipient; // remove by value
-			})
+            if (typeof this.composing.addresses[where].name !== 'undefined') {
+                this.composing.addresses[where] = {}
+            }else{
+                this.composing.addresses[where] = this.composing.addresses[where].filter(function(e) {
+    				return e.address !== address; // remove by value
+    			})
+            }
 		},
 		showMore: function(e) {
 			this.composing.showMore = true;
 			e.target.parentNode.parentNode.parentNode.removeChild(e.target.parentNode.parentNode);
 			// ugly hack
 		},
-		splitTag: function(e) {
-			var value = e.target.value;
-			var where = e.target.getAttribute('data-where');
-			if (value.substr(-1) === ' ') {
-				var val = value.substring(0, value.length - 1).trim();
-				if (val.length > 5) { // Minimum length is like "a@b.cc", therefore at least 5
-					this.pushTags(where, val);
-				}
-				e.target.value = '';
-			}
-		},
 		sanityCheck: function(e) {
-			if (this.composing.recipients.to.length === 0) {
-				return this.alert().error('At least one "to" recipient is required.');
+			if (this.composing.addresses.to.length === 0) {
+				return this.alert().error('At least one "to" address is required.');
 			}
 
 			if (this.composing.subject.trim().length === 0) {
@@ -279,7 +340,8 @@ module.exports = {
 				subject: '',
 				toBox: '',
 				html: '',
-				recipients: {
+				addresses: {
+                    sender: {},
 					to: [],
 					cc: [],
 					bcc: []
@@ -373,7 +435,96 @@ module.exports = {
 			.then(function() {
 				this.blockAutoSave = false;
 			}.bind(this))
-		}
+		},
+        loadTypeahead: function() {
+            var self = this;
+            $('.sender-typeahead-box').typeahead({
+                maxItem: false,
+                source: {
+                    data: self.ownAddresses
+                },
+                display: ['name', 'address'],
+                cancelButton: false,
+                template: function(query, item) {
+                    return '<span class="h6" style="word-wrap: break-word;">' + (item.isAlias ? '&#8651; ' : '') + '<strong>{{name}}</strong> &lt;{{address}}&gt;</span>'
+                },
+                templateValue: '{{address}}',
+                callback: {
+                    onClick: function(node, a, item, event) {
+                        // http://stackoverflow.com/questions/40749099/vuejs-why-does-this-set-throw-error
+                        // This is some legacy code... Need to update to vue 2.0 soon
+                        self.$set(`composing.addresses.sender.name`, item.name)
+                        self.$set(`composing.addresses.sender.address`, item.address)
+                        self.$set(`composing.addresses.sender.isAlias`, item.isAlias)
+                    },
+                    onClickAfter: function(node, a, item, event) {
+                        self.$nextTick(function() {
+                            $(node[0]).val('')
+                        })
+                    }
+                },
+                selector: {
+                    list: 'typeahead__list overflow-scroll'
+                }
+            })
+            $('.typeahead-box').typeahead({
+                dynamic: true,
+                maxItem: false,
+                minLength: 3,
+                delay: 500,
+                source: {
+                    addresses: {
+                        filter: false,
+                        ajax: function(query) {
+                            return {
+                                type: 'POST',
+                                url: self.returnGetAddressEP(),
+                                dataType : "json",
+                                contentType: 'application/json',
+                                data: JSON.stringify({
+                                    accountId: self.route.params.accountId,
+                                    query: query
+                                }),
+                                beforeSend: function(jqXHR, options) {
+                                    jqXHR.setRequestHeader('Authorization', 'JWT ' + self.getAuthToken())
+                                },
+                                callback: {
+                                    done: function(data, textStatus, jqXHR) {
+                                        return data;
+                                    },
+                                    fail: function (jqXHR, textStatus, errorThrown) {
+                                        self.alert().error(errorThrown);
+                                        return []
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                cancelButton: false,
+                display: 'addresses',
+                template: '<span class="h6" style="word-wrap: break-word;"><strong>{{name}}</strong> &lt;{{address}}&gt;</span>',
+                templateValue: '{{address}}',
+                callback: {
+                    onClick: function(node, a, item, event) {
+            			var where = node[0].getAttribute('data-where')
+                        var obj = {
+                            name: item.name,
+                            address: item.address
+                        }
+            			self.pushTags(where, obj)
+                    },
+                    onClickAfter: function(node, a, item, event) {
+                        self.$nextTick(function() {
+                            $(node[0]).val('')
+                        })
+                    }
+                },
+                selector: {
+                    list: 'typeahead__list overflow-scroll'
+                }
+            })
+        }
 	},
 	watch: {
 		'compose.markdown': function(val, oldVal) {
@@ -435,25 +586,22 @@ module.exports = {
 			this.loadAutoSaveEnabled = true;
 		}.bind(this))
 
-        this.getOwnAddress({
-            accountId: this.route.params.accountId
-        })
-        .then(function(array) {
-            for (var i = 0, length = array.length; i < length; i++) {
-                if (!array[i].aliasOf) {
-                    this.ownAddress = [array[i]];
-                    break;
-                }
-            }
-        })
-
 	},
 	compiled: function() {
 		this.grabDependencies(1)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
-			this.loading().go(100);
+            return this.getOwnAddress({
+                accountId: this.route.params.accountId
+            }).then(function(res) {
+                if (typeof res === 'undefined') return;
+                this.ownAddresses = res;
+                this.loading().go(100);
+            })
 		}.bind(this))
+        .then(function() {
+            this.loadTypeahead();
+        }.bind(this))
 
 		if (this.accounts.length === 0) {
 			this.getAccounts();
@@ -472,5 +620,9 @@ textarea {
 	resize: none;
 	overflow: hidden;
 	min-height: 8em;
+}
+.typeahead__field input {
+    width: 200px !important;
+    border: 0 !important;
 }
 </style>
