@@ -16,6 +16,9 @@ WORKDIR /usr/src/app
 
 COPY . /usr/src/app
 
+RUN npm run prod \
+ && npm prune --production
+
 EXPOSE 3001
 
-CMD npm run prod && npm prune --production && pm2 start app.json --no-daemon
+CMD pm2 start app.json --no-daemon
