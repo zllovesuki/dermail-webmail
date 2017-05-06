@@ -7,6 +7,7 @@ var RENEW_ENDPOINT = API_ENDPOINT + '/login/renew'
 var PING_ENDPOINT = API_ENDPOINT + '/read/ping'
 var GETSECURITY_ENDPOINT = API_ENDPOINT + '/read/security'
 var S3_ENDPOINT = API_ENDPOINT + '/read/s3'
+var GETADDRESS_ENDPOINT = API_ENDPOINT + '/read/getAddress'
 var GETACCOUNTS_ENDPOINT = API_ENDPOINT + '/read/getAccounts'
 var GETACCOUNT_ENDPOINT = API_ENDPOINT + '/read/getAccount'
 var GETFOLDERS_ENDPOINT = API_ENDPOINT + '/read/getFoldersInAccount'
@@ -80,6 +81,10 @@ var self = module.exports = {
 		})
 	},
 
+    returnGetAddressEP: function(_) {
+        return GETADDRESS_ENDPOINT;
+    },
+
 	refreshUnreadCount: function(_, targetAccountId) {
 		var data = {};
 
@@ -150,10 +155,10 @@ var self = module.exports = {
 		];
 
 		return Promise.map(listOfDependencies, function(data, index) {
-			var eval = index + 1;
-			if (eval > priority) return;
+			var test = index + 1;
+			if (test > priority) return;
 			return listOfDependencies[index]().then(function(res) {
-				if (priority === eval) {
+				if (priority === test) {
 					returnData = res;
 				}
 			})
@@ -307,6 +312,10 @@ var self = module.exports = {
             return data;
         })
 	},
+
+    getAuthToken: function(_) {
+        return _.state.token;
+    },
 
 	pushNotification: function(_, data) {
 		return helper.postWithHeader(this.$http, _.state, PUSHSUB_ENDPOINT, data);

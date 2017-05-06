@@ -301,7 +301,6 @@ module.exports = {
 	},
 	created: function() {
 		this.removeFolder();
-		this.removeAddressBook();
 		this.removeAccount();
 		this.resetLastFolderId();
 	},

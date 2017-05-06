@@ -37,10 +37,6 @@ router.map({
 				name: 'filter',
 				component: require('./views/account/filter.vue'),
 			},
-			'/:accountId/addresses': {
-				name: 'addresses',
-				component: require('./views/account/addresses.vue'),
-			},
 			'/:accountId/compose': {
 				name: 'compose',
 				component: require('./views/account/compose.vue'),
