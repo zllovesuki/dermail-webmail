@@ -17,7 +17,7 @@
                             <div class="typeahead__container">
                                 <div class="typeahead__field">
                                     <span class="typeahead__query">
-                                        <input class="typeahead-box"
+                                        <input class="sender-typeahead-box"
                                                placeholder="from..."
                                                data-where="sender"
                                                autocomplete="off">
@@ -202,6 +202,7 @@ var actions = require('../../lib/vuex/actions.js')
 module.exports = {
 	data: function() {
 		return {
+            ownAddresses: [],
 			storage: null,
 			autoSaveText: null,
 			blockAutoSave: true,
@@ -212,8 +213,8 @@ module.exports = {
 				subject: '',
 				toBox: '',
 				html: '',
-                sender: {},
 				addresses: {
+                    sender: {},
 					to: [],
 					cc: [],
 					bcc: []
@@ -437,6 +438,35 @@ module.exports = {
 		},
         loadTypeahead: function() {
             var self = this;
+            $('.sender-typeahead-box').typeahead({
+                maxItem: false,
+                source: {
+                    data: self.ownAddresses
+                },
+                display: ['name', 'address'],
+                cancelButton: false,
+                template: function(query, item) {
+                    return '<span class="h6" style="word-wrap: break-word;">' + (item.isAlias ? '&#8651; ' : '') + '<strong>{{name}}</strong> &lt;{{address}}&gt;</span>'
+                },
+                templateValue: '{{address}}',
+                callback: {
+                    onClick: function(node, a, item, event) {
+                        // http://stackoverflow.com/questions/40749099/vuejs-why-does-this-set-throw-error
+                        // This is some legacy code... Need to update to vue 2.0 soon
+                        self.$set(`composing.addresses.sender.name`, item.name)
+                        self.$set(`composing.addresses.sender.address`, item.address)
+                        self.$set(`composing.addresses.sender.isAlias`, item.isAlias)
+                    },
+                    onClickAfter: function(node, a, item, event) {
+                        self.$nextTick(function() {
+                            $(node[0]).val('')
+                        })
+                    }
+                },
+                selector: {
+                    list: 'typeahead__list overflow-scroll'
+                }
+            })
             $('.typeahead-box').typeahead({
                 dynamic: true,
                 maxItem: false,
@@ -561,8 +591,17 @@ module.exports = {
 		this.grabDependencies(1)
 		.then(function(res) {
 			if (typeof res === 'undefined') return;
-			this.loading().go(100);
+            return this.getOwnAddress({
+                accountId: this.route.params.accountId
+            }).then(function(res) {
+                if (typeof res === 'undefined') return;
+                this.ownAddresses = res;
+                this.loading().go(100);
+            })
 		}.bind(this))
+        .then(function() {
+            this.loadTypeahead();
+        }.bind(this))
 
 		if (this.accounts.length === 0) {
 			this.getAccounts();
@@ -571,7 +610,6 @@ module.exports = {
 	ready: function() {
 		this.$nextTick(function() {
 			this.blockAutoSave = false;
-            this.loadTypeahead();
 		})
 	}
 }
