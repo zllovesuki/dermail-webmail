@@ -283,9 +283,8 @@ module.exports = {
 		},
 		emailToObject: function(email) {
 			return {
-				account: email.address.substring(0, email.address.lastIndexOf("@")).toLowerCase(),
-				domain: email.address.substring(email.address.lastIndexOf("@") +1).toLowerCase(),
-				friendlyName: email.name
+                address: email.address.toLowerCase(),
+                name: email.name
 			}
 		},
 		appendToCompose: function() {
@@ -323,7 +322,7 @@ module.exports = {
 			if (typeof this.mail.replyTo !== 'undefined') {
 				obj = this.emailToObject(this.mail.replyTo[0]);
 			}else{
-				obj = this.mail.from[0];
+				obj = this.emailToObject(this.mail.from[0]);
 			}
 			this.appendComposeAddTo(obj);
 

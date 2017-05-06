@@ -551,8 +551,8 @@ module.exports = {
 		this.setTitle('Compose');
 
 		if (this.compose.addTo.length > 0) {
-			this.compose.addTo.forEach(function(tag) {
-				this.pushTags('to', tag.account + '@' + tag.domain);
+			this.compose.addTo.forEach(function(obj) {
+				this.pushTags('to', obj);
 			}.bind(this))
 			this.resetComposeAddTo();
 		}
