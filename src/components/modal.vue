@@ -2,7 +2,7 @@
 	<span>
 		<div class="modal-mask" @click="close" v-show="show" transition="modal">
 			<div class="modal-wrapper">
-				<div class="modal-container" @click.stop>
+				<div class="modal-container" style="max-width: 24em;" @click.stop>
 
 					<div class="modal-header">
 						<slot name="header">
@@ -64,7 +64,6 @@ module.exports = {
 }
 
 .modal-container {
-  width: 16em;
   margin: 0px auto;
   padding: 20px 30px;
   background-color: #fff;
