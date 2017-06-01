@@ -9,6 +9,9 @@
 		<a class="h6 bold mxn1 btn red" @click.prevent="oneClickToTrash" v-if="hideMoveToTrash.indexOf(folder.displayName.toLowerCase()) === -1">
 			> Trash
 		</a>
+        <a class="h6 bold mxn1 btn red" @click.prevent="showDeleteModal" v-if="folder.displayName.toLowerCase() === 'trash'">
+			> Delete Permanently
+		</a>
 		<modal :show.sync="folderModal">
 			<h4 slot="header">Move to a Folder</h4>
 			<span slot="body">
@@ -18,6 +21,18 @@
 						<option v-for="f in flatFolders" track-by="folderId" v-show="hideInMoveOptions.indexOf(f.displayName.toLowerCase()) === -1" value="{{ f.folderId }}">{{ f.displayName }}</option>
 					</select>
 					<button :disabled="buttonDisabled" class="btn btn-primary">Move</button>
+				</form>
+			</span>
+		</modal>
+        <modal :show.sync="deleteModal">
+			<h4 slot="header">Delete a message permanently</h4>
+			<span slot="body">
+				<form v-on:submit.prevent="removeOnePermanently" class="h5">
+					<label for="displayName" class="mb2">Are you sure to delete message with:
+    					<span class="block mb1">Subject: <span class="bold">{{ context.subject }}</span></span>
+                        <span class="block mb2">Body: <span class="bold">{{ context.text }}</span></span>
+                    </label>
+					<button :disabled="buttonDisabled" type="submit" class="block btn btn-outline red">Yes, I'm sure</button>
 				</form>
 			</span>
 		</modal>
@@ -44,6 +59,7 @@ module.exports = {
 		return {
 			buttonDisabled: false,
 			folderModal: false,
+            deleteModal: false,
 			modal: {
 				accountId: this.context.accountId,
 				folderId: this.context.folderId,
@@ -118,6 +134,36 @@ module.exports = {
 				this.hide = false;
 			}.bind(this))
 		},
+        showDeleteModal: function(e) {
+            this.deleteModal = true;
+            this.modal.action = 'delete';
+        },
+        removeOnePermanently: function(e) {
+            this.alert()
+			.okBtn("Yes")
+			.cancelBtn("No")
+			.confirm('Are you sure to delete the message?')
+			.then(function(resolved) {
+				resolved.event.preventDefault();
+
+				if (resolved.buttonClicked !== 'ok') return;
+
+				this.buttonDisabled = true;
+
+                return this.updateMail(this.modal)
+                .then(function(res) {
+                    if (typeof res === 'undefined') return;
+                    this.deleteModal = false;
+                    return this.mailHouseKeeping(this.modal.folderId, this.modal.messageId)
+                    .then(function() {
+                        this.alert().success('Deleting message queued.');
+                    }.bind(this))
+                })
+                .then(function() {
+                    this.buttonDisabled = false;
+                }.bind(this))
+			}.bind(this))
+        }
 
 	}
 }
