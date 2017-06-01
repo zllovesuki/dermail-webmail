@@ -39,7 +39,8 @@ module.exports = {
 
 	hideInMoveOptions: [
 		'spam',
-		'trash'
+		'trash',
+        'sent'
 	],
 
 	hideReadUnread: [
