@@ -115,7 +115,8 @@ var self = module.exports = {
 
         data = Object.assign(_.state.route.params, additional);
 
-        if (targetFolderId !== _.state.route.params.folderId) {
+        if (_.state.route.params.folderId !== 'inbox'
+            && targetFolderId !== _.state.route.params.folderId) {
             if (targetFolderId !== _.state.lastFolderId) return Promise.resolve();
             data.folderId = _.state.lastFolderId;
         }
