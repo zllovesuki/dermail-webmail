@@ -103,9 +103,12 @@ var self = module.exports = {
         var self = this;
         var additional = {
             slice: {
-                perPage: 1,
-                date: null,
-                starOnly: _.state.slice.starOnly
+                perPage: 10,
+                savedOn: _.state.mails[0].savedOn,
+                starOnly: _.state.slice.starOnly,
+                exclude: _.state.mails.map(function(mail) {
+                    return mail.messageId
+                })
             }
         };
         var data = {};
