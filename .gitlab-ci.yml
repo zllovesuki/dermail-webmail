@@ -4,12 +4,13 @@ before_script:
   - apt-get update -qq && apt-get install -y -qq curl
   - npm install
   - npm install forever browserify uglifyjs -g
-  - cp .gitlab-ci.config.json config.json
+  - mkdir config
+  - cp .gitlab-ci.config.json config/config.json
 
 cache:
   paths:
     - node_modules/
-    - config.json
+    - config/
 
 build:
   stage: build
