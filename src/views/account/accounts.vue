@@ -24,6 +24,15 @@
 					</div>
 				</div>
 			</div>
+            <div class="m0 p0 border-top" v-if="accounts.length > 0">
+                <div class="clearfix">
+                    <div class="left black">
+                        <a v-link="{ name: 'folder', params: { accountId: 'unified', folderId: 'inbox' } }" class="btn block h5">
+                            <span class="muted black">inbox</span> @ unified
+                        </a>
+                    </div>
+                </div>
+            </div>
 			<template v-for="account in accounts" track-by="accountId">
 				<div class="m0 p0 border-top">
 					<div class="clearfix">

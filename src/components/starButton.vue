@@ -1,7 +1,7 @@
 <template>
 	<span>
 		<a class="btn h4" @click="flipStar">
-			{{ isStar === true ? '&#9733;': '&#9734;' }}
+			{{ context.isStar === true ? '&#9733;': '&#9734;' }}
 		</a>
 	</span>
 </template>
@@ -17,22 +17,18 @@ module.exports = {
 		actions: actions
 	},
 	props: {
-		messageId: {
-			type: String,
-			required: true
-		},
-		isStar: {
-			type: Boolean,
+		context: {
+			type: Object,
 			required: true
 		}
 	},
 	methods: {
 		flipStar: function(e) {
-			var messageId = this.messageId;
-			var currentStar = this.isStar;
+			var messageId = this.context.messageId;
+			var currentStar = this.context.isStar;
 			var newStar = (currentStar ? 'unstar' : 'star');
 			this.updateMail({
-				accountId: this.route.params.accountId,
+				accountId: this.context.accountId,
 				messageId: messageId,
 				action: newStar
 			})

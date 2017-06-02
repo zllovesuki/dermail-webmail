@@ -150,7 +150,7 @@ module.exports = {
 	resetSlice: function(state) {
 		state.slice = {
 			perPage: 10,
-			date: null,
+			savedOn: null,
 			starOnly: false
 		}
 	},

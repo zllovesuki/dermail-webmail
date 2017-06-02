@@ -71,6 +71,8 @@ var self = module.exports = {
     			}else{
     				state.alert.error(res.statusText);
     			}
+            }).catch(function() {
+                state.alert.error('Unknown error');
             })
 		})
 	},

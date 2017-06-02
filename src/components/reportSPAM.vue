@@ -20,18 +20,10 @@ module.exports = {
 		actions: actions
 	},
 	props: {
-		folderName: {
-			type: String,
+		context: {
+			type: Object,
 			required: true
 		},
-		messageId: {
-			type: String,
-			required: true
-		},
-		folderId: {
-			type: String,
-			required: true
-		}
 	},
 	data: function() {
 		return {
@@ -40,23 +32,23 @@ module.exports = {
 	},
 	computed: {
 		alreadySpam: function() {
-			return this.folderName.toLowerCase() !== 'spam';
+			return this.context.displayName.toLowerCase() !== 'spam';
 		}
 	},
 	methods: {
 		moveToSPAM: function() {
 			var data = {
-				accountId: this.route.params.accountId,
-				messageId: this.messageId,
+				accountId: this.context.accountId,
+				messageId: this.context.messageId,
 				action: 'spam'
 			};
-			var currentFolder = this.folderId;
+			var currentFolder = this.context.folderId;
 			this.hide = true;
 			this.updateMail(data)
 			.then(function(res) {
 				if (typeof res === 'undefined') return;
 				this.alert().success('I hate SPAM!');
-				return this.mailHouseKeeping(currentFolder, this.messageId, true);
+				return this.mailHouseKeeping(currentFolder, this.context.messageId, true);
 			}.bind(this))
 			.finally(function() {
 				this.hide = false;
@@ -64,8 +56,8 @@ module.exports = {
 		},
 		notSPAM: function() {
 			var data = {
-				accountId: this.route.params.accountId,
-				messageId: this.messageId,
+				accountId: this.context.accountId,
+				messageId: this.context.messageId,
 				action: 'notspam'
 			};
 			this.hide = true;
@@ -76,7 +68,7 @@ module.exports = {
             })
             .then(function(data) {
 				this.alert().success('Got it.');
-				return this.mailHouseKeeping(data, this.messageId, true);
+				return this.mailHouseKeeping(data, this.context.messageId, true);
 			})
 			.finally(function() {
 				this.hide = false;

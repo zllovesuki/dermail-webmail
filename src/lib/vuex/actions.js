@@ -100,6 +100,7 @@ var self = module.exports = {
     },
 
     incrementallyGetMailsInFolder: function(_, targetFolderId) {
+        var self = this;
         var additional = {
             slice: {
                 perPage: 1,
@@ -119,13 +120,12 @@ var self = module.exports = {
         return helper.postWithHeader(this.$http, _.state, GETMAILSINFOLDER_ENDPOINT, data)
         .then(function(res) {
             if (typeof res === 'undefined') return;
-            return res.json()
-        })
-        .then(function(data) {
-            this.putMails(helper.arrayUnion(data, _.state.mails, function(a, b) {
-                return a.messageId === b.messageId;
-            }));
-            return data;
+            return res.json().then(function(data) {
+                self.putMails(helper.arrayUnion(data, _.state.mails, function(a, b) {
+                    return a.messageId === b.messageId;
+                }));
+                return data;
+            })
         })
     },
 
@@ -134,12 +134,10 @@ var self = module.exports = {
         var returnData;
         var listOfDependencies = [
             Promise.method(function() {
-                if (Object.keys(_this.account).length === 0 || priority === 1) {
-                    return _this.getAccount()
-                    .then(function(res) {
-                        return res;
-                    });
-                }
+                return _this.getAccount()
+                .then(function(res) {
+                    return res;
+                });
             }.bind(this)),
             Promise.method(function() {
                 return _this.getFolder()
@@ -173,28 +171,27 @@ var self = module.exports = {
         return helper.postWithHeader(this.$http, _.state, RENEW_ENDPOINT)
         .then(function(res) {
             if (typeof res === 'undefined') return;
-            return res.json()
-        })
-        .then(function(data) {
-            if (data.hasOwnProperty('token')) {
-                _.dispatch('setToken', data.token);
-                return true;
-            };
+            return res.json().then(function(data) {
+                if (data.hasOwnProperty('token')) {
+                    _.dispatch('setToken', data.token);
+                    return true;
+                };
+            })
         })
     },
     login: function(_, data) {
+        var self = this;
         return helper.postWithoutHeader(this.$http, _.state, LOGIN_ENDPOINT, data)
         .then(function(res) {
             if (typeof res === 'undefined') return;
-            return res.json()
-        })
-        .then(function(data) {
-            if (data.hasOwnProperty('token')) {
-                _.dispatch('setToken', data.token);
-                _.dispatch('setAuthenticated', true);
-                this.connectQueue();
-                return true;
-            };
+            return res.json().then(function(data) {
+                if (data.hasOwnProperty('token')) {
+                    _.dispatch('setToken', data.token);
+                    _.dispatch('setAuthenticated', true);
+                    self.connectQueue();
+                    return true;
+                };
+            })
         })
     },
     logout: function(_) {
@@ -207,55 +204,50 @@ var self = module.exports = {
         return helper.getWithHeader(this.$http, _.state, GETSECURITY_ENDPOINT)
         .then(function(res) {
             if (typeof res === 'undefined') return;
-            return res.json()
-        })
-        .then(function(data) {
-            _.dispatch('putSecurity', data);
+            return res.json().then(function(data) {
+                _.dispatch('putSecurity', data);
+            })
         })
     },
     getAccount: function(_) {
         return helper.postWithHeader(this.$http, _.state, GETACCOUNT_ENDPOINT, _.state.route.params)
         .then(function(res) {
             if (typeof res === 'undefined') return;
-            return res.json()
-        })
-        .then(function(data) {
-            data.displayName = data['account'] + '@' + data['domain'];
-            _.dispatch('putAccount', data);
-            return data;
+            return res.json().then(function(data) {
+                data.displayName = data['account'] + '@' + data['domain'];
+                _.dispatch('putAccount', data);
+                return data;
+            })
         })
     },
     getAccounts: function(_) {
         return helper.getWithHeader(this.$http, _.state, GETACCOUNTS_ENDPOINT)
         .then(function(res) {
             if (typeof res === 'undefined') return;
-            return res.json()
-        })
-        .then(function(data) {
-            _.dispatch('putAccounts', data);
-            return data;
+            return res.json().then(function(data) {
+                _.dispatch('putAccounts', data);
+                return data;
+            })
         })
     },
     getFolder: function(_) {
         return helper.postWithHeader(this.$http, _.state, GETFOLDER_ENDPOINT, _.state.route.params)
         .then(function(res) {
             if (typeof res === 'undefined') return;
-            return res.json()
-        })
-        .then(function(data) {
-            _.dispatch('putFolder', data);
-            return data;
+            return res.json().then(function(data) {
+                _.dispatch('putFolder', data);
+                return data;
+            })
         })
     },
     getMail: function(_) {
         return helper.postWithHeader(this.$http, _.state, GETMAIL_ENDPOINT, _.state.route.params)
         .then(function(res) {
             if (typeof res === 'undefined') return;
-            return res.json()
-        })
-        .then(function(data) {
-            _.dispatch('putMail', data);
-            return data;
+            return res.json().then(function(data) {
+                _.dispatch('putMail', data);
+                return data;
+            })
         })
     },
     getFoldersInAccount: function(_, params) {
@@ -263,64 +255,69 @@ var self = module.exports = {
         return helper.postWithHeader(this.$http, _.state, GETFOLDERS_ENDPOINT, params)
         .then(function(res) {
             if (typeof res === 'undefined') return;
-            return res.json()
-        })
-        .then(function(data) {
-            _.dispatch('putFoldersTree', helper.listToTree(data, {
-                idKey: 'folderId',
-                parentKey: 'parent',
-                childrenKey: 'child'
-            }))
-            _.dispatch('putFoldersFlat', data);
-            return data;
+            return res.json().then(function(data) {
+                _.dispatch('putFoldersTree', helper.listToTree(data, {
+                    idKey: 'folderId',
+                    parentKey: 'parent',
+                    childrenKey: 'child'
+                }))
+                _.dispatch('putFoldersFlat', data);
+                return data;
+            })
         })
     },
     getUnread: function(_, params) {
+        var self = this;
         params = params || _.state.route.params;
         return helper.postWithHeader(this.$http, _.state, GETUNREAD_ENDPOINT, params)
         .then(function(res) {
             if (typeof res === 'undefined') return;
-            return res.json()
-        })
-        .then(function(data) {
-            this.initUnreadCount(params.accountId);
-            this.setUnreadCount(data, params.accountId)
-            return data;
+            return res.json().then(function(data) {
+                self.initUnreadCount(params.accountId);
+                self.setUnreadCount(data, params.accountId)
+                return data;
+            })
         })
     },
+    isUnified: function(_) {
+        return _.state.route.params.accountId === 'unified' && _.state.route.params.folderId === 'inbox'
+    },
     getMailsInFolder: function(_, additional) {
-        var data = Object.assign(_.state.route.params, {
-            slice: _.state.slice
-        })
+        var self = this;
+        var data = Object.assign({
+            slice: Object.assign({
+                exclude: self.mails.map(function(mail) {
+                    return mail.messageId
+                })
+            }, _.state.slice)
+        }, _.state.route.params)
         return helper.postWithHeader(this.$http, _.state, GETMAILSINFOLDER_ENDPOINT, data)
         .then(function(res) {
             if (typeof res === 'undefined') return;
-            return res.json()
-        })
-        .then(function(data) {
-            this.putMails(this.mails.concat(data));
-            return data;
+            return res.json().then(function(data) {
+                self.putMails(self.mails.concat(data));
+                return data;
+            })
         })
     },
     getOwnAddress: function(_, data) {
         return helper.postWithHeader(this.$http, _.state, GETOWNADDDRESS_ENDPOINT, data)
         .then(function(res) {
             if (typeof res === 'undefined') return;
-            return res.json()
-        })
-        .then(function(result) {
-            return result;
+            return res.json().then(function(result) {
+                return result;
+            })
         })
     },
     getFilters: function(_, data) {
+        var self = this;
         return helper.postWithHeader(this.$http, _.state, GETFILTERS_ENDPOINT, _.state.route.params)
         .then(function(res) {
             if (typeof res === 'undefined') return;
-            return res.json()
-        })
-        .then(function(data) {
-            this.putFilters(data);
-            return data;
+            return res.json().then(function(data) {
+                self.putFilters(data);
+                return data;
+            })
         })
     },
 
@@ -499,6 +496,7 @@ var self = module.exports = {
 
     flipStarOnly: function(_) {
         _.dispatch('flipStar');
+        this.updateSliceDate(null)
     },
     updateSliceDate: function(_, data) {
         _.dispatch('updateSliceDate', data);

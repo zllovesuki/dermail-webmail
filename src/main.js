@@ -77,6 +77,10 @@ router.map({
 	}
 })
 
+router.redirect({
+    '/accounts/unified': '/accounts/unified/inbox'
+})
+
 require('./lib/init.js')(store, router)
 require('./lib/registerIcons.js')(Vue)
 require('./lib/registerFilters.js')(Vue)

@@ -4,7 +4,7 @@
 			<div class="m0 p1 border-bottom">
 				<div class="clearfix">
 					<div class="left-{{ propMail.messageId }} left black">
-						<star-button :message-id="propMail.messageId" :is-star.sync="propMail.isStar"></star-button>
+						<star-button :context="propMail"></star-button>
 						<span class="mxn2 btn h6 muted not-clickable">
 							{{ propMail.date | moment "from"}}
 						</span>
@@ -12,7 +12,7 @@
 					<div class="right">
 						<span class="menu-{{ propMail.messageId }} hide">
 							<mail-menu :context="propMail"></mail-menu>
-							<spam :folder-name="folder.displayName" :message-id="propMail.messageId" :folder-id="propMail.folderId" v-if="hideSpamButton.indexOf(folder.displayName.toLowerCase()) === -1"></spam>
+							<spam :context="propMail" v-if="hideSpamButton.indexOf(propMail.displayName.toLowerCase()) === -1"></spam>
 						</span>
 						<span class="address-{{ propMail.messageId }}">
 							<address-button origin-text="From" :origin="propMail.from" v-if="!atSentFolder"></address-button>
@@ -31,7 +31,7 @@
 							{{ propMail.subject | excerpt 50 }}
 						</a>
 					</div>
-					<div class="clickable bodyblock right{{ propMail.isRead === true ? ' muted' : ''}}" v-link="{ name: 'mail', params: { accountId: folder.accountId, folderId: folder.folderId, messageId: propMail.messageId } }">
+					<div class="clickable bodyblock right{{ propMail.isRead === true ? ' muted' : ''}}" v-link="{ name: 'mail', params: { accountId: propMail.accountId, folderId: propMail.folderId, messageId: propMail.messageId } }">
 						<span class="btn h5 m0 black">
 							{{ propMail.text | excerpt 75 }}
 						</span>

@@ -40,11 +40,11 @@ module.exports = {
 	created: function() {
 		var currentFolderId = this.route.params.folderId;
 		if (currentFolderId !== this.lastFolderId) {
+            this.resetSlice();
 			this.removeMails();
 		}else{
 			this.skipFetching = true;
 		}
-		this.resetSlice();
 	},
 	compiled: function() {
 
@@ -55,6 +55,9 @@ module.exports = {
 			if (typeof res === 'undefined') return;
 			this.setLastFolderId();
 			this.setTitle(this.folder.displayName);
+            if (this.isUnified()) {
+                return this.loadMore();
+            }
 			if (this.flatFolders.length === 0) {
 				return this.getFoldersInAccount()
 				.then(function() {
@@ -87,11 +90,16 @@ module.exports = {
 				this.ready = true;
 				this.loading().go(100);
 			}else{
-				this.More();
                 this.busy = true;
-				return this.getMailsInFolder()
+                return this.getMailsInFolder()
 				.then(function(res) {
-					if (typeof res === 'undefined') return;
+					if (typeof res === 'undefined') {
+                        this.busy = true;
+                        this.disableLoadMore = true;
+                        this.hideLoadMore = true;
+                        return;
+                    }
+                    this.More();
 					if (this.mails.length < this.slice.perPage || res.length < this.slice.perPage) {
 						this.disableLoadMore = true;
 					}
