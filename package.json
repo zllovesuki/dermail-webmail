@@ -26,7 +26,6 @@
     "nanobar": "^0.4.2",
     "socket.io-client": "^1.4.8",
     "uglify-js": "^3.0.15",
-    "uglifyjs": "^2.4.10",
     "unicode-substring": "^0.1.0",
     "validator": "^6.0.0",
     "vue": "^1.0.28",
