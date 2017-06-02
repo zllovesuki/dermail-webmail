@@ -1,15 +1,14 @@
 {
   "name": "dermail-webmail",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "private": true,
   "scripts": {
-    "prod": "NODE_ENV=production node node_modules/browserify/bin/cmd.js -e src/main.js | node node_modules/uglifyjs/bin/uglifyjs -c -m > public/prod.js",
+    "prod": "NODE_ENV=production node node_modules/browserify/bin/cmd.js -e src/main.js | node node_modules/uglify-js/bin/uglifyjs -c -m > public/prod.js",
     "watch": "node node_modules/watchify/bin/cmd.js -vd -p browserify -e src/main.js -o public/app.js -v"
   },
   "dependencies": {
     "debug": "~2.3.2",
-    "express": "~4.14.0",
-    "superagent": "^3.5.2"
+    "express": "~4.14.0"
   },
   "devDependencies": {
     "alertify.js": "^1.0.12",
@@ -26,6 +25,7 @@
     "marked": "^0.3.6",
     "nanobar": "^0.4.2",
     "socket.io-client": "^1.4.8",
+    "uglify-js": "^3.0.15",
     "uglifyjs": "^2.4.10",
     "unicode-substring": "^0.1.0",
     "validator": "^6.0.0",
