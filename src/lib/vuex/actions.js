@@ -105,12 +105,10 @@ var self = module.exports = {
             slice: {
                 perPage: 10,
                 starOnly: _.state.slice.starOnly,
-                context: _.state.mails.map(function(mail) {
-                    return {
-                        folderId: mail.folderId,
-                        savedOn: mail.savedOn
-                    }
-                })
+                context: _.state.mails.reduce(function(hashMap, mail) {
+                    hashMap[mail.folderId] = mail.savedOn
+                    return hashMap;
+                }, {})
             }
         };
         var data = {};
@@ -290,12 +288,10 @@ var self = module.exports = {
         var self = this;
         var data = Object.assign({
             slice: Object.assign({
-                context: self.mails.map(function(mail) {
-                    return {
-                        folderId: mail.folderId,
-                        savedOn: mail.savedOn
-                    }
-                })
+                context: self.mails.reduce(function(hashMap, mail) {
+                    hashMap[mail.folderId] = mail.savedOn
+                    return hashMap;
+                }, {})
             }, _.state.slice)
         }, _.state.route.params)
         return helper.postWithHeader(this.$http, _.state, GETMAILSINFOLDER_ENDPOINT, data)
