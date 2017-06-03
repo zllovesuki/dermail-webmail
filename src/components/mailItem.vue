@@ -66,7 +66,7 @@ module.exports = {
 	},
 	computed: {
 		atSentFolder: function() {
-			return this.folder.displayName.toLowerCase() === 'sent';
+			return this.propMail.displayName.toLowerCase() === 'sent';
 		}
 	},
 	methods: {

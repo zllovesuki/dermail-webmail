@@ -12,7 +12,7 @@
 					<ul class="list-reset block y-scrollable">
 						<li class="overflow-hidden" v-for="result in search.results" track-by="messageId">
 							<a target="_blank" v-link="{ name: 'mail', params: { accountId: this.route.params.accountId, folderId: result.folder.folderId, messageId: result.messageId }}" class="btn">
-								{{result.folder.displayName}} - {{ result.subject }}
+                                <span v-if="isUnified()"><span class="muted black">{{result.account.account}}@{{result.account.domain}}</span>/</span>{{result.folder.displayName}} - {{ result.subject }}
 							</a>
 						</li>
 						<li v-if="search.string.length > 0 && search.results.length === 0">No results.</li>

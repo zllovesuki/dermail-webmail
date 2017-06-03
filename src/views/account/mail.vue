@@ -50,7 +50,7 @@
 			</div>
 			<div class="m0 p1 border-top">
 				<div class="clearfix" v-if="ready">
-					<div class="left" v-if="hideInMoveOptions.indexOf(folder.displayName.toLowerCase()) === -1">
+					<div class="left" v-if="hideInMoveOptions.indexOf(mail.displayName.toLowerCase()) === -1">
 						<a class="muted h6 btn {{ color }}" @click="reply">
 							Reply
 						</a>
@@ -62,7 +62,7 @@
 						<a class="h6 mxn1 btn black" @click="showRaw">
 							Raw
 						</a>
-						<spam :folder-name="folder.displayName" :message-id="mail.messageId" :folder-id="mail.folderId" v-if="hideSpamButton.indexOf(folder.displayName.toLowerCase()) === -1"></spam>
+						<spam :context="mail" v-if="hideSpamButton.indexOf(mail.displayName.toLowerCase()) === -1"></spam>
 					</div>
 				</div>
 			</div>

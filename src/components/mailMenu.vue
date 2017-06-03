@@ -3,7 +3,7 @@
 		<a class="muted h6 mxn1 btn {{ color }}" @click="flipReadAndChangeBody" v-if="hideReadUnread.indexOf(context.displayName.toLowerCase()) === -1">
 			{{ context.isRead === true ? '> Unread': '> Read' }}
 		</a>
-		<a class="muted h6 mxn1 btn {{ color }}" @click="showMoveFolder" v-if="!isUnified() && hideMoveToFolder.indexOf(context.displayName.toLowerCase()) === -1">
+		<a class="muted h6 mxn1 btn {{ color }}" @click="showMoveFolder" v-if="hideMoveToFolder.indexOf(context.displayName.toLowerCase()) === -1">
 			> Folder
 		</a>
 		<a class="h6 bold mxn1 btn red" @click.prevent="oneClickToTrash" v-if="hideMoveToTrash.indexOf(context.displayName.toLowerCase()) === -1">
@@ -12,13 +12,13 @@
         <a class="h6 bold mxn1 btn red" @click.prevent="showDeleteModal" v-if="context.displayName.toLowerCase() === 'trash'">
 			> Delete Permanently
 		</a>
-		<modal :show.sync="folderModal" v-if="!isUnified()">
+		<modal :show.sync="folderModal">
 			<h4 slot="header">Move to a Folder</h4>
 			<span slot="body">
 				<form v-on:submit.prevent="doMoveToFolder" class="h5">
 					<label for="folder">Move to:</label>
 					<select class="block col-12 mb2 field" v-model="modal.folderId">
-						<option v-for="f in flatFolders" track-by="folderId" v-show="hideInMoveOptions.indexOf(f.displayName.toLowerCase()) === -1" value="{{ f.folderId }}">{{ f.displayName }}</option>
+						<option v-for="f in context.accountFlatFolders" track-by="folderId" v-show="hideInMoveOptions.indexOf(f.displayName.toLowerCase()) === -1" value="{{ f.folderId }}">{{ f.displayName }}</option>
 					</select>
 					<button :disabled="buttonDisabled" class="btn btn-primary">Move</button>
 				</form>
@@ -100,11 +100,15 @@ module.exports = {
 				return this.updateMail(this.modal)
 				.then(function(res) {
 					if (typeof res === 'undefined') return;
+                    this.alert().success('Moved to a folder.');
+                    if (this.isUnified()) {
+                        this.buttonDisabled = false;
+                        return;
+                    }
 					return this.mailHouseKeeping(this.modal.folderId, this.modal.messageId)
 					.then(function() {
 						this.resetLastFolderId();
 						this.buttonDisabled = false;
-						this.alert().success('Moved to a folder.');
 					}.bind(this))
 				})
 				.finally(function() {
