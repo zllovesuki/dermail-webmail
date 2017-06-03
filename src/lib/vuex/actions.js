@@ -125,9 +125,7 @@ var self = module.exports = {
         .then(function(res) {
             if (typeof res === 'undefined') return;
             return res.json().then(function(data) {
-                self.putMails(helper.arrayUnion(data, _.state.mails, function(a, b) {
-                    return a.messageId === b.messageId;
-                }));
+                self.putMails(helper.setOps.difference(data, _.state.mails));
                 return data;
             })
         })
