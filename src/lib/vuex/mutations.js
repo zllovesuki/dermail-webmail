@@ -144,13 +144,9 @@ module.exports = {
 	flipStar: function(state) {
 		state.slice.starOnly = !state.slice.starOnly;
 	},
-	updateSliceDate: function(state, data) {
-		state.slice.savedOn = data;
-	},
 	resetSlice: function(state) {
 		state.slice = {
 			perPage: 10,
-			savedOn: null,
 			starOnly: false
 		}
 	},

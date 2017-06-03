@@ -23,7 +23,6 @@ module.exports = {
 
 	slice: {
 		perPage: 10,
-		savedOn: null,
 		starOnly: false
 	},
 

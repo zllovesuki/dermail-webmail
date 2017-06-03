@@ -104,10 +104,12 @@ var self = module.exports = {
         var additional = {
             slice: {
                 perPage: 10,
-                savedOn: null,
                 starOnly: _.state.slice.starOnly,
-                exclude: _.state.mails.map(function(mail) {
-                    return mail.messageId
+                context: _.state.mails.map(function(mail) {
+                    return {
+                        folderId: mail.folderId,
+                        savedOn: mail.savedOn
+                    }
                 })
             }
         };
@@ -288,8 +290,11 @@ var self = module.exports = {
         var self = this;
         var data = Object.assign({
             slice: Object.assign({
-                exclude: self.mails.map(function(mail) {
-                    return mail.messageId
+                context: self.mails.map(function(mail) {
+                    return {
+                        folderId: mail.folderId,
+                        savedOn: mail.savedOn
+                    }
                 })
             }, _.state.slice)
         }, _.state.route.params)
@@ -498,10 +503,6 @@ var self = module.exports = {
 
     flipStarOnly: function(_) {
         _.dispatch('flipStar');
-        this.updateSliceDate(null)
-    },
-    updateSliceDate: function(_, data) {
-        _.dispatch('updateSliceDate', data);
     },
     resetSlice: function(_) {
         _.dispatch('resetSlice');

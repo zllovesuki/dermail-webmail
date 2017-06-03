@@ -76,12 +76,6 @@ module.exports = {
 		}
 	},
 	methods: {
-		More: function() {
-			var lastMail = this.mails.slice(-1)[0];
-			if (lastMail) {
-				this.updateSliceDate(lastMail.savedOn);
-			}
-		},
 		loadMore: function() {
 			this.loading().go(70);
 			if (this.skipFetching) {
@@ -99,7 +93,6 @@ module.exports = {
                         this.hideLoadMore = true;
                         return;
                     }
-                    this.More();
 					if (this.mails.length < this.slice.perPage || res.length < this.slice.perPage) {
 						this.disableLoadMore = true;
 					}
