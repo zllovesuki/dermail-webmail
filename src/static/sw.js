@@ -77,7 +77,7 @@ self.addEventListener('notificationclick', function(event) {
 	}).then(function(clientList) {
         if (event.action === 'read' && data.verify) {
             // mark read
-            fetch('__APIENDPOINT__/write/swActions', {
+            return fetch('__APIENDPOINT__/write/swActions', {
                 method: 'POST',
                 mode: 'cors',
                 headers: new Headers({
