@@ -24,7 +24,8 @@ function countNotificationsAndNotify(payload) {
 				} else {
 					notificationCount++;
 				}
-				existingNotification.close();
+                if (payload.remove === true && existingNotification.data.messageId !== payload.messageId) continue;
+                existingNotification.close();
 			}
 			delete payload.folder;
 			if (typeof payload._account === 'undefined') payload._account = payload.header.substring(payload.header.indexOf(':') + 1);
@@ -32,6 +33,7 @@ function countNotificationsAndNotify(payload) {
 			payload.body = 'You have ' + notificationCount + ' new emails in' + payload._account;
 			payload.notificationCount = notificationCount;
 		}
+        if (payload.remove === true) return;
 		return notify(payload, tag);
 	});
 }
