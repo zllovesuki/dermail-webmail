@@ -13,7 +13,9 @@ function countNotificationsAndNotify(payload) {
 	var tag = payload.accountId || 'notification';
 	return self.registration.getNotifications({ tag: tag })
 	.then(function(notifications) {
+        payload.single = true;
 		if (notifications && notifications.length > 0) {
+            payload.single = false;
 			var notificationCount = 1;
 			for (var i = 0; i < notifications.length; i++) {
 				var existingNotification = notifications[i];
@@ -35,11 +37,19 @@ function countNotificationsAndNotify(payload) {
 }
 
 function notify(payload, tag) {
+    var actions = [];
+    if (payload.single === true) {
+        actions = [{
+            action: 'read',
+            title: 'Mark Read'
+        }]
+    }
 	return self.registration.showNotification(payload.header, {
 		body: payload.body,
 		data: payload,
 		icon: '/public/mail_256x256.png',
 		tag: tag,
+        actions: actions,
 		vibrate: [300, 100, 300]
 	})
 }
@@ -65,6 +75,20 @@ self.addEventListener('notificationclick', function(event) {
 	event.waitUntil(clients.matchAll({
 		type: "window"
 	}).then(function(clientList) {
+        if (event.action === 'read' && data.verify) {
+            // mark read
+            fetch('__APIENDPOINT__/write/swActions', {
+                method: 'POST',
+                mode: 'cors',
+                headers: new Headers({
+                    'Content-Type': 'application/json'
+                }),
+                body: JSON.stringify({
+                    verify: data.verify,
+                    action: 'read'
+                })
+            })
+        }
 		if (!!data.folder && !!data.accountId) {
 			if (clients.openWindow) {
 				return clients.openWindow('__SITEURL__/accounts/' + data.accountId + '/' + data.folder.folderId + '/' + data.messageId);
