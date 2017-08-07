@@ -38,7 +38,7 @@ function countNotificationsAndNotify(payload) {
 
 function notify(payload, tag) {
     var actions = [];
-    if (payload.single === true && data.verify) {
+    if (payload.single === true && payload.verify) {
         actions = [{
             action: 'read',
             title: 'Mark Read'
