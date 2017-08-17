@@ -44,7 +44,7 @@ var self = module.exports = {
 	getHeader: function(state) {
 		return {
 			headers: {
-				'Authorization': 'JWT ' + state.token
+				'Authorization': 'bearer ' + state.token
 			}
 		}
 	},
