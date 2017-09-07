@@ -13,6 +13,11 @@
 					Push Notification
 				</span>
 			</span>
+            <span v-if="isInSpamFilter">
+				<span class="btn button-narrow mxn1" v-link="{ name: 'settingSpamFilter' }">
+    				Spam Filter
+				</span>
+			</span>
 			<span v-if="isInColor">
 				<span class="btn button-narrow mxn1" v-link="{ name: 'settingColor' }">
 					Color
@@ -38,6 +43,9 @@ module.exports = {
 	computed: {
 		isInPushNotification: function() {
 			return this.route.name === 'settingPushNotification'
+		},
+        isInSpamFilter: function() {
+			return this.route.name === 'settingSpamFilter'
 		},
 		isInColor: function() {
 			return this.route.name === 'settingColor'

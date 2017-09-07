@@ -62,6 +62,10 @@ router.map({
 				name: 'settingPushNotification',
 				component: require('./views/setting/pushNotification.vue')
 			},
+            '/spamFilter': {
+				name: 'settingSpamFilter',
+				component: require('./views/setting/spamFilter.vue')
+			},
 			'/color': {
 				name: 'settingColor',
 				component: require('./views/setting/color.vue')

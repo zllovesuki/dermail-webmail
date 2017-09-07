@@ -30,6 +30,21 @@
 				</div>
 			</div>
 		</div>
+        <div class="overflow-hidden bg-white rounded mb2">
+			<div class="m0 p1">
+				<div class="clearfix">
+					<span class="btn black h5">Spam filter: </span>
+				</div>
+				<div class="clearfix">
+					<span class="ml1 btn black h6 muted not-clickable">Dermail comes with a Bayesian spam filter to keep your inbox clean.</span>
+				</div>
+			</div>
+			<div class="m0 p2 border-top">
+				<div class="clearfix">
+					<a class="muted h6 ml1 mb1 bold btn btn-outline {{ color }}" v-link="{ name: 'settingSpamFilter' }">Preferences</a>
+				</div>
+			</div>
+		</div>
 		<div class="overflow-hidden bg-white rounded mb2">
 			<div class="m0 p1">
 				<div class="clearfix">
@@ -45,21 +60,6 @@
 				</div>
 			</div>
 		</div>
-        <div class="overflow-hidden bg-white rounded mb2">
-			<div class="m0 p1">
-				<div class="clearfix">
-					<span class="btn black h5">Spam filter: </span>
-				</div>
-				<div class="clearfix">
-					<span class="ml1 btn black h6 muted not-clickable">You should periodically retrain Bayesian filter with new mails.</span>
-				</div>
-			</div>
-			<div class="m0 p2 border-top">
-				<div class="clearfix">
-					<a class="muted h6 ml1 mb1 bold btn btn-outline {{ color }}" @click="train">Retrain</a>
-				</div>
-			</div>
-		</div>
 	</div>
 </template>
 <script>
@@ -72,13 +72,6 @@ module.exports = {
 		getters: getters,
 		actions: actions
 	},
-    methods: {
-        train: function() {
-            this.trainBayes().then(function() {
-                this.alert().success('Requested.');
-            })
-        }
-    },
 	ready: function() {
 		this.loading().go(100);
 		this.setTitle('Settings');

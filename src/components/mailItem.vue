@@ -12,7 +12,7 @@
 					<div class="right">
 						<span class="menu-{{ propMail.messageId }} hide">
 							<mail-menu :context="propMail"></mail-menu>
-							<spam :context="propMail" v-if="hideSpamButton.indexOf(propMail.displayName.toLowerCase()) === -1"></spam>
+							<spam :context="propMail" v-if="isBayesianEnabled(propMail.accountId) && hideSpamButton.indexOf(propMail.displayName.toLowerCase()) === -1"></spam>
 						</span>
 						<span class="address-{{ propMail.messageId }}">
 							<address-button origin-text="From" :origin="propMail.from" v-if="!atSentFolder"></address-button>

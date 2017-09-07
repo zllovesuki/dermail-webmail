@@ -25,7 +25,6 @@ var UPDATEFOLDER_ENDPOINT = API_ENDPOINT + '/write/updateFolder'
 var UPDATEDOMAIN_ENDPOINT = API_ENDPOINT + '/write/updateDomain'
 var UPDATEACCOUNT_ENDPOINT = API_ENDPOINT + '/write/updateAccount'
 var PUSHSUB_ENDPOINT = API_ENDPOINT + '/write/pushSubscriptions'
-var BAYES_ENDPOINT = API_ENDPOINT + '/write/trainBayes'
 var SENDMAIL_ENDPOINT = API_ENDPOINT + '/relay/sendMail'
 var UPLOADS3STREAM_ENDPOINT = API_ENDPOINT + '/upload/s3Stream'
 
@@ -332,10 +331,6 @@ var self = module.exports = {
         return helper.postWithHeader(this.$http, _.state, PUSHSUB_ENDPOINT, data);
     },
 
-    trainBayes: function(_) {
-        return helper.postWithHeader(this.$http, _.state, BAYES_ENDPOINT);
-    },
-
     searchMailsInAccount: function(_, data) {
         return helper.postWithHeader(this.$http, _.state, SEARCHMAILSINACCOUNT_ENDPOINT, data);
     },
@@ -502,6 +497,12 @@ var self = module.exports = {
     },
     resetSlice: function(_) {
         _.dispatch('resetSlice');
+    },
+
+    isBayesianEnabled: function(_, accountId) {
+        return _.state.accounts.filter(function(account) {
+            return account.accountId === accountId
+        })[0].bayesEnabled === true;
     },
 
     mailHouseKeeping: function(_, folderId, messageId, redirectToFolder) {
