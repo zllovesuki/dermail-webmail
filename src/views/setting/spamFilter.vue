@@ -16,8 +16,11 @@
 					<table class="h6 col col-12">
 						<template v-for="account in accounts" track-by="accountId" v-if="account.bayesEnabled === true">
 							<tr>
-								<td class="col col-12">
-									<span class="btn left" @click="popupRetrainModal(account.accountId)">{{ account.account }}@{{ account.domain }}</span>
+								<td class="col col-6">
+									<span class="btn left" @click="account.trainLock !== false ? return false : popupRetrainModal(account.accountId) ">{{ account.account }}@{{ account.domain }}</span>
+								</td>
+                                <td class="col col-6">
+									<button v-if="account.trainLock !== false" type="button" class="right bold btn non-clickable btn-outline red muted">Busy</span>
 								</td>
 							</tr>
 						</template>
