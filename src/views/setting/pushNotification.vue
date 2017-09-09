@@ -36,7 +36,7 @@
 			</div>
 			<div class="m0 p2 border-top">
 				<div class="clearfix">
-					<span class="btn black h5">Account Status: </span>
+					<span class="btn black h6">Account Status: </span>
 				</div>
 				<div class="clearfix">
 					<table class="h6 col col-12">

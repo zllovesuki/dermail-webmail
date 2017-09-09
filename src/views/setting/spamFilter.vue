@@ -13,7 +13,7 @@
 			</div>
 			<div class="m0 p2 border-top">
                 <div class="clearfix">
-					<span class="btn black h5">Untrained Mails: </span>
+					<span class="btn black h6">Account Status: </span>
 				</div>
 				<div class="clearfix">
 					<table class="h6 col col-12">
@@ -23,8 +23,9 @@
 									<span class="btn left">{{ account.account }}@{{ account.domain }}</span>
 								</td>
                                 <td class="col col-6">
-									<button v-if="account.trainLock !== false" type="button" class="right bold btn non-clickable btn-outline red muted">Busy</span>
+									<button v-if="account.trainLock !== false" type="button" class="right bold btn non-clickable red muted">Busy</span>
                                     <button v-if="account.trainLock === false && account.untrainMailsCount > 0" type="button" class="right bold btn btn-outline {{ color }}" @click="popupRetrainModal(account.accountId)">{{ account.untrainMailsCount }} mails</span>
+                                    <button v-if="account.trainLock === false && account.untrainMailsCount === 0" type="button" class="right bold btn not-clickable {{ color }} muted">up to date</span>
 								</td>
 							</tr>
 						</template>
@@ -45,7 +46,7 @@
 			</div>
 			<div class="m0 p2 border-top">
 				<div class="clearfix">
-					<span class="btn black h5">Account Status: </span>
+					<span class="btn black h6">Account Status: </span>
 				</div>
 				<div class="clearfix">
 					<table class="h6 col col-12">
