@@ -12,15 +12,19 @@
 				</div>
 			</div>
 			<div class="m0 p2 border-top">
+                <div class="clearfix">
+					<span class="btn black h5">Untrained Mails: </span>
+				</div>
 				<div class="clearfix">
 					<table class="h6 col col-12">
 						<template v-for="account in accounts" track-by="accountId" v-if="account.bayesEnabled === true">
 							<tr>
 								<td class="col col-6">
-									<span class="btn left" @click="account.trainLock !== false ? return false : popupRetrainModal(account.accountId) ">{{ account.account }}@{{ account.domain }}</span>
+									<span class="btn left">{{ account.account }}@{{ account.domain }}</span>
 								</td>
                                 <td class="col col-6">
 									<button v-if="account.trainLock !== false" type="button" class="right bold btn non-clickable btn-outline red muted">Busy</span>
+                                    <button v-if="account.trainLock === false && account.untrainMailsCount > 0" type="button" class="right bold btn btn-outline {{ color }}" @click="popupRetrainModal(account.accountId)">{{ account.untrainMailsCount }} mails</span>
 								</td>
 							</tr>
 						</template>
