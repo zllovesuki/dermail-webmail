@@ -486,7 +486,7 @@ module.exports = {
                                     query: query
                                 }),
                                 beforeSend: function(jqXHR, options) {
-                                    jqXHR.setRequestHeader('Authorization', 'JWT ' + self.getAuthToken())
+                                    jqXHR.setRequestHeader('Authorization', 'Bearer ' + self.getAuthToken())
                                 },
                                 callback: {
                                     done: function(data, textStatus, jqXHR) {
