@@ -1,9 +1,9 @@
 <template>
 	<div>
-		<div class="overflow-hidden bg-white rounded mb2">
+		<div class="overflow-hidden bg-white rounded mb2" v-if="supportPush">
 			<div class="m0 p1">
 				<div class="clearfix">
-					<span class="btn black h5">Push Notifications: </span>
+					<span class="btn black h5">Cloud Messaging: </span>
 				</div>
 				<div class="clearfix">
 					<span class="ml1 btn black h6 muted not-clickable">By utilizing Firebase Cloud Messaging and Mozilla Cloud Services, Dermail will send push notification to your device when new mails arrive. (Chrome 50+, Firefox 44+)</span>
@@ -23,6 +23,41 @@
 				</div>
 			</div>
 		</div>
+        <div class="overflow-hidden bg-white rounded mb2">
+            <div class="m0 p1">
+                <div class="clearfix">
+                    <span class="btn black h5">Pushover: </span>
+                </div>
+                <div class="clearfix">
+                    <span class="ml1 btn black h6 muted not-clickable">By utilizing Pushover service, Dermail will send push notification to your device when new mails arrive, across platforms.</span>
+                </div>
+            </div>
+            <div class="m0 p2 border-top">
+				<div class="clearfix">
+                    <table class="h6 col col-12">
+                        <tr>
+                            <td class="col col-2">
+                                App Token:
+                            </td>
+                            <td class="col col-10">
+                                <input type="text" class="field" v-model="pushOver.token">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col col-2">
+                                User Key:
+                            </td>
+                            <td class="col col-10">
+                                <input type="text" class="field" v-model="pushOver.user">
+                            </td>
+                        </tr>
+                    </table>
+                    <button type="submit" class="h6 btn btn-outline {{ color }} block ml1" @click="updatePushover">
+                        Update
+                    </button>
+                </div>
+            </div>
+        </div>
 		<div class="overflow-hidden bg-white rounded mb2">
 			<div class="m0 p1">
 				<div class="clearfix">
@@ -84,6 +119,10 @@ module.exports = {
 	},
 	data: function() {
 		return {
+            pushOver: {
+                root: window.location.origin
+            },
+            supportPush: false,
 			canSubscribe: false,
 			canUnsubscribe: false,
 			disabled: false,
@@ -242,13 +281,25 @@ module.exports = {
 				this.disableNotifyButton = false;
 				this.fetchAccounts();
 			})
-		}
+		},
+        updatePushover: function() {
+            var payload = JSON.stringify(this.pushOver)
+			return this.pushNotification({
+				action: 'updatePushover',
+				payload: payload
+			})
+			.then(function(res) {
+				if (typeof res === 'undefined') return;
+				this.alert().success('Pushover setting updated.');
+			})
+        }
 	},
 	beforeCompile: function() {
 		this.setTitle('Push Notifications');
 	},
 	ready: function() {
 		if ('serviceWorker' in navigator) {
+            this.supportPush = true
 			var sw = navigator.serviceWorker.register('/sw.js');
 			sw.then(function(registration) {
 				registration.pushManager.getSubscription()
@@ -267,6 +318,19 @@ module.exports = {
 			}.bind(this))
 		}
 		this.fetchAccounts();
+
+        this.pushNotification({
+            action: 'findPushover'
+        })
+        .then(function(res) {
+            if (typeof res === 'undefined') return;
+            return res.json().then(function(result) {
+                if (typeof result.token !== 'undefined' && typeof result.user !== 'undefined') {
+                    this.$set('pushOver.token', result.token)
+                    this.$set('pushOver.user', result.user)
+                }
+            }.bind(this))
+        }.bind(this))
 	}
 }
 </script>
